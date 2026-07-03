@@ -234,13 +234,13 @@ h1, h2, h3, h4, h5, h6 {
 /* Auth Specific UI */
 .auth-input-group {
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 
 .auth-input {
   width: 100%;
-  padding: 14px 16px;
-  padding-top: 24px;
+  padding: 10px 12px;
+  padding-top: 20px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   font-size: 1rem;

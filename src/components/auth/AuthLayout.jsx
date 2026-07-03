@@ -27,7 +27,7 @@ const AuthLayout = ({ children }) => {
       </div>
 
       {/* Right Authentication Panel */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px', position: 'relative' }}>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', position: 'relative' }}>
         
         {/* Mobile-only subtle banner fallback if we wanted one, but per instructions, keep it clean */}
         <div style={{ width: '100%', maxWidth: '480px' }}>
