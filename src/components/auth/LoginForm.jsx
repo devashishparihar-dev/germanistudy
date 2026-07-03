@@ -34,10 +34,7 @@ const LoginForm = ({ onToggleMode, onLogin, onForgotPassword }) => {
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show" style={{ width: '100%' }}>
-      <motion.div variants={itemVariants} style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-        <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '300px', objectFit: 'contain' }} />
-        <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '300px', objectFit: 'contain' }} />
-      </motion.div>
+
       
       <motion.div variants={itemVariants} style={{ marginBottom: '16px' }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: '4px' }}>Welcome Back</h2>
