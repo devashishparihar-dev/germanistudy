@@ -1,0 +1,92 @@
+{
+  "title": "TestAS Core Test Mock 1",
+  "description": "A comprehensive mock test covering quantitative problems, inferring relationships, completing patterns, and numerical series. (Under Construction)",
+  "duration": 190,
+  "questions": [
+    {
+      "question_number": 1,
+      "section": "quantitative",
+      "difficulty": "medium",
+      "question_type": "multiple_choice",
+      "question": "A school is organizing a graduation ceremony for 400 students. The administration wants to provide each student with 3 commemorative badges. The badges are ordered in bulk packages of 50. How many packages does the school need to order so that every student receives exactly 3 badges?",
+      "options": [
+        "A) 18",
+        "B) 20",
+        "C) 24",
+        "D) 28"
+      ],
+      "correct_answer": "C) 24",
+      "explanation": "Total badges needed = 400 students * 3 badges/student = 1200 badges. Number of packages = 1200 badges / 50 badges/package = 24 packages.",
+      "hint": "",
+      "estimated_time": 60
+    },
+    {
+      "question_number": 2,
+      "section": "quantitative",
+      "difficulty": "medium",
+      "question_type": "multiple_choice",
+      "question": "The administration of a hospital needs to paint the waiting rooms in 3 of their clinics. Each clinic consists of 5 identical wings. Each wing has 200 m² of wall space. The waiting room makes up 1/5th of the wall space in each wing. What is the total waiting room wall space in the 3 clinics that needs to be painted?",
+      "options": [
+        "A) 200 m²",
+        "B) 600 m²",
+        "C) 1200 m²",
+        "D) 3000 m²"
+      ],
+      "correct_answer": "B) 600 m²",
+      "explanation": "Total wings = 3 clinics * 5 wings = 15 wings. Total wall space = 15 wings * 200 m² = 3000 m². Waiting room space = 1/5th of 3000 m² = 600 m².",
+      "hint": "",
+      "estimated_time": 60
+    },
+    {
+      "question_number": 3,
+      "section": "quantitative",
+      "difficulty": "medium",
+      "question_type": "multiple_choice",
+      "question": "At a tech startup, 80% of the engineers and 50% of the designers finish their projects on time. If the startup's workforce consists of 70% engineers, what percentage of the entire startup's workforce are engineers who finish their projects on time?",
+      "options": [
+        "A) 80%",
+        "B) 70%",
+        "C) 56%",
+        "D) 15%"
+      ],
+      "correct_answer": "C) 56%",
+      "explanation": "To find the percentage of the entire workforce that are engineers finishing on time, multiply the percentage of the workforce that are engineers (70%) by the percentage of engineers who finish on time (80%). 0.70 * 0.80 = 0.56, or 56%.",
+      "hint": "",
+      "estimated_time": 60
+    },
+    {
+      "question_number": 4,
+      "section": "quantitative",
+      "difficulty": "medium",
+      "question_type": "multiple_choice",
+      "question": "A chef preparing a banquet found that 1/5 of the dishes were too salty, and 3/8 were too sweet. What percentage of the dishes were neither too salty nor too sweet?",
+      "options": [
+        "A) 42.5%",
+        "B) 57.5%",
+        "C) 60%",
+        "D) 82.5%"
+      ],
+      "correct_answer": "A) 42.5%",
+      "explanation": "Convert fractions to a common denominator (40): 1/5 = 8/40, and 3/8 = 15/40. Together, they make up 23/40 of the dishes. The remaining dishes are 17/40. To convert to a percentage: 17 / 40 = 0.425 = 42.5%.",
+      "hint": "",
+      "estimated_time": 90
+    },
+    {
+      "question_number": 5,
+      "section": "quantitative",
+      "difficulty": "hard",
+      "question_type": "multiple_choice",
+      "question": "A museum is open 10 hours a day. It sells 40 tickets every hour Monday through Friday, and 25% of those are children's tickets. It sells 120 tickets every hour on the weekends, and 40% of those are children's tickets. If the regular adult ticket is 20 Euros Monday through Friday and 25 Euros on weekends, and children's tickets are 15 Euros every day, how many Euros does the museum make in a full week?",
+      "options": [
+        "A) 87,900",
+        "B) 86,400",
+        "C) 88,500",
+        "D) 92,000"
+      ],
+      "correct_answer": "A) 87,900",
+      "explanation": "Mon-Fri: 10 hrs * 40 tickets = 400 tickets/day. For 5 days = 2000 tickets. Children's tickets = 25% of 2000 = 500 tickets. Adult tickets = 1500 tickets. Mon-Fri Revenue = (1500 * 20) + (500 * 15) = 30,000 + 7,500 = 37,500 Euros. Weekends: 10 hrs * 120 tickets = 1200 tickets/day. For 2 days = 2400 tickets. Children's tickets = 40% of 2400 = 960 tickets. Adult tickets = 1440 tickets. Weekend Revenue = (1440 * 25) + (960 * 15) = 36,000 + 14,400 = 50,400 Euros. Total Weekly Revenue = 37,500 + 50,400 = 87,900 Euros.",
+      "hint": "",
+      "estimated_time": 120
+    }
+  ]
+}

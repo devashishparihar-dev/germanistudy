@@ -1,0 +1,377 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Semantic Core Variables - Light Mode */
+  --background: #FAFAFA;
+  --surface: #FFFFFF;
+  --surface-translucent: rgba(255, 255, 255, 0.85);
+  --primary: #F2AF00;
+  --primary-hover: #D99D00;
+  --accent: #1A1D24;
+  --text: #1A1D24;
+  --text-muted: #5A6475;
+  --border: #E5E7EB;
+  
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+
+  /* Typography */
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Dimensions */
+  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --radius-sm: 4px;
+  
+  /* Soft Shadows for Premium Feel */
+  --shadow-soft: 0 4px 20px rgba(59, 0, 0, 0.04), 0 2px 8px rgba(59, 0, 0, 0.02);
+  --shadow-hover: 0 12px 30px rgba(59, 0, 0, 0.06), 0 8px 16px rgba(59, 0, 0, 0.04);
+  
+  /* Legacy/Compatibility */
+  --bg-main: var(--background);
+  --bg-light: var(--surface);
+  --card-bg: var(--surface);
+  --primary-color: var(--primary);
+  --primary-blue: var(--primary);
+  --accent-color: var(--accent);
+  --sidebar-bg: var(--primary);
+  --text-main: var(--text);
+  --border-color: var(--border);
+  --logo-primary: var(--primary);
+  --logo-secondary: var(--accent);
+}
+
+.dark {
+  /* Semantic Core Variables - Dark Mode */
+  --background: #13151A;
+  --surface: #1E2129;
+  --surface-translucent: rgba(30, 33, 41, 0.85);
+  --primary: #F2AF00;
+  --primary-hover: #FADB5F;
+  --accent: #F2AF00;
+  --text: #F8F9FA;
+  --text-muted: #9CA3AF;
+  --border: #374151;
+
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.6), 0 8px 16px rgba(0, 0, 0, 0.4);
+
+  /* Legacy/Compatibility */
+  --bg-main: var(--background);
+  --bg-light: var(--surface);
+  --card-bg: var(--surface);
+  --primary-color: var(--primary);
+  --primary-blue: var(--primary);
+  --accent-color: var(--accent);
+  --sidebar-bg: var(--surface);
+  --text-main: var(--text);
+  --border-color: var(--border);
+  --logo-primary: #E5E9F0;
+  --logo-secondary: var(--accent);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--background);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+.mono-text {
+  font-family: var(--font-mono);
+}
+
+/* Premium Card Base */
+.premium-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  padding: 24px;
+}
+
+.premium-card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--primary);
+  color: #13151A; /* Force slate black text for high contrast on yellow */
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-family: var(--font-heading);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark .btn-primary {
+  background: var(--primary);
+  color: #13151A; /* Text on yellow is always dark slate */
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(242, 175, 0, 0.25);
+}
+
+.dark .btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 4px 12px rgba(242, 175, 0, 0.15);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-family: var(--font-heading);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary:hover {
+  background: var(--border);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Grid Navigation States */
+.grid-item {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 0.95rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.grid-item-unvisited {
+}
+
+.grid-item-visited {
+  background: var(--accent);
+  color: var(--primary);
+  border-color: var(--accent);
+}
+
+.grid-item-answered {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+
+.grid-item-flagged {
+  background: var(--warning);
+  color: white;
+  border-color: var(--warning);
+}
+
+.grid-item-current {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Timer Pulse Animation */
+@keyframes pulseAccent {
+  0% { transform: scale(1); color: var(--warning); }
+  50% { transform: scale(1.05); color: var(--error); }
+  100% { transform: scale(1); color: var(--warning); }
+}
+.timer-pulse {
+  animation: pulseAccent 1s infinite;
+}
+
+/* Auth Specific UI */
+.auth-input-group {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 14px 16px;
+  padding-top: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--surface);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.auth-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(242, 175, 0, 0.2);
+}
+
+.dark .auth-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(242, 175, 0, 0.25);
+}
+
+.auth-label {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.auth-input:focus ~ .auth-label,
+.auth-input:not(:placeholder-shown) ~ .auth-label {
+  top: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.dark .auth-input:focus ~ .auth-label,
+.dark .auth-input:not(:placeholder-shown) ~ .auth-label {
+  color: var(--primary);
+}
+
+.auth-input:not(:focus):not(:placeholder-shown) ~ .auth-label {
+  color: var(--text-muted);
+}
+
+/* Animations */
+@keyframes checkPop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.strength-check {
+  animation: checkPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+.floating-element {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Mobile Responsiveness
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+  
+  .show-on-mobile {
+    display: block !important;
+  }
+  
+  .show-on-mobile-flex {
+    display: flex !important;
+  }
+
+  /* Typography Adjustments */
+  h1 {
+    font-size: 2.5rem !important;
+  }
+  h2 {
+    font-size: 2rem !important;
+  }
+  h3 {
+    font-size: 1.5rem !important;
+  }
+  p {
+    font-size: 1rem !important;
+  }
+
+  /* Padding Adjustments */
+  .view-container main {
+    padding: 80px 24px 60px !important;
+  }
+
+  .premium-card {
+    padding: 24px !important;
+  }
+
+  /* General Grid Adjustments */
+  .mobile-grid-1 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Sidebar adjustments via classes instead of inline styles for cleaner React code */
+  .mobile-sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 90;
+  }
+}
+
+@media (min-width: 769px) {
+  .hide-on-desktop {
+    display: none !important;
+  }
+}
+
+/* Logo responsiveness */
+.logo-light-mode { display: block; }
+.logo-dark-mode { display: none; }
+.dark .logo-light-mode { display: none; }
+.dark .logo-dark-mode { display: block; }
