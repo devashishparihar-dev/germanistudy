@@ -8,7 +8,7 @@ const BrandPanel = () => {
       
       <div>
         <div style={{ marginBottom: '64px' }}>
-          <img src="/assets/branding/logo_wide_dark.png" alt="GermaniStudy Logo" style={{ height: '120px', objectFit: 'contain' }} />
+          <img src="/assets/branding/logo_wide_dark.png" alt="GermaniStudy Logo" style={{ height: '200px', objectFit: 'contain' }} />
         </div>
 
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: '3rem', fontWeight: 700, lineHeight: 1.1, marginBottom: '24px', fontFamily: 'var(--font-heading)', color: '#F8F9FA' }}>
