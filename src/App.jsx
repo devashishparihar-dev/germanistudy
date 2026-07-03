@@ -94,11 +94,11 @@ function App() {
 
     switch (currentView) {
       case 'Home':
-        return <Home setCurrentView={setCurrentView} />;
+        return <Home setCurrentView={setCurrentView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
       case 'Auth':
         return <Auth setCurrentView={setCurrentView} />;
       case 'Dashboard':
-        return <Dashboard setCurrentView={setCurrentView} session={session} />;
+        return <Dashboard setCurrentView={setCurrentView} session={session} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
       case 'Blogs':
         return <Blogs setCurrentView={setCurrentView} />;
       case 'History':
@@ -129,7 +129,7 @@ function App() {
 
   return (
     <div className="platform-container">
-      {['Home', 'Auth', 'Admin Panel', 'Blogs'].includes(currentView) && (
+      {['Home', 'Admin Panel', 'Blogs'].includes(currentView) && (
         <TopNav 
           currentView={currentView} 
           setCurrentView={setCurrentView} 
@@ -138,7 +138,7 @@ function App() {
           setIsDarkMode={setIsDarkMode}
         />
       )}
-      <div className={`platform-content ${!['Home', 'Auth', 'Admin Panel', 'Blogs'].includes(currentView) ? 'simulator-active' : ''}`}>
+      <div className={`platform-content ${!['Home', 'Admin Panel', 'Blogs'].includes(currentView) ? 'simulator-active' : ''}`}>
         {renderView()}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { PlayCircle, Target, Clock, ArrowRight, BookOpen, AlertCircle, BarChart3, History, ChevronDown, CheckCircle, TrendingUp, Award, Zap } from 'lucide-react';
+import { PlayCircle, Target, Clock, ArrowRight, BookOpen, AlertCircle, BarChart3, History, ChevronDown, CheckCircle, TrendingUp, Award, Zap, Sun, Moon } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
 
 const mockChartData = [
@@ -43,7 +43,7 @@ const StatCard = ({ icon: Icon, title, value, trend, delay }) => (
   </motion.div>
 );
 
-const Dashboard = ({ setCurrentView, session }) => {
+const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
   const [selectedExam, setSelectedExam] = useState('TestAS');
   const [showExamDropdown, setShowExamDropdown] = useState(false);
   
@@ -66,7 +66,14 @@ const Dashboard = ({ setCurrentView, session }) => {
               </motion.p>
             </div>
             
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <button 
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', padding: '12px', borderRadius: '50%', boxShadow: 'var(--shadow-soft)' }}
+                title="Toggle Dark Mode"
+              >
+                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
               <button 
                 onClick={() => setShowExamDropdown(!showExamDropdown)}
                 style={{ 

@@ -34,14 +34,14 @@ const LoginForm = ({ onToggleMode, onLogin, onForgotPassword }) => {
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show" style={{ width: '100%' }}>
-      <motion.div variants={itemVariants} style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-        <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '96px', objectFit: 'contain' }} />
-        <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '96px', objectFit: 'contain' }} />
+      <motion.div variants={itemVariants} style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+        <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '64px', objectFit: 'contain' }} />
+        <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '64px', objectFit: 'contain' }} />
       </motion.div>
       
-      <motion.div variants={itemVariants} style={{ marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text)', marginBottom: '8px' }}>Welcome Back</h2>
-        <p style={{ color: 'var(--text-muted)' }}>Continue your preparation where you left off.</p>
+      <motion.div variants={itemVariants} style={{ marginBottom: '16px' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: '4px' }}>Welcome Back</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Continue your preparation where you left off.</p>
       </motion.div>
 
       {errorMsg && (
@@ -54,7 +54,7 @@ const LoginForm = ({ onToggleMode, onLogin, onForgotPassword }) => {
         <AuthInput label="Email Address" type="email" icon={Mail} value={email} onChange={(e) => setEmail(e.target.value)} required />
         <AuthInput label="Password" type="password" icon={Lock} value={password} onChange={(e) => setPassword(e.target.value)} required />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <input type="checkbox" id="remember" style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--primary)' }} />
             <label htmlFor="remember" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', cursor: 'pointer' }}>Remember me</label>
@@ -67,7 +67,7 @@ const LoginForm = ({ onToggleMode, onLogin, onForgotPassword }) => {
         <PrimaryButton type="submit" isLoading={loading}>Sign In</PrimaryButton>
       </motion.form>
 
-      <motion.div variants={itemVariants} style={{ display: 'flex', alignItems: 'center', margin: '24px 0', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+      <motion.div variants={itemVariants} style={{ display: 'flex', alignItems: 'center', margin: '16px 0', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
         <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
         <span style={{ padding: '0 12px' }}>OR</span>
         <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
@@ -77,7 +77,7 @@ const LoginForm = ({ onToggleMode, onLogin, onForgotPassword }) => {
         <SocialLoginButtons />
       </motion.div>
 
-      <motion.div variants={itemVariants} style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.95rem', color: 'var(--text-muted)' }}>
+      <motion.div variants={itemVariants} style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
         Don't have an account?{' '}
         <button onClick={onToggleMode} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Create Account</button>
       </motion.div>

@@ -38,20 +38,20 @@ const SignupForm = ({ onToggleMode, onSignup }) => {
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show" style={{ width: '100%' }}>
-      <motion.div variants={itemVariants} style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-        <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '96px', objectFit: 'contain' }} />
-        <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '96px', objectFit: 'contain' }} />
+      <motion.div variants={itemVariants} style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+        <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '64px', objectFit: 'contain' }} />
+        <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '64px', objectFit: 'contain' }} />
       </motion.div>
-      <motion.div variants={itemVariants} style={{ marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text)', marginBottom: '8px' }}>Create your account</h2>
-        <p style={{ color: 'var(--text-muted)' }}>Start your personalized DMAT preparation journey today.</p>
+      <motion.div variants={itemVariants} style={{ marginBottom: '16px' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: '4px' }}>Create your account</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Start your personalized DMAT preparation journey today.</p>
       </motion.div>
 
       <motion.div variants={itemVariants}>
         <SocialLoginButtons />
       </motion.div>
 
-      <motion.div variants={itemVariants} style={{ display: 'flex', alignItems: 'center', margin: '24px 0', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+      <motion.div variants={itemVariants} style={{ display: 'flex', alignItems: 'center', margin: '16px 0', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
         <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
         <span style={{ padding: '0 12px' }}>OR</span>
         <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
@@ -70,8 +70,7 @@ const SignupForm = ({ onToggleMode, onSignup }) => {
         <AuthInput label="Password" type="password" name="password" icon={Lock} value={formData.password} onChange={handleChange} required />
         <PasswordStrengthIndicator password={formData.password} />
         
-        <div style={{ marginTop: '24px' }}></div>
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
           <div style={{ flex: 1 }}>
             <AuthInput label="Confirm Password" type="password" name="confirmPassword" icon={Lock} value={formData.confirmPassword} onChange={handleChange} required />
           </div>
@@ -117,7 +116,7 @@ const SignupForm = ({ onToggleMode, onSignup }) => {
           </div>
         </div>
 
-        <div style={{ marginBottom: '24px' }}>
+        <div style={{ marginBottom: '16px' }}>
           <div className="auth-input-group">
             <input type="date" name="testDate" value={formData.testDate} onChange={handleChange} className="auth-input" style={{ paddingTop: '24px', paddingLeft: '38px' }} required />
             <Calendar size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
@@ -125,7 +124,7 @@ const SignupForm = ({ onToggleMode, onSignup }) => {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
           <input type="checkbox" id="terms" name="acceptTerms" checked={formData.acceptTerms} onChange={handleChange} style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--primary)' }} required />
           <label htmlFor="terms" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', cursor: 'pointer' }}>I agree to the Terms of Service and Privacy Policy.</label>
         </div>
@@ -133,7 +132,7 @@ const SignupForm = ({ onToggleMode, onSignup }) => {
         <PrimaryButton type="submit" isLoading={loading}>Create Account</PrimaryButton>
       </motion.form>
 
-      <motion.div variants={itemVariants} style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.95rem', color: 'var(--text-muted)' }}>
+      <motion.div variants={itemVariants} style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
         Already have an account?{' '}
         <button onClick={onToggleMode} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Log In</button>
       </motion.div>
