@@ -3,37 +3,9 @@ import { Newspaper, ChevronRight, Clock } from 'lucide-react';
 
 import { motion } from 'framer-motion';
 
+import { blogPosts } from '../data/blogs';
+
 const Blogs = ({ setCurrentView }) => {
-  const blogPosts = [
-    {
-      title: "Mastering the TestAS Cognitive Section",
-      excerpt: "The core cognitive module can be daunting. Here are 5 strategies to maximize your score and manage your time effectively during the exam.",
-      date: "Jul 1, 2026",
-      readTime: "5 min read",
-      category: "Test Prep"
-    },
-    {
-      title: "Top 10 Master's Programs in Germany for Engineers",
-      excerpt: "Germany is a hub for engineering excellence. Discover which universities offer the best ROI and what you need to secure an admission.",
-      date: "Jun 28, 2026",
-      readTime: "8 min read",
-      category: "Admissions"
-    },
-    {
-      title: "How to Build a Standout Profile",
-      excerpt: "Grades aren't everything. Learn how to highlight your extracurriculars, projects, and motivation letter to impress admission committees.",
-      date: "Jun 15, 2026",
-      readTime: "6 min read",
-      category: "Guides"
-    },
-    {
-      title: "Understanding the German Grading System",
-      excerpt: "Converting your CGPA to the German scale can be confusing. We break down the Bavarian Formula and how universities evaluate your transcripts.",
-      date: "May 30, 2026",
-      readTime: "4 min read",
-      category: "Resources"
-    }
-  ];
 
   return (
     <div className="view-container blogs-view" style={{ maxWidth: '100%', padding: '0', background: 'var(--background)' }}>
@@ -56,8 +28,14 @@ const Blogs = ({ setCurrentView }) => {
                 animate={{ opacity: 1, y: 0 }} 
                 transition={{ delay: idx * 0.1 }} 
                 className="premium-card" 
-                style={{ padding: '32px', display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--surface)' }}
+                style={{ padding: '0', display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--surface)', overflow: 'hidden' }}
               >
+                {post.thumbnail && (
+                  <div style={{ width: '100%', height: '200px', overflow: 'hidden' }}>
+                    <img src={post.thumbnail} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                )}
+                <div style={{ padding: '32px', display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                   <span style={{ padding: '4px 12px', background: 'rgba(136, 192, 208, 0.15)', color: 'var(--primary)', borderRadius: '16px', fontSize: '0.85rem', fontWeight: 600 }}>
                     {post.category}
@@ -77,9 +55,10 @@ const Blogs = ({ setCurrentView }) => {
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '24px' }}>
                   <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{post.date}</span>
-                  <button style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '1rem' }}>
+                  <button onClick={() => setCurrentView(`BlogPost:${post.id}`)} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '1rem' }}>
                     Read Full Post <ChevronRight size={18} />
                   </button>
+                </div>
                 </div>
               </motion.div>
             ))}

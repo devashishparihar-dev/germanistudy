@@ -14,9 +14,11 @@ import CoreTest from './views/CoreTest';
 import Profile from './views/Profile';
 import Settings from './views/Settings';
 import Blogs from './views/Blogs';
+import BlogPost from './views/BlogPost';
 import MockHistory from './views/MockHistory';
-
-const publicViews = ['Home', 'Auth', 'Simulator', 'Core Test', 'Practice', 'Library', 'Blogs']; // temporarily whitelist Simulator and Core Test for testing without auth
+import DigitalCoreTest from './views/DigitalCoreTest';
+import DigitalSimulator from './views/DigitalSimulator';
+const publicViews = ['Home', 'Auth', 'Simulator', 'Core Test', 'Practice', 'Library', 'Blogs', 'BlogPost', 'Digital Core Test', 'DigitalSimulator']; // temporarily whitelist Simulator and Core Test for testing without auth
 
 function App() {
   const getInitialView = () => {
@@ -77,7 +79,8 @@ function App() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       // If user logs out and is on a private route, redirect home or auth
-      if (!session && !publicViews.includes(currentView)) {
+      const isPublic = publicViews.includes(currentView) || currentView.startsWith('BlogPost:');
+      if (!session && !isPublic) {
         setCurrentView('Auth');
       }
     });
@@ -87,7 +90,8 @@ function App() {
 
   const renderView = () => {
     // Auth Guard
-    if (!session && !publicViews.includes(currentView)) {
+    const isPublic = publicViews.includes(currentView) || currentView.startsWith('BlogPost:');
+    if (!session && !isPublic) {
       // Force redirect to Auth if not logged in
       return <Auth setCurrentView={setCurrentView} />;
     }
@@ -112,6 +116,8 @@ function App() {
         return <AdminPanel setCurrentView={setCurrentView} />;
       case 'Core Test':
         return <CoreTest setCurrentView={setCurrentView} />;
+      case 'Digital Core Test':
+        return <DigitalCoreTest setCurrentView={setCurrentView} />;
       case 'Practice':
         return <TopicPractice setCurrentView={setCurrentView} />;
       case 'Library':
@@ -122,14 +128,20 @@ function App() {
         return <Settings setCurrentView={setCurrentView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
       case 'Simulator':
         return <Simulator setCurrentView={setCurrentView} />;
+      case 'DigitalSimulator':
+        return <DigitalSimulator setCurrentView={setCurrentView} />;
       default:
+        if (currentView.startsWith('BlogPost:')) {
+          const blogId = currentView.split(':')[1];
+          return <BlogPost setCurrentView={setCurrentView} blogId={blogId} />;
+        }
         return <Home setCurrentView={setCurrentView} />;
     }
   };
 
   return (
     <div className="platform-container">
-      {['Home', 'Admin Panel', 'Blogs'].includes(currentView) && (
+      {(['Home', 'Admin Panel', 'Blogs'].includes(currentView) || currentView.startsWith('BlogPost:')) && (
         <TopNav 
           currentView={currentView} 
           setCurrentView={setCurrentView} 
@@ -138,7 +150,7 @@ function App() {
           setIsDarkMode={setIsDarkMode}
         />
       )}
-      <div className={`platform-content ${!['Home', 'Admin Panel', 'Blogs'].includes(currentView) ? 'simulator-active' : ''}`}>
+      <div className={`platform-content ${!(['Home', 'Admin Panel', 'Blogs'].includes(currentView) || currentView.startsWith('BlogPost:')) ? 'simulator-active' : ''}`}>
         {renderView()}
       </div>
     </div>

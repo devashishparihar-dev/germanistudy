@@ -101,7 +101,7 @@ const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
                     width: '100%', minWidth: '220px'
                   }}
                 >
-                  {['TestAS', 'DMAT', 'TestDaF', 'Goethe-Zertifikat'].map((exam) => (
+                  {['TestAS', 'Digital TestAS', 'DMAT', 'TestDaF', 'Goethe-Zertifikat'].map((exam) => (
                     <button
                       key={exam}
                       onClick={() => { setSelectedExam(exam); setShowExamDropdown(false); }}
@@ -122,7 +122,7 @@ const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
             </div>
           </header>
 
-          {selectedExam === 'TestAS' ? (
+          {selectedExam === 'TestAS' || selectedExam === 'Digital TestAS' ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
               
               {/* Stats Row */}
@@ -181,7 +181,7 @@ const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
                       </div>
                       <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: '8px', lineHeight: 1.2 }}>Take Mock Exam 6</h3>
                       <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '24px' }}>You're on track! Take your next baseline mock to calibrate your progress.</p>
-                      <button className="btn-primary" style={{ width: '100%' }} onClick={() => setCurrentView('Core Test')}>
+                      <button className="btn-primary" style={{ width: '100%' }} onClick={() => setCurrentView(selectedExam === 'Digital TestAS' ? 'Digital Core Test' : 'Core Test')}>
                         Start Exam
                       </button>
                     </div>

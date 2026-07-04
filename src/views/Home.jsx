@@ -59,7 +59,6 @@ const Home = ({ setCurrentView }) => {
             Your Complete Journey to <br />
             <span style={{ color: 'var(--primary)', position: 'relative' }}>
               Studying in Germany
-              <svg width="100%" height="20" viewBox="0 0 100 20" preserveAspectRatio="none" style={{ position: 'absolute', bottom: '-5px', left: 0, zIndex: -1, opacity: 0.3 }}><path d="M0 10 Q 50 20 100 10" stroke="var(--accent)" strokeWidth="8" fill="none" /></svg>
             </span>
           </h1>
           
