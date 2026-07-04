@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   ArrowRight, BookOpen, GraduationCap, Globe2, 
   FileText, School, Compass, Target, 
-  FileCheck, PlaneTakeoff, ChevronRight, Star
+  FileCheck, PlaneTakeoff, ChevronRight, Star, ChevronDown
 } from 'lucide-react';
 
 const Home = ({ setCurrentView }) => {
@@ -23,12 +23,16 @@ const Home = ({ setCurrentView }) => {
     { icon: <PlaneTakeoff size={32} />, title: 'Arrive in Germany', desc: 'Enroll in your dream university and start your journey.' }
   ];
 
-  const stats = [
-    { label: "Students Guided", value: "25,000+" },
-    { label: "Admissions Secured", value: "4,200+" },
-    { label: "Exams Conquered", value: "1M+" },
-    { label: "Partner Universities", value: "45+" }
+  const faqs = [
+    { question: "What is the DMAT?", answer: "The DMAT (Digital Master's Admissions Test) is a comprehensive exam designed to assess your readiness for Master's programs in Germany." },
+    { question: "Do I need German language skills?", answer: "While many Master's programs are offered in English, having basic German language skills can significantly enhance your daily life and career prospects." },
+    { question: "What is TestAS and do I need it?", answer: "TestAS is a central standardized scholastic aptitude test for foreign students. Many German universities use it to assess cognitive skills, and a good score can significantly improve your chances of admission." },
+    { question: "How can I prepare for the TestAS?", answer: "We offer specialized simulation tests and practice materials tailored to both the core test and subject-specific modules of the TestAS to help you achieve a top percentile score." },
+    { question: "How do I apply for a student visa?", answer: "We provide detailed guides and resources to help you independently navigate the APS Certification, Blocked Account setup, and the student visa application process." },
+    { question: "Are public universities in Germany really free?", answer: "Yes, most public universities in Germany do not charge tuition fees for international students, only a small semester contribution." }
   ];
+
+  const [openFaq, setOpenFaq] = useState(null);
 
   return (
     <div className="view-container home-view" style={{ maxWidth: '100%', padding: '0', background: 'var(--background)' }}>
@@ -132,16 +136,63 @@ const Home = ({ setCurrentView }) => {
         </div>
       </section>
 
-      {/* Statistics */}
-      <section style={{ background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)', width: '100%', padding: '100px 32px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(26,29,36,0.1) 1px, transparent 1px)', backgroundSize: '30px 30px', opacity: 0.3 }} />
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '48px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          {stats.map((stat, idx) => (
-            <motion.div key={idx} style={{ color: '#13151A' }} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}>
-              <div style={{ fontSize: '3.5rem', fontWeight: 800, marginBottom: '12px', color: '#13151A', fontFamily: 'var(--font-heading)', textShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>{stat.value}</div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase', opacity: 0.9 }}>{stat.label}</div>
-            </motion.div>
-          ))}
+      {/* FAQ */}
+      <section style={{ backgroundColor: 'var(--surface)', width: '100%', padding: '100px 32px', borderTop: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+            <h2 style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--text)', marginBottom: '16px', fontFamily: 'var(--font-heading)' }}>Frequently Asked Questions</h2>
+            <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)' }}>Common questions about studying in Germany.</p>
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {faqs.map((faq, idx) => (
+              <div 
+                key={idx} 
+                style={{ 
+                  background: 'var(--background)', 
+                  border: '1px solid var(--border)', 
+                  borderRadius: '12px', 
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                <button 
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '24px', 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    background: 'transparent', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    color: 'var(--text)'
+                  }}
+                >
+                  <span style={{ fontSize: '1.15rem', fontWeight: 600 }}>{faq.question}</span>
+                  <ChevronDown 
+                    size={20} 
+                    style={{ 
+                      transform: openFaq === idx ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.3s ease',
+                      color: 'var(--primary)'
+                    }} 
+                  />
+                </button>
+                <motion.div 
+                  initial={false}
+                  animate={{ height: openFaq === idx ? 'auto' : 0, opacity: openFaq === idx ? 1 : 0 }}
+                  style={{ overflow: 'hidden' }}
+                >
+                  <div style={{ padding: '0 24px 24px', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                    {faq.answer}
+                  </div>
+                </motion.div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
