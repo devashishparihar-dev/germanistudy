@@ -7,18 +7,18 @@ import TopicPractice from './views/TopicPractice';
 import Library from './views/Library';
 import Analytics from './views/Analytics';
 import AdminPanel from './views/AdminPanel';
-import Simulator from './views/Simulator';
 import Auth from './views/Auth';
 import NotFound from './views/NotFound';
-import CoreTest from './views/CoreTest';
 import Profile from './views/Profile';
 import Settings from './views/Settings';
 import Blogs from './views/Blogs';
 import BlogPost from './views/BlogPost';
 import MockHistory from './views/MockHistory';
 import DigitalCoreTest from './views/DigitalCoreTest';
+import DigitalSubjectTest from './views/DigitalSubjectTest';
 import DigitalSimulator from './views/DigitalSimulator';
-const publicViews = ['Home', 'Auth', 'Simulator', 'Core Test', 'Practice', 'Library', 'Blogs', 'BlogPost', 'Digital Core Test', 'DigitalSimulator']; // temporarily whitelist Simulator and Core Test for testing without auth
+import UnauthPreview from './views/UnauthPreview';
+const publicViews = ['Home', 'Auth', 'Practice', 'Library', 'Blogs', 'BlogPost', 'Digital Core Test', 'Digital Subject Test', 'DigitalSimulator', 'UnauthPreview'];
 
 function App() {
   const getInitialView = () => {
@@ -99,6 +99,8 @@ function App() {
     switch (currentView) {
       case 'Home':
         return <Home setCurrentView={setCurrentView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
+      case 'UnauthPreview':
+        return <UnauthPreview setCurrentView={setCurrentView} />;
       case 'Auth':
         return <Auth setCurrentView={setCurrentView} />;
       case 'Dashboard':
@@ -110,14 +112,17 @@ function App() {
       case 'Analytics':
         return <Analytics setCurrentView={setCurrentView} />;
       case 'Admin Panel':
-        if (session?.user?.email !== 'devashishparihar6@gmail.com') {
+        if (!session?.user) {
           return <NotFound setCurrentView={setCurrentView} />;
         }
-        return <AdminPanel setCurrentView={setCurrentView} />;
-      case 'Core Test':
-        return <CoreTest setCurrentView={setCurrentView} />;
+        // Admin access is checked in the AdminPanel component via Supabase profiles
+        // OR we can do a check here. Since it's a synchronous switch statement, 
+        // we'll let AdminPanel handle the loading state & redirect if unauthorized.
+        return <AdminPanel setCurrentView={setCurrentView} session={session} />;
       case 'Digital Core Test':
         return <DigitalCoreTest setCurrentView={setCurrentView} />;
+      case 'Digital Subject Test':
+        return <DigitalSubjectTest setCurrentView={setCurrentView} />;
       case 'Practice':
         return <TopicPractice setCurrentView={setCurrentView} />;
       case 'Library':
@@ -126,8 +131,6 @@ function App() {
         return <Profile setCurrentView={setCurrentView} session={session} />;
       case 'Settings':
         return <Settings setCurrentView={setCurrentView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
-      case 'Simulator':
-        return <Simulator setCurrentView={setCurrentView} />;
       case 'DigitalSimulator':
         return <DigitalSimulator setCurrentView={setCurrentView} />;
       default:

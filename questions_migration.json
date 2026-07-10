@@ -1,0 +1,1146 @@
+[
+  {
+    "section": "quantitative",
+    "question": "A local community center is organizing a charity dinner and expects 450 attendees. The caterer plans to serve small dessert tarts, estimating that each attendee will eat 3 tarts. The tarts are sold in bakery boxes of 40. How many boxes of tarts must the caterer order to ensure there are enough for every attendee?",
+    "options": [
+      "33",
+      "34",
+      "35",
+      "40"
+    ],
+    "correct_answer": "34",
+    "explanation": "Total tarts needed = 450 guests * 3 tarts/guest = 1,350 tarts. Boxes needed = 1,350 / 40 = 33.75. Since the caterer cannot order a fraction of a box, they must round up to 34.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "At a tech company, 40% of the employees are developers and 60% are in other roles. If 70% of the developers and 50% of the non-developers are certified in a new cloud technology, what percentage of the total company employees are certified in this technology?",
+    "options": [
+      "58%",
+      "60%",
+      "62%",
+      "64%"
+    ],
+    "correct_answer": "58%",
+    "explanation": "Let total employees be 100. Developers = 40. Others = 60. Certified developers = 70% of 40 = 28. Certified others = 50% of 60 = 30. Total certified = 28 + 30 = 58.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A real estate developer is renovating 3 apartment buildings. Each building has 12 apartments, and each apartment has a total floor area of 120 square meters. The bathrooms, which account for 1/15th of the total floor area in each apartment, all need new tiling. What is the total area of bathroom floors across all 3 buildings that needs to be retiled?",
+    "options": [
+      "288 sq m",
+      "240 sq m",
+      "144 sq m",
+      "72 sq m"
+    ],
+    "correct_answer": "288 sq m",
+    "explanation": "Total apartments = 3 * 12 = 36. Bathroom area per apartment = 120 * (1/15) = 8 sq m. Total bathroom area = 36 * 8 = 288 sq m.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "During a student survey on a recent exam's difficulty, 1/5 of the students found the exam \"very difficult,\" while 3/8 found it \"moderate.\" If the rest of the students found the exam \"easy,\" what percentage of the students found the exam \"easy\"?",
+    "options": [
+      "35%",
+      "40%",
+      "42.5%",
+      "57.5%"
+    ],
+    "correct_answer": "42.5%",
+    "explanation": "1/5 + 3/8 = 8/40 + 15/40 = 23/40 found it difficult/moderate. The rest found it easy: 1 - 23/40 = 17/40. (17 / 40) * 100% = 42.5%.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A cylindrical water tank has a volume of 4,800 liters. A pump fills the tank at a rate of 15 liters per minute. If the pump runs continuously, how many hours will it take to completely fill the empty tank?",
+    "options": [
+      "3.5",
+      "4.8",
+      "5.33",
+      "6.4"
+    ],
+    "correct_answer": "5.33",
+    "explanation": "Total minutes = 4,800 / 15 = 320 minutes. Convert to hours = 320 / 60 = 5.33 hours.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A museum is open 9 hours a day. From Monday to Friday, it receives an average of 40 visitors per hour, 25% of whom are seniors. On weekends, it receives an average of 120 visitors per hour, 15% of whom are seniors. Regular admission is 20 Euros, but seniors pay a discounted rate of 12 Euros. How much revenue does the museum generate in a complete week?",
+    "options": [
+      "63,200 Euros",
+      "67,840 Euros",
+      "71,520 Euros",
+      "73,008 Euros"
+    ],
+    "correct_answer": "73,008 Euros",
+    "explanation": "Mon-Fri (45 hours): Total = 1,800. Seniors (25%) = 450. Regular = 1,350. Rev = 450*12 + 1350*20 = 5,400 + 27,000 = 32,400. Weekends (18 hours): Total = 2,160. Seniors (15%) = 324. Regular = 1,836. Rev = 324*12 + 1836*20 = 3,888 + 36,720 = 40,608. Total = 73,008 Euros.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A coffee shop blends two types of coffee beans. Bean A costs $12 per kilogram, and Bean B costs $16 per kilogram. The owner wants to create a 50-kilogram blend that costs exactly $15 per kilogram to maximize their profit margin without raising prices. How many kilograms of Bean A should be used in the blend?",
+    "options": [
+      "12.5 kg",
+      "15 kg",
+      "20 kg",
+      "25 kg"
+    ],
+    "correct_answer": "12.5 kg",
+    "explanation": "Let x be Bean A. 12x + 16(50 - x) = 15(50). 12x + 800 - 16x = 750. -4x = -50. x = 12.5 kg.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "Sarah invests $4,000 in a savings account that yields a simple annual interest rate of 4.5%. At the same time, she invests $6,000 in a different account with a simple annual interest rate of 3%. After 4 years, what is the total amount of interest Sarah has earned from both accounts combined?",
+    "options": [
+      "$1,320",
+      "$1,440",
+      "$1,560",
+      "$1,680"
+    ],
+    "correct_answer": "$1,440",
+    "explanation": "Interest 1 = 4000 * 0.045 * 4 = 720. Interest 2 = 6000 * 0.03 * 4 = 720. Total = 720 + 720 = 1,440.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A rectangular garden is 20 meters long and 15 meters wide. A path of uniform width of 2 meters is built completely around the outside of the garden. What is the area of the path?",
+    "options": [
+      "140 sq m",
+      "156 sq m",
+      "160 sq m",
+      "176 sq m"
+    ],
+    "correct_answer": "156 sq m",
+    "explanation": "Garden area = 20 * 15 = 300 sq m. Outer dimensions = 24m by 19m. Total area = 456 sq m. Path area = 456 - 300 = 156 sq m.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "In a certain high school, the ratio of boys to girls is 4:5. If 20 more boys enroll at the school and 10 girls leave, the number of boys and girls becomes equal. How many students were originally enrolled in the school?",
+    "options": [
+      "270",
+      "315",
+      "360",
+      "405"
+    ],
+    "correct_answer": "270",
+    "explanation": "Let boys = 4x, girls = 5x. 4x + 20 = 5x - 10, so x = 30. Original boys = 120, girls = 150. Total = 270.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A store buys a laptop for $600. It marks up the price by 40% to set the regular selling price. During a holiday sale, the store offers a 20% discount on the regular selling price. What is the final selling price of the laptop during the sale, and what is the store's profit?",
+    "options": [
+      "Price: $768, Profit: $168",
+      "Price: $672, Profit: $72",
+      "Price: $720, Profit: $120",
+      "Price: $648, Profit: $48"
+    ],
+    "correct_answer": "Price: $672, Profit: $72",
+    "explanation": "Regular price = 600 * 1.40 = 840. Sale price = 840 * 0.80 = 672. Profit = 672 - 600 = 72.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A team of 6 workers can complete a landscaping project in 15 days. If the project needs to be completed in 9 days due to an upcoming event, how many additional workers working at the same rate must be hired?",
+    "options": [
+      "4",
+      "6",
+      "8",
+      "10"
+    ],
+    "correct_answer": "4",
+    "explanation": "Total worker-days = 6 * 15 = 90. Workers needed for 9 days = 90 / 9 = 10. Additional = 10 - 6 = 4.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A box contains 5 red balls, 4 blue balls, and 3 green balls. If two balls are drawn at random without replacement, what is the probability that both balls are blue?",
+    "options": [
+      "1/11",
+      "1/9",
+      "2/15",
+      "4/33"
+    ],
+    "correct_answer": "1/11",
+    "explanation": "Total balls = 12. P(1st blue) = 4/12. P(2nd blue) = 3/11. Total prob = (4/12) * (3/11) = 1/11.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "The average (arithmetic mean) test score for a class of 25 students is 78. If the scores of 5 students who averaged 90 are removed from the calculation, what is the new average score of the remaining students?",
+    "options": [
+      "72",
+      "74",
+      "75",
+      "76"
+    ],
+    "correct_answer": "75",
+    "explanation": "Total score = 25 * 78 = 1950. Score removed = 5 * 90 = 450. New total = 1500. New average = 1500 / 20 = 75.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A factory produces two models of smartphones: Model X and Model Y. The production cost of Model X is $150, and it sells for $250. The production cost of Model Y is $200, and it sells for $320. In one month, the factory sold a total of 1,200 smartphones, making a total profit of $128,000. How many Model Y smartphones were sold?",
+    "options": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "correct_answer": "400",
+    "explanation": "Profit X = 100, Profit Y = 120. x + y = 1200. 100x + 120y = 128000. 100(1200-y) + 120y = 128000. 120000 + 20y = 128000. 20y = 8000. y = 400.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "If 3x - 4y = 10 and 2x + y = 14, what is the value of x - y?",
+    "options": [
+      "-2",
+      "2",
+      "4",
+      "6"
+    ],
+    "correct_answer": "4",
+    "explanation": "y = 14 - 2x. Substitute: 3x - 4(14 - 2x) = 10. 3x - 56 + 8x = 10. 11x = 66, so x = 6. y = 14 - 12 = 2. x - y = 6 - 2 = 4.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A car travels from City A to City B at an average speed of 60 km/h and returns from City B to City A along the same route at an average speed of 90 km/h. What is the car's average speed for the entire round trip?",
+    "options": [
+      "72 km/h",
+      "75 km/h",
+      "78 km/h",
+      "80 km/h"
+    ],
+    "correct_answer": "72 km/h",
+    "explanation": "Let distance = D. Time out = D/60. Time back = D/90. Total time = D/60 + D/90 = 5D/180 = D/36. Avg speed = 2D / (D/36) = 72 km/h.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A right-angled triangle has a hypotenuse of 13 cm and one leg of 5 cm. What is the area of the triangle?",
+    "options": [
+      "15 sq cm",
+      "30 sq cm",
+      "32.5 sq cm",
+      "60 sq cm"
+    ],
+    "correct_answer": "30 sq cm",
+    "explanation": "Leg a = 5, hypotenuse c = 13. b = sqrt(169 - 25) = 12 cm. Area = 0.5 * 5 * 12 = 30 sq cm.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "In a group of 120 language students, 75 study Spanish, 60 study French, and 20 study neither language. How many students study both Spanish and French?",
+    "options": [
+      "25",
+      "30",
+      "35",
+      "40"
+    ],
+    "correct_answer": "35",
+    "explanation": "Total studying at least one = 120 - 20 = 100. Spanish + French - Both = 100. 75 + 60 - Both = 100. 135 - Both = 100. Both = 35.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "The perimeter of a rectangular field is 140 meters. The length of the field is 10 meters more than twice its width. What is the area of the field?",
+    "options": [
+      "800 sq m",
+      "900 sq m",
+      "1000 sq m",
+      "1200 sq m"
+    ],
+    "correct_answer": "1000 sq m",
+    "explanation": "Perimeter = 2(L + W) = 140, L + W = 70. L = 2W + 10. 3W + 10 = 70. W = 20. L = 50. Area = 50 * 20 = 1000 sq m.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A store owner buys an item and sets its price so that if he gives a 10% discount, he still makes a 20% profit on his cost. If the item's cost is $150, what is the set selling price before the discount?",
+    "options": [
+      "$180",
+      "$192",
+      "$200",
+      "$225"
+    ],
+    "correct_answer": "$200",
+    "explanation": "Target profit = 20% of 150 = $30. Target selling price = $180. 0.9 * Set Price = 180. Set Price = $200.",
+    "difficulty": 1
+  },
+  {
+    "section": "quantitative",
+    "question": "A circular track has a circumference of 400 meters. Two runners start at the same point and run in opposite directions. Runner A runs at a speed of 6 m/s, and Runner B runs at a speed of 4 m/s. How many seconds will it take for them to meet for the first time?",
+    "options": [
+      "20",
+      "40",
+      "60",
+      "80"
+    ],
+    "correct_answer": "40",
+    "explanation": "Relative speed = 6 + 4 = 10 m/s. Time = Distance / Relative Speed = 400 / 10 = 40 seconds.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "_____ : tree = petal : _____",
+    "options": [
+      "branch ... flower",
+      "leaf ... flower",
+      "forest ... garden",
+      "trunk ... stem"
+    ],
+    "correct_answer": "leaf ... flower",
+    "explanation": "A leaf is a part of a tree, just as a petal is a part of a flower. The logical connection is 'part : whole'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "author : _____ = composer : _____",
+    "options": [
+      "book ... symphony",
+      "words ... notes",
+      "write ... sing",
+      "pen ... piano"
+    ],
+    "correct_answer": "book ... symphony",
+    "explanation": "An author creates a book, just as a composer creates a symphony. The logical connection is 'creator : creation'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "_____ : wrist = belt : _____",
+    "options": [
+      "watch ... waist",
+      "hand ... trousers",
+      "bracelet ... neck",
+      "cuff ... hip"
+    ],
+    "correct_answer": "watch ... waist",
+    "explanation": "A watch is worn around the wrist, just as a belt is worn around the waist. The logical connection is 'accessory : body part it is worn on'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "scalpel : _____ = scissors : _____",
+    "options": [
+      "cut ... paper",
+      "surgeon ... barber",
+      "knife ... cut",
+      "hospital ... salon"
+    ],
+    "correct_answer": "surgeon ... barber",
+    "explanation": "A scalpel is the primary tool used by a surgeon, just as scissors are a primary tool used by a barber. The logical connection is 'tool : professional user'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "thermometer : _____ = scale : _____",
+    "options": [
+      "temperature ... weight",
+      "degrees ... grams",
+      "fever ... mass",
+      "heat ... balance"
+    ],
+    "correct_answer": "temperature ... weight",
+    "explanation": "A thermometer is an instrument used to measure temperature, just as a scale is an instrument used to measure weight. The logical connection is 'instrument : measured property'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "hungry : _____ = tired : _____",
+    "options": [
+      "eat ... sleep",
+      "food ... bed",
+      "starving ... exhausted",
+      "thirst ... rest"
+    ],
+    "correct_answer": "eat ... sleep",
+    "explanation": "When you are hungry, the natural action to resolve it is to eat; when you are tired, the natural action to resolve it is to sleep. The logical connection is 'physical state : resolving action'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "_____ : bird = canine : _____",
+    "options": [
+      "avian ... dog",
+      "eagle ... wolf",
+      "fly ... bark",
+      "feather ... fur"
+    ],
+    "correct_answer": "avian ... dog",
+    "explanation": "Avian is the adjective used to describe the family of birds, just as canine is the adjective used to describe the family of dogs. The logical connection is 'class adjective : animal group'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "telescope : _____ = microscope : _____",
+    "options": [
+      "astronomy ... biology",
+      "distance ... tiny",
+      "stars ... cells",
+      "space ... laboratory"
+    ],
+    "correct_answer": "astronomy ... biology",
+    "explanation": "A telescope is a primary observational tool in astronomy, just as a microscope is a primary observational tool in biology. The logical connection is 'tool : field of study'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "car : _____ = horse : _____",
+    "options": [
+      "engine ... legs",
+      "driver ... rider",
+      "garage ... stable",
+      "road ... track"
+    ],
+    "correct_answer": "garage ... stable",
+    "explanation": "A car is typically stored in a garage, just as a horse is typically housed in a stable. The logical connection is 'vehicle/animal : designated storage place'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "ignorant : _____ = poor : _____",
+    "options": [
+      "knowledge ... money",
+      "stupid ... broke",
+      "learn ... earn",
+      "smart ... rich"
+    ],
+    "correct_answer": "knowledge ... money",
+    "explanation": "To be ignorant is to be lacking in knowledge, just as to be poor is to be lacking in money. The logical connection is 'state of deprivation : what is lacked'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "_____ : word = letter : _____",
+    "options": [
+      "sentence ... word",
+      "syllable ... consonant",
+      "paragraph ... sentence",
+      "book ... page"
+    ],
+    "correct_answer": "sentence ... word",
+    "explanation": "A sentence is composed of multiple words, just as a word is composed of multiple letters. The logical connection is 'whole : part'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "canvas : _____ = marble : _____",
+    "options": [
+      "painter ... sculptor",
+      "painting ... statue",
+      "easel ... chisel",
+      "art ... stone"
+    ],
+    "correct_answer": "painter ... sculptor",
+    "explanation": "Canvas is the primary blank material worked on by a painter, just as marble is a primary raw material worked on by a sculptor. The logical connection is 'material : artist'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "_____ : disease = police : _____",
+    "options": [
+      "doctor ... crime",
+      "health ... safety",
+      "medicine ... criminal",
+      "hospital ... station"
+    ],
+    "correct_answer": "doctor ... crime",
+    "explanation": "A doctor's profession involves preventing and fighting disease, just as the police profession involves preventing and fighting crime. The logical connection is 'professional : target problem'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "expand : _____ = accelerate : _____",
+    "options": [
+      "contract ... delay",
+      "size ... speed",
+      "grow ... move",
+      "shrink ... decelerate"
+    ],
+    "correct_answer": "shrink ... decelerate",
+    "explanation": "Shrink is the direct antonym of expand, just as decelerate is the direct antonym of accelerate. The logical connection is 'verb : its antonym'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "_____ : liquid = freeze : _____",
+    "options": [
+      "melt ... solid",
+      "water ... ice",
+      "evaporate ... gas",
+      "flow ... stop"
+    ],
+    "correct_answer": "melt ... solid",
+    "explanation": "To melt is the process that results in a liquid state, just as to freeze is the process that results in a solid state. The logical connection is 'process : resulting state'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "page : _____ = episode : _____",
+    "options": [
+      "book ... series",
+      "paper ... television",
+      "read ... watch",
+      "chapter ... season"
+    ],
+    "correct_answer": "book ... series",
+    "explanation": "A page is an individual sequential unit of a book, just as an episode is an individual sequential unit of a television series. The logical connection is 'part : whole series'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "_____ : clock = direction : _____",
+    "options": [
+      "time ... compass",
+      "hands ... north",
+      "hour ... map",
+      "watch ... location"
+    ],
+    "correct_answer": "time ... compass",
+    "explanation": "Time is what is measured and shown by a clock, just as direction is what is measured and shown by a compass. The logical connection is 'measured concept : measuring instrument'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "archipelago : _____ = constellation : _____",
+    "options": [
+      "islands ... stars",
+      "sea ... sky",
+      "group ... cluster",
+      "ocean ... galaxy"
+    ],
+    "correct_answer": "islands ... stars",
+    "explanation": "An archipelago is a collective group of islands, just as a constellation is a collective group of stars. The logical connection is 'collective noun : individual items'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "_____ : trial = referee : _____",
+    "options": [
+      "judge ... match",
+      "lawyer ... player",
+      "court ... field",
+      "jury ... whistle"
+    ],
+    "correct_answer": "judge ... match",
+    "explanation": "A judge presides over and enforces the rules in a trial, just as a referee presides over and enforces the rules in a match. The logical connection is 'official authority : event'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "rubber : _____ = glass : _____",
+    "options": [
+      "flexible ... fragile",
+      "bounce ... shatter",
+      "tire ... window",
+      "soft ... sharp"
+    ],
+    "correct_answer": "flexible ... fragile",
+    "explanation": "Rubber is inherently characterized by being flexible, just as glass is inherently characterized by being fragile. The logical connection is 'material : intrinsic physical property'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "_____ : poetry = choreographer : _____",
+    "options": [
+      "poet ... dance",
+      "rhyme ... movement",
+      "stanza ... stage",
+      "writer ... ballet"
+    ],
+    "correct_answer": "poet ... dance",
+    "explanation": "A poet is a person who creates poetry, just as a choreographer is a person who creates a dance. The logical connection is 'creator : artistic creation'.",
+    "difficulty": 1
+  },
+  {
+    "section": "relationships",
+    "question": "seed : _____ = egg : _____",
+    "options": [
+      "plant ... bird",
+      "tree ... chicken",
+      "root ... nest",
+      "sprout ... hatch"
+    ],
+    "correct_answer": "plant ... bird",
+    "explanation": "A seed represents the initial embryonic stage that grows into a plant, just as an egg represents the embryonic stage that hatches into a bird. The logical connection is 'initial stage : mature organism'.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ■ ] [ □ ] [ □ ]\n[ □ ] [ ■ ] [ □ ]\n[ □ ] [ □ ] [ ? ]",
+    "options": [
+      "[ ■ ]",
+      "[ □ ]",
+      "[ ▤ ]",
+      "[ ▦ ]"
+    ],
+    "correct_answer": "[ ■ ]",
+    "explanation": "The solid square moves diagonally from top-left to bottom-right across the 3x3 grid. The missing piece must complete this diagonal line.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ◯ ] [ ▲ ] [ ◯ ]\n[ ▲ ] [ ◯ ] [ ▲ ]\n[ ◯ ] [ ▲ ] [ ? ]",
+    "options": [
+      "[ ◯ ]",
+      "[ ▲ ]",
+      "[ △ ]",
+      "[ ⬤ ]"
+    ],
+    "correct_answer": "[ ◯ ]",
+    "explanation": "The grid follows a strict alternating checkerboard pattern between empty circles and filled triangles. The bottom-right corner must be an empty circle.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Sequence:\n[ | ] [ / ] [ — ] [ \\ ] [ ? ]",
+    "options": [
+      "[ | ]",
+      "[ — ]",
+      "[ / ]",
+      "[ \\ ]"
+    ],
+    "correct_answer": "[ | ]",
+    "explanation": "The line rotates 45 degrees clockwise in each step. After the backslash, the next 45-degree rotation results in a vertical line.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ★ ] [ ★ ★ ] [ ★ ★ ★ ]\n[ △ ] [ △ △ ] [ △ △ △ ]\n[ ◯ ] [ ◯ ◯ ] [ ? ]",
+    "options": [
+      "[ ◯ ]",
+      "[ ◯ ◯ ]",
+      "[ ◯ ◯ ◯ ]",
+      "[ ◯ ◯ ◯ ◯ ]"
+    ],
+    "correct_answer": "[ ◯ ◯ ◯ ]",
+    "explanation": "In each row, the number of shapes increases by one from left to right. The third row starts with one circle, then two, so the final cell needs three circles.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ △ ] [ ▷ ] [ ▽ ]\n[ △ ] [ ▷ ] [ ▽ ]\n[ △ ] [ ▷ ] [ ? ]",
+    "options": [
+      "[ ◁ ]",
+      "[ △ ]",
+      "[ ▽ ]",
+      "[ ▷ ]"
+    ],
+    "correct_answer": "[ ▽ ]",
+    "explanation": "Each row is identical, with the triangle rotating 90 degrees clockwise from left to right. The last shape in the sequence is a downward-pointing triangle.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ◯ ] [ ⬤ ] [ ◯ ]\n[ □ ] [ ■ ] [ □ ]\n[ ◇ ] [ ◆ ] [ ? ]",
+    "options": [
+      "[ ◇ ]",
+      "[ ◆ ]",
+      "[ ◈ ]",
+      "[ ◯ ]"
+    ],
+    "correct_answer": "[ ◇ ]",
+    "explanation": "Each row features a shape that is empty on the left, filled in the middle, and empty again on the right. The third row uses diamonds, so the missing shape is an empty diamond.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ◐ ] [ ◑ ] [ ⬤ ]\n[ ◒ ] [ ◓ ] [ ⬤ ]\n[ ◐ ] [ ◑ ] [ ? ]",
+    "options": [
+      "[ ◯ ]",
+      "[ ⬤ ]",
+      "[ ◐ ]",
+      "[ ◒ ]"
+    ],
+    "correct_answer": "[ ⬤ ]",
+    "explanation": "In each row, two half-filled circles combine to form a completely filled circle in the third column. The third row repeats the first row, resulting in a filled circle.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Sequence:\n[ △ ] [ □ ] [ ⬠ ] [ ? ]",
+    "options": [
+      "[ ◯ ]",
+      "[ ⬡ ]",
+      "[ ◇ ]",
+      "[ ☆ ]"
+    ],
+    "correct_answer": "[ ⬡ ]",
+    "explanation": "The shapes increase in the number of sides: Triangle (3), Square (4), Pentagon (5). The next shape must be a Hexagon (6 sides).",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ◁ ] [ △ ] [ ▷ ]\n[ ▽ ] [ ◁ ] [ △ ]\n[ ▷ ] [ ▽ ] [ ? ]",
+    "options": [
+      "[ ◁ ]",
+      "[ ▷ ]",
+      "[ △ ]",
+      "[ ▽ ]"
+    ],
+    "correct_answer": "[ ◁ ]",
+    "explanation": "The shapes shift one position to the left as you move down to the next row (with the leftmost wrapping to the right). The bottom-right cell continues this shift to become a left-pointing triangle.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ + ] [ - ] [ × ]\n[ - ] [ × ] [ + ]\n[ × ] [ + ] [ ? ]",
+    "options": [
+      "[ + ]",
+      "[ - ]",
+      "[ × ]",
+      "[ ÷ ]"
+    ],
+    "correct_answer": "[ - ]",
+    "explanation": "Each row and column contains exactly one of each symbol (+, -, ×). The third row already has × and +, so the missing symbol must be -.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Sequence:\n[ ⬤ ◯ ◯ ] [ ◯ ⬤ ◯ ] [ ◯ ◯ ⬤ ] [ ? ]",
+    "options": [
+      "[ ⬤ ◯ ◯ ]",
+      "[ ◯ ⬤ ◯ ]",
+      "[ ◯ ◯ ⬤ ]",
+      "[ ⬤ ⬤ ◯ ]"
+    ],
+    "correct_answer": "[ ⬤ ◯ ◯ ]",
+    "explanation": "The filled circle moves one position to the right in each step. After reaching the end, it wraps back to the first position.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ■ ] [ ■ ] [ □ ]\n[ ■ ] [ □ ] [ ■ ]\n[ □ ] [ ■ ] [ ? ]",
+    "options": [
+      "[ □ ]",
+      "[ ■ ]",
+      "[ ▤ ]",
+      "[ ◯ ]"
+    ],
+    "correct_answer": "[ ■ ]",
+    "explanation": "In each row, there are exactly two filled squares and one empty square. The third row already has one empty and one filled square, so the missing one must be filled.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ / ] [ \\ ] [ X ]\n[ - ] [ | ] [ + ]\n[ \\ ] [ / ] [ ? ]",
+    "options": [
+      "[ + ]",
+      "[ X ]",
+      "[ | ]",
+      "[ - ]"
+    ],
+    "correct_answer": "[ X ]",
+    "explanation": "In each row, the third symbol is formed by superimposing the first two symbols. Superimposing \\ and / creates an X.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Sequence:\n[ ☆ ] [ ★ ☆ ] [ ☆ ★ ☆ ] [ ? ]",
+    "options": [
+      "[ ★ ☆ ★ ☆ ]",
+      "[ ☆ ★ ☆ ★ ]",
+      "[ ★ ★ ☆ ☆ ]",
+      "[ ☆ ☆ ★ ★ ]"
+    ],
+    "correct_answer": "[ ★ ☆ ★ ☆ ]",
+    "explanation": "One star is added at each step, and the colors alternate starting with the newly added star on the left. The sequence grows and alternates: empty, filled-empty, empty-filled-empty, filled-empty-filled-empty.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ◯ ] [ △ ] [ □ ]\n[ △ ] [ □ ] [ ◯ ]\n[ □ ] [ ◯ ] [ ? ]",
+    "options": [
+      "[ ◯ ]",
+      "[ △ ]",
+      "[ □ ]",
+      "[ ◇ ]"
+    ],
+    "correct_answer": "[ △ ]",
+    "explanation": "Each row and column must contain exactly one circle, one triangle, and one square (a Latin square). The third row is missing a triangle.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ◧ ] [ ◨ ] [ ■ ]\n[ ◓ ] [ ◒ ] [ ⬤ ]\n[ ◧ ] [ ◨ ] [ ? ]",
+    "options": [
+      "[ □ ]",
+      "[ ■ ]",
+      "[ ◯ ]",
+      "[ ⬤ ]"
+    ],
+    "correct_answer": "[ ■ ]",
+    "explanation": "The first two symbols in a row combine to form the third symbol (left half + right half = full shape). The third row repeats the first row, resulting in a solid square.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Sequence:\n[ △ ] [ ▽ ] [ △ △ ] [ ▽ ▽ ] [ ? ]",
+    "options": [
+      "[ △ △ ]",
+      "[ ▽ ▽ ]",
+      "[ △ △ △ ]",
+      "[ ▽ ▽ ▽ ]"
+    ],
+    "correct_answer": "[ △ △ △ ]",
+    "explanation": "The pattern alternates between upward and downward triangles, while the quantity increases every two steps. The next logical step is three upward triangles.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ◇ ] [ ◆ ] [ ◇ ]\n[ ◆ ] [ ◆ ] [ ◆ ]\n[ ◇ ] [ ◆ ] [ ? ]",
+    "options": [
+      "[ ◇ ]",
+      "[ ◆ ]",
+      "[ ◯ ]",
+      "[ ■ ]"
+    ],
+    "correct_answer": "[ ◇ ]",
+    "explanation": "The grid forms a symmetrical cross of filled diamonds in the center row and column, with empty diamonds in the four corners. The bottom-right corner must be empty.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ 1 ] [ 2 ] [ 3 ]\n[ 4 ] [ 5 ] [ 6 ]\n[ 7 ] [ 8 ] [ ? ]",
+    "options": [
+      "[ 8 ]",
+      "[ 9 ]",
+      "[ 10 ]",
+      "[ 0 ]"
+    ],
+    "correct_answer": "[ 9 ]",
+    "explanation": "A simple sequential numerical pattern. The numbers increase by 1 reading left to right, top to bottom. The missing number is 9.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ↑ ] [ ↗ ] [ → ]\n[ ↖ ] [ ↑ ] [ ↗ ]\n[ ← ] [ ↖ ] [ ? ]",
+    "options": [
+      "[ ↑ ]",
+      "[ ↗ ]",
+      "[ → ]",
+      "[ ↓ ]"
+    ],
+    "correct_answer": "[ ↑ ]",
+    "explanation": "The arrows rotate 45 degrees clockwise as you move right across a row. In the third row, ← rotates 45 degrees to ↖, which then rotates 45 degrees to ↑.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Row 1:\n[ ◯ ] [ ◯ ◯ ] [ ◯ ]\n[ △ ] [ △ △ ] [ △ ]\n[ □ ] [ □ □ ] [ ? ]",
+    "options": [
+      "[ □ ]",
+      "[ □ □ ]",
+      "[ □ □ □ ]",
+      "[ ◯ ]"
+    ],
+    "correct_answer": "[ □ ]",
+    "explanation": "The middle column always contains two of the shapes, while the outer columns contain one. The third row uses squares, so the final column must have one square.",
+    "difficulty": 1
+  },
+  {
+    "section": "patterns",
+    "question": "Sequence:\n[ A ] [ C ] [ E ] [ G ] [ ? ]",
+    "options": [
+      "[ H ]",
+      "[ I ]",
+      "[ J ]",
+      "[ K ]"
+    ],
+    "correct_answer": "[ I ]",
+    "explanation": "The letters skip one letter in the alphabet each time (+2 positions). After G comes H, and then I.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "5, 8, 11, 14, 17, ?",
+    "options": [
+      "19",
+      "20",
+      "21",
+      "22"
+    ],
+    "correct_answer": "20",
+    "explanation": "The pattern adds 3 to the previous number: 17 + 3 = 20.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "2, 4, 8, 16, 32, ?",
+    "options": [
+      "48",
+      "64",
+      "128",
+      "256"
+    ],
+    "correct_answer": "64",
+    "explanation": "The pattern multiplies the previous number by 2: 32 * 2 = 64.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "50, 45, 40, 35, 30, ?",
+    "options": [
+      "20",
+      "22",
+      "25",
+      "28"
+    ],
+    "correct_answer": "25",
+    "explanation": "The pattern subtracts 5 from the previous number: 30 - 5 = 25.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "3, 6, 5, 10, 9, ?",
+    "options": [
+      "18",
+      "17",
+      "14",
+      "8"
+    ],
+    "correct_answer": "18",
+    "explanation": "The pattern alternates between multiplying by 2 and subtracting 1. After subtracting 1 to get 9, the next step is 9 * 2 = 18.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "1, 4, 9, 16, 25, ?",
+    "options": [
+      "30",
+      "36",
+      "49",
+      "64"
+    ],
+    "correct_answer": "36",
+    "explanation": "This is a sequence of perfect squares: 1², 2², 3², 4², 5². The next number is 6² = 36.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "1, 1, 2, 3, 5, 8, ?",
+    "options": [
+      "11",
+      "12",
+      "13",
+      "15"
+    ],
+    "correct_answer": "13",
+    "explanation": "This is the Fibonacci sequence, where each number is the sum of the two preceding ones: 5 + 8 = 13.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "4, 12, 6, 18, 9, ?",
+    "options": [
+      "12",
+      "15",
+      "27",
+      "36"
+    ],
+    "correct_answer": "27",
+    "explanation": "The pattern alternates between multiplying by 3 and dividing by 2. After dividing 18 by 2 to get 9, the next step is 9 * 3 = 27.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "10, 11, 13, 16, 20, ?",
+    "options": [
+      "23",
+      "24",
+      "25",
+      "26"
+    ],
+    "correct_answer": "25",
+    "explanation": "The difference between consecutive numbers increases by 1 each time (+1, +2, +3, +4). The next difference is +5, so 20 + 5 = 25.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "100, 50, 52, 26, 28, ?",
+    "options": [
+      "14",
+      "24",
+      "30",
+      "56"
+    ],
+    "correct_answer": "14",
+    "explanation": "The pattern alternates between dividing by 2 and adding 2. After adding 2 to get 28, the next step is 28 / 2 = 14.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "2, 3, 5, 7, 11, ?",
+    "options": [
+      "12",
+      "13",
+      "14",
+      "15"
+    ],
+    "correct_answer": "13",
+    "explanation": "This is the sequence of prime numbers. The prime number following 11 is 13.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "5, 6, 8, 11, 15, 20, ?",
+    "options": [
+      "25",
+      "26",
+      "27",
+      "28"
+    ],
+    "correct_answer": "26",
+    "explanation": "The pattern adds increasing integers: +1, +2, +3, +4, +5. The next step is +6, so 20 + 6 = 26.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "2, 5, 4, 7, 6, 9, ?",
+    "options": [
+      "8",
+      "10",
+      "11",
+      "12"
+    ],
+    "correct_answer": "8",
+    "explanation": "The pattern alternates between adding 3 and subtracting 1. After adding 3 to get 9, the next step is 9 - 1 = 8.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "1, 8, 27, 64, 125, ?",
+    "options": [
+      "196",
+      "216",
+      "256",
+      "512"
+    ],
+    "correct_answer": "216",
+    "explanation": "This is a sequence of perfect cubes: 1³, 2³, 3³, 4³, 5³. The next number is 6³ = 216.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "21, 24, 22, 25, 23, ?",
+    "options": [
+      "20",
+      "24",
+      "26",
+      "28"
+    ],
+    "correct_answer": "26",
+    "explanation": "The pattern alternates between adding 3 and subtracting 2. After subtracting 2 to get 23, the next step is 23 + 3 = 26.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "3, 4, 7, 11, 18, ?",
+    "options": [
+      "25",
+      "27",
+      "29",
+      "31"
+    ],
+    "correct_answer": "29",
+    "explanation": "Each number is the sum of the two preceding numbers (similar to Fibonacci): 11 + 18 = 29.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "3, 9, 27, 81, 243, ?",
+    "options": [
+      "486",
+      "729",
+      "834",
+      "912"
+    ],
+    "correct_answer": "729",
+    "explanation": "The pattern multiplies the previous number by 3: 243 * 3 = 729.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "2, 6, 12, 20, 30, ?",
+    "options": [
+      "36",
+      "40",
+      "42",
+      "48"
+    ],
+    "correct_answer": "42",
+    "explanation": "The difference between consecutive numbers increases by 2 each time (+4, +6, +8, +10). The next difference is +12, so 30 + 12 = 42.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "7, 14, 11, 22, 19, ?",
+    "options": [
+      "36",
+      "38",
+      "40",
+      "42"
+    ],
+    "correct_answer": "38",
+    "explanation": "The pattern alternates between multiplying by 2 and subtracting 3. After subtracting 3 to get 19, the next step is 19 * 2 = 38.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "128, 64, 32, 16, 8, ?",
+    "options": [
+      "2",
+      "4",
+      "6",
+      "10"
+    ],
+    "correct_answer": "4",
+    "explanation": "The pattern divides the previous number by 2: 8 / 2 = 4.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "3, 5, 9, 17, 33, ?",
+    "options": [
+      "63",
+      "64",
+      "65",
+      "66"
+    ],
+    "correct_answer": "65",
+    "explanation": "The difference between numbers doubles each time (+2, +4, +8, +16). The next difference is +32, so 33 + 32 = 65.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "10, 9, 11, 8, 12, ?",
+    "options": [
+      "6",
+      "7",
+      "8",
+      "13"
+    ],
+    "correct_answer": "7",
+    "explanation": "The pattern applies operations that increase in magnitude while alternating signs: -1, +2, -3, +4. The next operation is -5, so 12 - 5 = 7.",
+    "difficulty": 1
+  },
+  {
+    "section": "numerical_series",
+    "question": "4, 5, 10, 12, 24, 27, ?",
+    "options": [
+      "50",
+      "52",
+      "54",
+      "56"
+    ],
+    "correct_answer": "54",
+    "explanation": "The pattern alternates between adding an increasing number and multiplying by 2: (+1, *2, +2, *2, +3). The next step is *2, so 27 * 2 = 54.",
+    "difficulty": 1
+  }
+]

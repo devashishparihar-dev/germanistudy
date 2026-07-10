@@ -5,6 +5,7 @@ import LoginForm from '../components/auth/LoginForm';
 import SignupForm from '../components/auth/SignupForm';
 import ForgotPasswordModal from '../components/auth/ForgotPasswordModal';
 import EmailVerificationCard from '../components/auth/EmailVerificationCard';
+import { trackEvent } from '../utils/analytics';
 
 const Auth = ({ setCurrentView }) => {
   const [viewState, setViewState] = useState('login'); // 'login', 'signup', 'forgot', 'verify'
@@ -12,7 +13,15 @@ const Auth = ({ setCurrentView }) => {
 
   const handleLogin = async (email, password) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (!error) setCurrentView('Dashboard');
+    if (!error) {
+      if (localStorage.getItem('redirectAfterAuth') === 'free_mock') {
+        localStorage.removeItem('redirectAfterAuth');
+        localStorage.setItem('selectedDigitalModule', 'free_mock');
+        setCurrentView('DigitalSimulator');
+      } else {
+        setCurrentView('Dashboard');
+      }
+    }
     return error; // return error to the form to display
   };
 
@@ -36,6 +45,10 @@ const Auth = ({ setCurrentView }) => {
     if (error) {
       alert(error.message);
     } else {
+      trackEvent('sign_up_success', { 
+        country: formData.country, 
+        targetModule: formData.targetModule 
+      });
       setRegisteredEmail(formData.email);
       setViewState('verify');
     }
