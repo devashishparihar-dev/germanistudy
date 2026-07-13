@@ -39,7 +39,7 @@ const Analytics = ({ setCurrentView }) => {
               </div>
               <h3 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text)', marginBottom: '16px' }}>No Data Available Yet</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '500px', margin: '0 auto 32px' }}>Complete your first TestAS Mock Test to unlock detailed performance analytics, accuracy breakdowns, and subject competency profiles.</p>
-              <button className="btn-primary" onClick={() => setCurrentView('CoreTest')} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '14px 32px', fontSize: '1.1rem' }}>
+              <button className="btn-primary" onClick={() => setCurrentView('digital-core-test')} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '14px 32px', fontSize: '1.1rem' }}>
                 Take TestAS Mock <ArrowUpRight size={18} />
               </button>
             </motion.div>

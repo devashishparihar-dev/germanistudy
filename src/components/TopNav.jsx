@@ -3,35 +3,55 @@ import { supabase } from '../supabaseClient';
 import { Moon, Sun, Bell, User, Menu, X, BookOpen, GraduationCap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const TopNav = ({ currentView, setCurrentView, session, isDarkMode, setIsDarkMode }) => {
+const TopNav = ({ currentView, setCurrentView, session, isAdmin, isDarkMode, setIsDarkMode }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-
-  const isAdmin = session?.user?.email === 'devashishparihar6@gmail.com';
-  
-  // Custom navigation structure mapping to views
   const navItems = [
-    { label: 'Home', view: 'Home', isPublic: true },
+    { label: 'Home', view: 'Home', isPublic: true, hideWhenLogged: true },
     { label: 'Dashboard', view: 'Dashboard', isPublic: false },
-    { label: 'Core Test', view: 'Core Test', isPublic: false },
+    { label: 'Core Test', view: 'digital-core-test', isPublic: false },
     { label: 'Analytics', view: 'Analytics', isPublic: false },
-    { label: 'Pricing', view: 'Home', isPublic: true }, // Placeholder
-    { label: 'About', view: 'Home', isPublic: true }, // Placeholder
+    { label: 'Pricing', view: 'Pricing', isPublic: true },
+    { label: 'About', action: 'scroll-about', isPublic: true },
     { label: 'Blog', view: 'Blogs', isPublic: true },
   ];
 
   if (isAdmin) {
-    navItems.push({ label: 'Admin Panel', view: 'Admin Panel', isPublic: false });
+    navItems.push({ label: 'Admin Panel', view: 'admin-panel', isPublic: false });
   }
+
+  const [activeTab, setActiveTab] = useState(() => {
+    const item = navItems.find(i => i.view === currentView);
+    return item ? item.label : currentView;
+  });
+
+  useEffect(() => {
+    const item = navItems.find(i => i.view === currentView);
+    if (item) setActiveTab(item.label);
+    else setActiveTab(currentView);
+  }, [currentView]);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+
+      if (currentView === 'Home') {
+        const aboutEl = document.getElementById('about-section');
+        if (aboutEl) {
+          const rect = aboutEl.getBoundingClientRect();
+          if (rect.top <= window.innerHeight * 0.75 && rect.bottom >= 0) {
+            setActiveTab('About');
+          } else {
+            setActiveTab('Home');
+          }
+        }
+      }
     };
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Trigger once on mount/update
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [currentView]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -63,14 +83,14 @@ const TopNav = ({ currentView, setCurrentView, session, isDarkMode, setIsDarkMod
         width: '100%',
         boxShadow: isScrolled ? 'var(--shadow-soft)' : 'none'
       }}>
-      <div className="nav-brand" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'transform 0.2s ease' }} onClick={() => setCurrentView('Home')} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+      <div className="nav-brand" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'transform 0.2s ease' }} onClick={() => setCurrentView(session ? 'Dashboard' : 'Home')} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
         <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '72px', objectFit: 'contain' }} />
         <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '72px', objectFit: 'contain' }} />
       </div>
 
       {/* Desktop Navigation */}
       <ul className="nav-links-desktop hide-on-mobile" style={{ display: 'flex', gap: '4px', listStyle: 'none', margin: 0, padding: 0, alignItems: 'center' }}>
-        {navItems.filter(item => item.isPublic || session).map((item) => (
+        {navItems.filter(item => (item.isPublic || session) && !(session && item.hideWhenLogged)).map((item) => (
           <li key={item.label}>
             <button 
               style={{
@@ -80,19 +100,32 @@ const TopNav = ({ currentView, setCurrentView, session, isDarkMode, setIsDarkMod
                 borderRadius: '8px',
                 fontSize: '0.95rem',
                 fontWeight: 500,
-                color: currentView === item.view ? 'var(--primary)' : 'var(--text-muted)',
+                color: activeTab === item.label ? 'var(--primary)' : 'var(--text-muted)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 position: 'relative'
               }}
               onMouseEnter={(e) => e.target.style.color = 'var(--text)'}
-              onMouseLeave={(e) => e.target.style.color = currentView === item.view ? 'var(--primary)' : 'var(--text-muted)'}
-              onClick={() => setCurrentView(item.view)}
+              onMouseLeave={(e) => e.target.style.color = activeTab === item.label ? 'var(--primary)' : 'var(--text-muted)'}
+              onClick={() => {
+                if (item.action === 'scroll-about') {
+                  if (currentView !== 'Home') {
+                    setCurrentView('Home');
+                    setTimeout(() => document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
+                  } else {
+                    document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                } else {
+                  setCurrentView(item.view);
+                }
+              }}
             >
               {item.label}
-              {currentView === item.view && (
+              {activeTab === item.label && (
                 <motion.div
                   layoutId="nav-indicator"
+                  initial={false}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   style={{ position: 'absolute', bottom: 0, left: 16, right: 16, height: '2px', background: 'var(--primary)', borderRadius: '2px' }}
                 />
               )}
@@ -134,16 +167,24 @@ const TopNav = ({ currentView, setCurrentView, session, isDarkMode, setIsDarkMod
             </div>
           </>
         ) : (
-          <button 
-            className="btn-primary hide-on-mobile"
-            onClick={() => setCurrentView('Auth')}
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '8px',
-              boxShadow: '0 4px 6px -1px rgba(59, 0, 0, 0.2)'
-            }}
-          >
-            Get Started
-          </button>
+          <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button 
+              onClick={() => setCurrentView('Auth')}
+              style={{ background: 'transparent', border: 'none', color: 'var(--text)', fontWeight: 600, cursor: 'pointer', padding: '8px 16px', fontSize: '0.95rem' }}
+            >
+              Log In
+            </button>
+            <button 
+              className="btn-primary"
+              onClick={() => setCurrentView('Auth')}
+              style={{ 
+                display: 'flex', alignItems: 'center', gap: '8px',
+                boxShadow: '0 4px 6px -1px rgba(59, 0, 0, 0.2)'
+              }}
+            >
+              Get Started
+            </button>
+          </div>
         )}
         
         <button 
@@ -169,18 +210,36 @@ const TopNav = ({ currentView, setCurrentView, session, isDarkMode, setIsDarkMod
             }}
           >
             <ul style={{ listStyle: 'none', margin: 0, padding: '16px 32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {navItems.filter(item => item.isPublic || session).map((item) => (
+              {navItems.filter(item => (item.isPublic || session) && !(session && item.hideWhenLogged)).map((item) => (
                 <li key={item.label}>
                   <button 
-                    style={{ background: 'transparent', border: 'none', fontSize: '1.1rem', fontWeight: 500, color: currentView === item.view ? 'var(--primary)' : 'var(--text)', cursor: 'pointer', padding: '8px 0', width: '100%', textAlign: 'left' }}
-                    onClick={() => { setCurrentView(item.view); setMobileMenuOpen(false); }}
+                    style={{ background: 'transparent', border: 'none', fontSize: '1.1rem', fontWeight: 500, color: activeTab === item.label ? 'var(--primary)' : 'var(--text)', cursor: 'pointer', padding: '8px 0', width: '100%', textAlign: 'left' }}
+                    onClick={() => { 
+                      if (item.action === 'scroll-about') {
+                        if (currentView !== 'Home') {
+                          setCurrentView('Home');
+                          setTimeout(() => document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
+                        } else {
+                          document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      } else {
+                        setCurrentView(item.view); 
+                      }
+                      setMobileMenuOpen(false); 
+                    }}
                   >
                     {item.label}
                   </button>
                 </li>
               ))}
               {!session && (
-                <li style={{ marginTop: '8px' }}>
+                <li style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <button 
+                    onClick={() => { setCurrentView('Auth'); setMobileMenuOpen(false); }}
+                    style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)', fontWeight: 600, padding: '12px', width: '100%', borderRadius: '0' }}
+                  >
+                    Log In
+                  </button>
                   <button 
                     className="btn-primary"
                     onClick={() => { setCurrentView('Auth'); setMobileMenuOpen(false); }}

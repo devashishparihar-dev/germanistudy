@@ -12,7 +12,6 @@ const Home = ({ setCurrentView }) => {
   }, []);
 
   const faqs = [
-    { question: "What is the DMAT?", answer: "The DMAT (Digital Master's Admissions Test) is a comprehensive exam designed to assess your readiness for Master's programs in Germany." },
     { question: "Do I need German language skills?", answer: "While many Master's programs are offered in English, having basic German language skills can significantly enhance your daily life and career prospects." },
     { question: "What is TestAS and do I need it?", answer: "TestAS is a central standardized scholastic aptitude test for foreign students. Many German universities use it to assess cognitive skills, and a good score can significantly improve your chances of admission." },
     { question: "How can I prepare for the TestAS?", answer: "We offer specialized simulation tests and practice materials tailored to both the core test and subject-specific modules of the TestAS to help you achieve a top percentile score." },
@@ -85,13 +84,13 @@ const Home = ({ setCurrentView }) => {
             <div>
               <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text)', marginBottom: '24px', lineHeight: 1.2 }}>Identical Test Environment</h2>
               <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                Don't get caught off guard by the digital interface. Our simulator reproduces the exact layout, non-linear navigation constraints, and strict per-subtest timing of the official TestAS Core Module.
+                Don't get caught off guard by the digital interface. Our simulator reproduces the exact layout and strict per-subtest timing of the official TestAS Core Module.
               </p>
             </div>
             <div style={{ background: 'var(--background)', padding: '40px', border: '1px solid var(--border)' }}>
               <GridMotif size={48} color="var(--primary)" style={{ marginBottom: '24px' }} />
               <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '12px' }}>Strict Timing</h3>
-              <p style={{ color: 'var(--text-muted)' }}>25 minutes per section. No going back once submitted.</p>
+              <p style={{ color: 'var(--text-muted)' }}>25 minutes per section.</p>
             </div>
           </div>
 
@@ -145,7 +144,7 @@ const Home = ({ setCurrentView }) => {
       </section>
 
       {/* SEO About Section & Footer */}
-      <footer style={{ backgroundColor: 'var(--surface)', width: '100%', borderTop: '1px solid var(--border)' }}>
+      <footer id="about-section" style={{ backgroundColor: 'var(--surface)', width: '100%', borderTop: '1px solid var(--border)' }}>
         
         <section style={{ maxWidth: '800px', margin: '0 auto', padding: '80px 32px', textAlign: 'left' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: '24px', fontFamily: 'var(--font-heading)' }}>About GermaniStudy</h2>
@@ -163,7 +162,7 @@ const Home = ({ setCurrentView }) => {
         <div style={{ padding: '40px 32px', textAlign: 'center', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <GridMotif size={32} color="var(--primary)" style={{ marginBottom: '24px' }} />
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '32px', flexWrap: 'wrap' }}>
-            <a href="#" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600, fontFamily: 'var(--font-heading)', letterSpacing: '1px' }}>DMAT PREP</a>
+            <a href="#" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600, fontFamily: 'var(--font-heading)', letterSpacing: '1px' }}>TESTAS PREP</a>
             <a href="#" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600, fontFamily: 'var(--font-heading)', letterSpacing: '1px' }}>MASTER'S</a>
             <a href="#" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600, fontFamily: 'var(--font-heading)', letterSpacing: '1px' }}>RESOURCES</a>
           </div>

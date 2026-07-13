@@ -269,7 +269,7 @@ const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} style={{ display: 'flex', gap: '16px' }}>
                 <button 
                   className="premium-card" 
-                  onClick={() => setCurrentView('Digital Core Test')}
+                  onClick={() => setCurrentView('digital-core-test')}
                   style={{ flex: 1, padding: '20px', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', cursor: 'pointer', transition: 'all 0.2s' }}
                   onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
                   onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border)'}

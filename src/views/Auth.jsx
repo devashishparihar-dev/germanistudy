@@ -30,25 +30,13 @@ const Auth = ({ setCurrentView }) => {
     // can be added to user metadata or a separate profiles table here.
     const { error } = await supabase.auth.signUp({
       email: formData.email,
-      password: formData.password,
-      options: {
-        data: {
-          full_name: formData.fullName,
-          country: formData.country,
-          study_level: formData.studyLevel,
-          target_module: formData.targetModule,
-          test_date: formData.testDate
-        }
-      }
+      password: formData.password
     });
 
     if (error) {
       alert(error.message);
     } else {
-      trackEvent('sign_up_success', { 
-        country: formData.country, 
-        targetModule: formData.targetModule 
-      });
+      trackEvent('sign_up_success', { email: formData.email });
       setRegisteredEmail(formData.email);
       setViewState('verify');
     }

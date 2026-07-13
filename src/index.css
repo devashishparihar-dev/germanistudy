@@ -1,13 +1,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/IBMPlexSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/IBMPlexSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/IBMPlexSans-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
 :root {
+  /* Simulator Tokens */
+  --bg-base: #F5F6F8;
+  --surface: #FFFFFF;
+  --ink-primary: #1B2430;
+  --ink-muted: #5C6773;
+  --accent-primary: #1E4E8C;
+  --accent-flag: #B8862B;
+  --accent-danger: #B23B3B;
+  --border-hairline: #DADFE5;
+
   /* Semantic Core Variables - Light Mode */
   --background: #F7F6F2; /* --paper */
   --surface: #FFFFFF;
   --surface-translucent: rgba(255, 255, 255, 0.85);
-  --primary: #1E3A5F; /* --index-blue */
-  --primary-hover: #152B47;
-  --accent: #D9A441; /* --signal-amber */
+  --primary: #D9A441; /* Yellow */
+  --primary-hover: #E8B95E;
+  --accent: #1E3A5F; /* Blue */
   --text: #1C2321; /* --ink */
   --text-muted: #6B7280; /* --graphite */
   --border: #E2E0D8; /* --grid-line */
@@ -46,6 +77,16 @@
 }
 
 .dark {
+  /* Simulator Tokens - Dark Mode */
+  --bg-base: #0F172A;
+  --surface: #1E293B;
+  --ink-primary: #F1F5F9;
+  --ink-muted: #94A3B8;
+  --accent-primary: #3B82F6;
+  --accent-flag: #F59E0B;
+  --accent-danger: #EF4444;
+  --border-hairline: #334155;
+
   /* Semantic Core Variables - Dark Mode */
   --background: #111413;
   --surface: #1C2321;
@@ -124,7 +165,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Buttons */
 .btn-primary {
   background: var(--primary);
-  color: #FFFFFF;
+  color: #111413;
   border: none;
   padding: 14px 28px;
   border-radius: 0;
@@ -147,7 +188,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-primary:hover {
   background: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(30, 58, 95, 0.25);
+  box-shadow: 0 4px 12px rgba(217, 164, 65, 0.25);
 }
 
 .dark .btn-primary:hover {

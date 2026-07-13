@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, BookOpen, BarChart3, Settings, User, Compass, Target, FolderOpen, History, Menu, X, Shield } from 'lucide-react';
+import { LayoutDashboard, BookOpen, BarChart3, Settings, User, Compass, Target, FolderOpen, History, Menu, X, Shield, Layers } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -15,8 +15,11 @@ const ExamSidebar = ({ setCurrentView }) => {
     window.addEventListener('resize', handleResize);
     
     // Check if user is admin
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsAdmin(session?.user?.email === 'devashishparihar6@gmail.com');
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        const { data } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+        setIsAdmin(data?.role === 'admin');
+      }
     });
 
     return () => window.removeEventListener('resize', handleResize);
@@ -24,9 +27,9 @@ const ExamSidebar = ({ setCurrentView }) => {
 
   const menuItems = [
     { label: 'Dashboard', icon: <LayoutDashboard size={20} />, view: 'Dashboard' },
-    { label: 'Core Module', icon: <BookOpen size={20} />, view: 'Digital Core Test' },
-    { label: 'Subject Module', icon: <Target size={20} />, view: 'Digital Subject Test' },
-    { label: 'Practice', icon: <Target size={20} />, view: 'Practice' },
+    { label: 'Core Module', icon: <Target size={20} />, view: 'digital-core-test' },
+    { label: 'Subject Module', icon: <Layers size={20} />, view: 'digital-subject-test' },
+    { label: 'Practice', icon: <BookOpen size={20} />, view: 'Practice' },
     { label: 'Library', icon: <FolderOpen size={20} />, view: 'Library' },
     { label: 'Analytics', icon: <BarChart3 size={20} />, view: 'Analytics' },
     { label: 'History', icon: <History size={20} />, view: 'History' },
@@ -36,7 +39,7 @@ const ExamSidebar = ({ setCurrentView }) => {
   ];
 
   if (isAdmin) {
-    menuItems.push({ label: 'Admin Panel', icon: <Shield size={20} />, view: 'Admin Panel', bottom: true });
+    menuItems.push({ label: 'Admin Panel', icon: <Shield size={20} />, view: 'admin-panel', bottom: true });
   }
 
   return (

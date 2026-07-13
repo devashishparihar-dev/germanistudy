@@ -43,9 +43,7 @@ const DigitalSubjectTest = ({ setCurrentView }) => {
             ))}
           </div>
           
-          <div className="premium-card" style={{ padding: '32px', marginBottom: '48px', textAlign: 'center', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid var(--error)' }}>
-            <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--error)' }}>Strict Mode Active: Forward Navigation Only. No Note-Taking. Single-Choice Only.</div>
-          </div>
+
 
           <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: '24px', borderBottom: '1px solid var(--border)', paddingBottom: '16px' }}>Select Subject Module</h2>
           

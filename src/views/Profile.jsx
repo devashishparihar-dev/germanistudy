@@ -111,15 +111,15 @@ const Profile = ({ setCurrentView, session }) => {
                     <option value="" disabled>Select Exam</option>
                     {studyLevel === 'Undergraduate' ? (
                       <>
-                        <option value="DMAT - Engineering">DMAT - Engineering</option>
-                        <option value="DMAT - Economics">DMAT - Economics</option>
-                        <option value="DMAT - Humanities">DMAT - Humanities</option>
-                        <option value="DMAT - Mathematics">DMAT - Mathematics</option>
-                        <option value="DMAT - Medical">DMAT - Medical</option>
+                        <option value="TestAS - Engineering">TestAS - Engineering</option>
+                        <option value="TestAS - Economics">TestAS - Economics</option>
+                        <option value="TestAS - Humanities">TestAS - Humanities</option>
+                        <option value="TestAS - Mathematics">TestAS - Mathematics</option>
+                        <option value="TestAS - Medical">TestAS - Medical</option>
                       </>
                     ) : studyLevel === "Master's" ? (
                       <>
-                        <option value="DMAT">DMAT</option>
+                        <option value="TestAS">TestAS</option>
                         <option value="GRE">GRE</option>
                         <option value="GMAT">GMAT</option>
                         <option value="General/Direct Admission">General / Direct Admission</option>

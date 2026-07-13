@@ -49,6 +49,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
   const [sectionsData, setSectionsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [serverResults, setServerResults] = useState(null);
 
   // Global Test State
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
@@ -58,6 +59,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
   // These represent the answers and flags for each section
   const [globalAnswers, setGlobalAnswers] = useState([]);
   const [flaggedQuestions, setFlaggedQuestions] = useState([]);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
 
   // Current Section State
   const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -104,6 +106,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
         if (isCustomMock) {
           let rawData = [];
           let testName = 'Custom Mock Test';
+          let mockDuration = null;
           try {
             const { data: mockTestData } = await supabase
               .from('mock_tests')
@@ -115,6 +118,14 @@ const DigitalSimulator = ({ setCurrentView }) => {
               rawData = mockTestData.questions;
               testName = mockTestData.test_name;
             } else {
+              const { data: mockDetails, error: mockDetailsError } = await supabase
+                .from('mock_tests')
+                .select('duration')
+                .eq('id', selectedCoreModule)
+                .single();
+                
+              mockDuration = mockDetails?.duration;
+
               // Fetch questions linked to this mock test via junction table
               const { data: mappings, error: mapError } = await supabase
                 .from('mock_test_questions')
@@ -130,7 +141,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
                 const qIds = mappings.map(m => m.question_id);
                 const { data: questions, error: qError } = await supabase
                   .from('core_test_questions')
-                  .select('*')
+                  .select('id, question, options, section, difficulty, explanation, type:question_type, image_url')
                   .in('id', qIds);
                   
                 if (qError) {
@@ -151,8 +162,11 @@ const DigitalSimulator = ({ setCurrentView }) => {
             rawData = freeMockTestQuestions;
           }
 
-          // If it's a short mock (e.g. 15 questions), give 5 mins per section. Otherwise 25 mins.
-          const durationPerSection = rawData.length <= 15 ? 5 * 60 : 25 * 60;
+          // If duration is provided in the DB, use it (divided by 3 sections). 
+          // However, if it's a short mock (<= 15 questions), enforce 20 mins total. Otherwise 75 mins total (or mockDuration).
+          let durationPerSection = 25 * 60;
+          const displayTotalDuration = rawData.length <= 15 ? 20 : (mockDuration || 75);
+          durationPerSection = Math.floor((displayTotalDuration * 60) / 3);
           config = CORE_SECTION_CONFIG.map(c => ({...c, duration: durationPerSection}));
 
           let tempGrouped = [[], [], []];
@@ -205,7 +219,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
 
             const { data: coreQuestions } = await supabase
               .from('core_test_questions')
-              .select('*')
+              .select('id, question, options, section, difficulty, explanation, type:question_type, image_url')
               .or(`section.eq.${selectedCoreModule},section.eq.${querySection}`);
               
             if (coreQuestions && coreQuestions.length > 0) {
@@ -227,7 +241,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
           
           let rawData = [];
           try {
-            const { data: coreQuestions } = await supabase.from('core_test_questions').select('*');
+            const { data: coreQuestions } = await supabase.from('core_test_questions').select('id, question, options, section, difficulty, explanation, type:question_type, image_url');
             if (coreQuestions && coreQuestions.length > 0) {
                rawData = coreQuestions;
             } else {
@@ -406,80 +420,70 @@ const DigitalSimulator = ({ setCurrentView }) => {
   };
 
   const handleSectionComplete = () => {
-    const isSingleModule = activeSectionConfig.length === 1;
-    
-    if (currentSectionIndex === activeSectionConfig.length - 1) {
-      if (!isSingleModule && currentSectionIndex === 2) {
-        // Last core section finished -> 30 min skippable break
-        setBreakTimeLeft(30 * 60);
-        setExamStage('break');
-      } else {
+    setExamStage('section_loading');
+    setTimeout(() => {
+      if (currentSectionIndex === activeSectionConfig.length - 1) {
         finishExam();
+      } else {
+        startNextSection();
       }
-    } else {
-      // 2 minute optional break between core subtests
-      setBreakTimeLeft(2 * 60);
-      setExamStage('break');
-    }
+    }, 400);
   };
 
-  const finishExam = () => {
+  const finishExam = async () => {
     setExamStage('calculating');
-    setTimeout(() => {
-      // Calculate final results
-      const pastTests = JSON.parse(localStorage.getItem('mockTestHistory') || '[]');
-      
-      let totalScore = 0;
-      let totalQs = 0;
-      const sectionScores = activeSectionConfig.map(() => ({ score: 0, total: 0 }));
-
-      sectionsData.forEach((sectionQs, sIdx) => {
-        sectionQs.forEach((q, qIdx) => {
-          totalQs++;
-          sectionScores[sIdx].total++;
-          const userAns = globalAnswers[sIdx][qIdx];
-          if (userAns !== null && userAns !== '') {
-            if (q.type === 'input') {
-              if (userAns.trim().toLowerCase() === q.correct_answer.trim().toLowerCase()) {
-                totalScore++;
-                sectionScores[sIdx].score++;
-              }
-            } else {
-              if (q.options[userAns] === q.correct_answer) {
-                totalScore++;
-                sectionScores[sIdx].score++;
-              }
-            }
-          }
+    
+    const formattedAnswers = [];
+    sectionsData.forEach((sectionQs, sIdx) => {
+      sectionQs.forEach((q, qIdx) => {
+        formattedAnswers.push({
+          question_id: q.id,
+          selected_answer: globalAnswers[sIdx][qIdx]
         });
       });
+    });
 
-      const newTest = {
-        id: Date.now().toString(),
-        examName: activeSectionConfig.length > 1 ? 'Digital Core Test Mock' : 'Digital Subject Test Mock',
-        date: new Date().toLocaleDateString(),
-        timeTaken: 'Completed',
-        status: 'Completed',
-        score: totalScore,
-        totalQuestions: totalQs,
-        accuracy: Math.round((totalScore / totalQs) * 100) || 0,
-        answers: globalAnswers,
-        sectionScores: sectionScores
-        // Persist to MockHistory local storage
-      };
+    try {
+      const selectedCoreModule = localStorage.getItem('selectedDigitalModule');
       
-      localStorage.setItem('mockTestHistory', JSON.stringify([newTest, ...pastTests]));
+      const { data, error } = await supabase.functions.invoke('submit-test', {
+        body: { mock_test_id: selectedCoreModule, answers: formattedAnswers }
+      });
+      
+      if (error) throw error;
+      
+      setServerResults(data);
+      
+      const updatedSectionsData = [...sectionsData];
+      data.question_results.forEach(res => {
+        for (let sIdx = 0; sIdx < updatedSectionsData.length; sIdx++) {
+           const qIndex = updatedSectionsData[sIdx].findIndex(q => q.id === res.question_id);
+           if (qIndex !== -1) {
+             updatedSectionsData[sIdx][qIndex] = {
+               ...updatedSectionsData[sIdx][qIndex],
+               correct_answer: res.correct_answer,
+               explanation: res.explanation
+             };
+             break;
+           }
+        }
+      });
+      setSectionsData(updatedSectionsData);
+
       localStorage.removeItem('simulator_autosave');
       
       trackEvent('mock_completed', {
-        examName: newTest.examName,
-        score: totalScore,
-        totalQuestions: totalQs,
-        accuracy: newTest.accuracy
+        examName: activeSectionConfig.length > 1 ? 'Digital Core Test Mock' : 'Digital Subject Test Mock',
+        score: data.score,
+        totalQuestions: formattedAnswers.length
       });
       
       setExamStage('results');
-    }, 2500); // 2.5s loader
+    } catch(err) {
+      console.error("Failed to submit test:", err);
+      alert("Failed to submit test results. Please try again.");
+      setExamStage('subtest');
+    }
   };
 
   const startNextSection = () => {
@@ -504,16 +508,16 @@ const DigitalSimulator = ({ setCurrentView }) => {
   };
 
   if (loading) return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-main)', color: 'var(--text)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-base)', color: 'var(--ink-primary)' }}>
       <motion.div 
         animate={{ rotate: 360 }}
         transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-        style={{ width: '64px', height: '64px', borderRadius: '50%', border: '4px solid var(--border)', borderTopColor: 'var(--primary)', marginBottom: '24px' }}
+        style={{ width: '64px', height: '64px', borderRadius: '50%', border: '4px solid var(--border-hairline)', borderTopColor: 'var(--accent-primary)', marginBottom: '24px' }}
       />
-      <h2 style={{ fontSize: '1.25rem', color: 'var(--text-muted)' }}>Loading Test Environment...</h2>
+      <h2 style={{ fontSize: '1.25rem', color: 'var(--ink-muted)' }}>Loading Test Environment...</h2>
     </div>
   );
-  if (error) return <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-main)', color: 'var(--error)' }}>{error}</div>;
+  if (error) return <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-base)', color: 'var(--accent-danger)' }}>{error}</div>;
 
   const currentQ = sectionsData[currentSectionIndex] ? sectionsData[currentSectionIndex][currentQIndex] : null;
   const isTestlet = currentQ ? !!currentQ.testletPassage : false;
@@ -521,7 +525,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
   // Render different stages
   return (
     <ErrorBoundary>
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--bg-main)', fontFamily: 'sans-serif' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--bg-base)', fontFamily: 'sans-serif' }}>
       
       <AnimatePresence mode="wait">
         
@@ -532,9 +536,9 @@ const DigitalSimulator = ({ setCurrentView }) => {
             style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', padding: '24px' }}
           >
             <div className="premium-card" style={{ maxWidth: '600px', width: '100%', padding: '48px', background: 'var(--surface)', textAlign: 'center' }}>
-              <AlertCircle size={48} style={{ color: 'var(--primary)', margin: '0 auto 24px' }} />
-              <h2 style={{ fontSize: '2rem', marginBottom: '16px', color: 'var(--text)' }}>Exam Rules</h2>
-              <div style={{ textAlign: 'left', marginBottom: '32px', color: 'var(--text-muted)' }}>
+              <AlertCircle size={48} style={{ color: 'var(--accent-primary)', margin: '0 auto 24px' }} />
+              <h2 style={{ fontSize: '2rem', marginBottom: '16px', color: 'var(--ink-primary)' }}>Exam Rules</h2>
+              <div style={{ textAlign: 'left', marginBottom: '32px', color: 'var(--ink-muted)' }}>
                 <ul style={{ lineHeight: '2', fontSize: '1.1rem' }}>
                   <li><strong>No calculators</strong> or external aids permitted.</li>
                   <li><strong>No scratch paper</strong> or notes allowed during the exam.</li>
@@ -556,20 +560,20 @@ const DigitalSimulator = ({ setCurrentView }) => {
             style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', padding: '24px' }}
           >
             <div className="premium-card" style={{ maxWidth: '700px', width: '100%', padding: '48px', background: 'var(--surface)' }}>
-              <h2 style={{ fontSize: '1.75rem', marginBottom: '16px', color: 'var(--text)', fontWeight: 'bold' }}>
+              <h2 style={{ fontSize: '1.75rem', marginBottom: '16px', color: 'var(--ink-primary)', fontWeight: 'bold' }}>
                 Instructions: {activeSectionConfig[currentSectionIndex].title}
               </h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', marginBottom: '32px', lineHeight: '1.6' }}>
+              <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem', marginBottom: '32px', lineHeight: '1.6' }}>
                 {activeSectionConfig[currentSectionIndex].rules}
               </p>
 
               {activeSectionConfig[currentSectionIndex].example && (
-                <div style={{ background: 'var(--bg-main)', padding: '24px', borderRadius: '12px', marginBottom: '32px', border: '1px solid var(--border)' }}>
-                  <h3 style={{ fontSize: '1.1rem', marginBottom: '12px', color: 'var(--text)' }}>Worked Example</h3>
-                  <div style={{ whiteSpace: 'pre-wrap', color: 'var(--text-muted)', marginBottom: '16px', fontFamily: 'monospace' }}>
+                <div style={{ background: 'var(--bg-base)', padding: '24px', borderRadius: '12px', marginBottom: '32px', border: '1px solid var(--border-hairline)' }}>
+                  <h3 style={{ fontSize: '1.1rem', marginBottom: '12px', color: 'var(--ink-primary)' }}>Worked Example</h3>
+                  <div style={{ whiteSpace: 'pre-wrap', color: 'var(--ink-muted)', marginBottom: '16px', fontFamily: 'monospace' }}>
                     {activeSectionConfig[currentSectionIndex].example.question}
                   </div>
-                  <div style={{ paddingLeft: '12px', borderLeft: '4px solid var(--primary)', color: 'var(--text)', fontSize: '0.95rem' }}>
+                  <div style={{ paddingLeft: '12px', borderLeft: '4px solid var(--accent-primary)', color: 'var(--ink-primary)', fontSize: '0.95rem' }}>
                     <strong>Explanation:</strong> {activeSectionConfig[currentSectionIndex].example.explanation}
                   </div>
                 </div>
@@ -582,6 +586,23 @@ const DigitalSimulator = ({ setCurrentView }) => {
           </motion.div>
         )}
 
+        {examStage === 'section_loading' && (
+          <motion.div 
+            key="section_loading"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}
+            style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-base)' }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                style={{ width: '48px', height: '48px', border: '4px solid var(--border-hairline)', borderTopColor: 'var(--accent-primary)', borderRadius: '50%', marginBottom: '24px' }}
+              />
+              <h2 style={{ color: 'var(--ink-muted)', fontSize: '1.25rem', letterSpacing: '0.5px' }}>Loading next section...</h2>
+            </div>
+          </motion.div>
+        )}
+
         {examStage === 'break' && (
           <motion.div 
             key="break"
@@ -589,11 +610,11 @@ const DigitalSimulator = ({ setCurrentView }) => {
             style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', padding: '24px' }}
           >
             <div className="premium-card" style={{ maxWidth: '600px', width: '100%', padding: '48px', background: 'var(--surface)', textAlign: 'center' }}>
-              <h2 style={{ fontSize: '2rem', marginBottom: '16px', color: 'var(--text)' }}>Break Time</h2>
-              <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: '32px', fontFamily: 'monospace' }}>
+              <h2 style={{ fontSize: '2rem', marginBottom: '16px', color: 'var(--ink-primary)' }}>Break Time</h2>
+              <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'var(--accent-primary)', marginBottom: '32px', fontFamily: 'monospace' }}>
                 {formatTime(breakTimeLeft)}
               </div>
-              <p style={{ color: 'var(--text-muted)', marginBottom: '40px', fontSize: '1.1rem' }}>
+              <p style={{ color: 'var(--ink-muted)', marginBottom: '40px', fontSize: '1.1rem' }}>
                 Take a moment to stretch and rest your eyes before the next section.
               </p>
               
@@ -613,9 +634,9 @@ const DigitalSimulator = ({ setCurrentView }) => {
             <motion.div 
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-              style={{ width: '64px', height: '64px', borderRadius: '50%', border: '4px solid var(--border)', borderTopColor: 'var(--primary)', marginBottom: '24px' }}
+              style={{ width: '64px', height: '64px', borderRadius: '50%', border: '4px solid var(--border-hairline)', borderTopColor: 'var(--accent-primary)', marginBottom: '24px' }}
             />
-            <h2 style={{ fontSize: '1.5rem', color: 'var(--text)' }}>Calculating your results...</h2>
+            <h2 style={{ fontSize: '1.5rem', color: 'var(--ink-primary)' }}>Calculating your results...</h2>
           </motion.div>
         )}
 
@@ -626,8 +647,8 @@ const DigitalSimulator = ({ setCurrentView }) => {
              style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}
           >
             {/* Results Header */}
-            <header style={{ height: '70px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', flexShrink: 0 }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem', color: 'var(--text)' }}>Mock Exam Results</div>
+            <header style={{ height: '70px', background: 'var(--surface)', borderBottom: '1px solid var(--border-hairline)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', flexShrink: 0 }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem', color: 'var(--ink-primary)' }}>Mock Exam Results</div>
               <button onClick={() => setCurrentView('Dashboard')} className="btn-secondary" style={{ padding: '8px 16px' }}>
                 Exit to Dashboard
               </button>
@@ -636,33 +657,12 @@ const DigitalSimulator = ({ setCurrentView }) => {
             <div style={{ padding: '48px 10%', flex: 1 }}>
               <div className="premium-card" style={{ padding: '48px', textAlign: 'center', marginBottom: '48px', background: 'var(--surface)' }}>
                 <CheckCircle size={64} style={{ color: 'var(--success)', margin: '0 auto 24px' }} />
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '16px', color: 'var(--text)', fontWeight: 'bold' }}>Test Submitted</h2>
+                <h2 style={{ fontSize: '2.5rem', marginBottom: '16px', color: 'var(--ink-primary)', fontWeight: 'bold' }}>Test Submitted</h2>
                 
-                {(() => {
-                  let totalScore = 0;
-                  let totalQuestions = 0;
-                  const sectionScores = activeSectionConfig.map(() => ({ score: 0, total: 0 }));
-
-                  sectionsData.forEach((sectionQs, sIdx) => {
-                    sectionQs.forEach((q, qIdx) => {
-                      totalQuestions++;
-                      sectionScores[sIdx].total++;
-                      const userAns = globalAnswers[sIdx][qIdx];
-                      if (userAns !== null && userAns !== '') {
-                        if (q.type === 'input') {
-                          if (userAns.trim().toLowerCase() === q.correct_answer.trim().toLowerCase()) {
-                            totalScore++;
-                            sectionScores[sIdx].score++;
-                          }
-                        } else {
-                          if (q.options[userAns] === q.correct_answer) {
-                            totalScore++;
-                            sectionScores[sIdx].score++;
-                          }
-                        }
-                      }
-                    });
-                  });
+                {serverResults && (() => {
+                  const totalScore = serverResults.score;
+                  const totalQuestions = serverResults.question_results.length;
+                  const sectionScores = serverResults.section_breakdown;
 
                   // Simulated percentile (just a mock for now, 60-99 range based on score)
                   const scorePercent = totalScore / totalQuestions;
@@ -670,19 +670,19 @@ const DigitalSimulator = ({ setCurrentView }) => {
 
                   return (
                     <>
-                      <div style={{ fontSize: '1.25rem', color: 'var(--text-muted)', marginBottom: '40px' }}>
-                        You scored <strong style={{ color: 'var(--primary)', fontSize: '1.5rem' }}>{totalScore} / {totalQuestions}</strong>
+                      <div style={{ fontSize: '1.25rem', color: 'var(--ink-muted)', marginBottom: '40px' }}>
+                        You scored <strong style={{ color: 'var(--accent-primary)', fontSize: '1.5rem' }}>{totalScore} / {totalQuestions}</strong>
                         <div style={{ marginTop: '12px', fontSize: '1.1rem', color: 'var(--success)' }}>
                           Better than ~{estimatedPercentile}% of test-takers
                         </div>
                       </div>
                       
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', textAlign: 'left' }}>
-                        {activeSectionConfig.map((sec, idx) => (
-                          <div key={idx} style={{ padding: '24px', background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: '12px' }}>
-                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '8px' }}>{sec.title}</div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text)' }}>
-                              {sectionScores[idx].score} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>/ {sectionScores[idx].total}</span>
+                        {sectionScores.map((sec, idx) => (
+                          <div key={idx} style={{ padding: '24px', background: 'var(--bg-base)', border: '1px solid var(--border-hairline)', borderRadius: '12px' }}>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--ink-muted)', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '8px' }}>{sec.section}</div>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--ink-primary)' }}>
+                              {sec.correct} <span style={{ fontSize: '1rem', color: 'var(--ink-muted)', fontWeight: 'normal' }}>/ {sec.total}</span>
                             </div>
                           </div>
                         ))}
@@ -694,16 +694,16 @@ const DigitalSimulator = ({ setCurrentView }) => {
 
               {/* Review Section */}
               <div className="premium-card" style={{ padding: '48px', background: 'var(--surface)' }}>
-                <h3 style={{ fontSize: '1.75rem', marginBottom: '24px', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <h3 style={{ fontSize: '1.75rem', marginBottom: '24px', color: 'var(--ink-primary)', display: 'flex', alignItems: 'center', gap: '12px' }}>
                   Item-by-Item Review
-                  {!isPremium && <Lock size={20} style={{ color: 'var(--text-muted)' }} />}
+                  {!isPremium && <Lock size={20} style={{ color: 'var(--ink-muted)' }} />}
                 </h3>
                 
                 {!isPremium ? (
-                  <div style={{ textAlign: 'center', padding: '48px 24px', background: 'var(--bg-main)', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                    <Lock size={48} style={{ color: 'var(--text-muted)', margin: '0 auto 16px' }} />
-                    <h4 style={{ fontSize: '1.25rem', marginBottom: '12px', color: 'var(--text)' }}>Premium Feature</h4>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '24px', maxWidth: '400px', margin: '0 auto 24px' }}>
+                  <div style={{ textAlign: 'center', padding: '48px 24px', background: 'var(--bg-base)', borderRadius: '12px', border: '1px solid var(--border-hairline)' }}>
+                    <Lock size={48} style={{ color: 'var(--ink-muted)', margin: '0 auto 16px' }} />
+                    <h4 style={{ fontSize: '1.25rem', marginBottom: '12px', color: 'var(--ink-primary)' }}>Premium Feature</h4>
+                    <p style={{ color: 'var(--ink-muted)', marginBottom: '24px', maxWidth: '400px', margin: '0 auto 24px' }}>
                       Upgrade to unlock comprehensive explanations and review every question to understand your mistakes.
                     </p>
                     <button className="btn-primary" onClick={() => alert('Redirect to upgrade/subscription page')}>
@@ -719,8 +719,8 @@ const DigitalSimulator = ({ setCurrentView }) => {
                              onClick={() => setReviewModeSection(idx)}
                              style={{ 
                                padding: '12px 24px', borderRadius: '8px', fontWeight: 'bold', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
-                               background: reviewModeSection === idx ? 'var(--primary)' : 'var(--bg-main)',
-                               color: reviewModeSection === idx ? '#fff' : 'var(--text)',
+                               background: reviewModeSection === idx ? 'var(--accent-primary)' : 'var(--bg-base)',
+                               color: reviewModeSection === idx ? '#fff' : 'var(--ink-primary)',
                                transition: 'all 0.2s'
                              }}>
                              {sec.title}
@@ -738,20 +738,20 @@ const DigitalSimulator = ({ setCurrentView }) => {
                            }
 
                            return (
-                             <div key={idx} style={{ padding: '24px', background: 'var(--bg-main)', border: `1px solid ${isCorrect ? 'var(--success)' : 'var(--border)'}`, borderRadius: '12px' }}>
+                             <div key={idx} style={{ padding: '24px', background: 'var(--bg-base)', border: `1px solid ${isCorrect ? 'var(--success)' : 'var(--border-hairline)'}`, borderRadius: '12px' }}>
                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                                 <strong style={{ color: 'var(--text)' }}>Question {idx + 1}</strong>
-                                 <span style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', fontWeight: 'bold' }}>
+                                 <strong style={{ color: 'var(--ink-primary)' }}>Question {idx + 1}</strong>
+                                 <span style={{ color: isCorrect ? 'var(--success)' : 'var(--accent-danger)', fontWeight: 'bold' }}>
                                    {isCorrect ? 'Correct' : 'Incorrect'}
                                  </span>
                                </div>
-                               <div style={{ whiteSpace: 'pre-wrap', color: 'var(--text)', marginBottom: '16px' }}>{q.question}</div>
+                               <div style={{ whiteSpace: 'pre-wrap', color: 'var(--ink-primary)', marginBottom: '16px' }}>{q.question}</div>
                                <div style={{ background: 'var(--surface)', padding: '16px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.95rem' }}>
                                  <div><strong>Your Answer:</strong> {q.type === 'input' ? (userAns || 'None') : (userAns !== null ? q.options[userAns] : 'None')}</div>
                                  <div style={{ marginTop: '8px' }}><strong>Correct Answer:</strong> {q.correct_answer}</div>
                                </div>
                                {q.explanation && (
-                                 <div style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>
+                                 <div style={{ fontSize: '0.95rem', color: 'var(--ink-muted)' }}>
                                    <strong>Explanation:</strong> {q.explanation}
                                  </div>
                                )}
@@ -774,31 +774,41 @@ const DigitalSimulator = ({ setCurrentView }) => {
           >
             {/* Minimal Header */}
             <header style={{ 
-              height: '60px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', 
-              justifyContent: 'space-between', padding: '0 24px', flexShrink: 0 
+              height: '70px', background: 'var(--surface)', borderBottom: '1px solid var(--border-hairline)', display: 'flex', alignItems: 'center', 
+              justifyContent: 'space-between', padding: '0 32px', flexShrink: 0 
             }}>
-              <div style={{ width: '30%', color: 'var(--text)', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                {activeSectionConfig[currentSectionIndex].title}
+              <div style={{ width: '30%', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--ink-muted)', fontWeight: 'bold' }}>
+                  {isTestlet ? 'Subject Module' : 'Core Module'}
+                </span>
+                <span style={{ color: 'var(--ink-primary)', fontWeight: 600, fontSize: '1.05rem' }}>
+                  {activeSectionConfig[currentSectionIndex].title}
+                </span>
               </div>
               
-              <div style={{ width: '40%', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                Question {currentQIndex + 1} of {sectionsData[currentSectionIndex].length}
+              <div style={{ width: '40%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ color: 'var(--ink-muted)', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>
+                  Question {currentQIndex + 1} of {sectionsData[currentSectionIndex].length}
+                </div>
+                <div style={{ width: '200px', height: '4px', background: 'var(--border-hairline)', borderRadius: '2px', overflow: 'hidden' }}>
+                  <div style={{ width: `${((currentQIndex + 1) / sectionsData[currentSectionIndex].length) * 100}%`, height: '100%', background: 'var(--accent-primary)', transition: 'width 0.3s ease-out' }} />
+                </div>
               </div>
               
               <div style={{ width: '30%', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                 <div style={{ 
-                  fontSize: '1.2rem', fontWeight: 'bold', fontFamily: 'monospace', 
-                  color: timeLeft <= 120 ? 'var(--error)' : 'var(--text)', 
-                  padding: '4px 12px', background: 'var(--bg-main)', borderRadius: '6px',
-                  transition: 'color 0.3s', display: 'flex', alignItems: 'center'
+                  fontSize: '1.1rem', fontWeight: 600, fontVariantNumeric: 'tabular-nums', 
+                  color: timeLeft <= 120 ? '#FFFFFF' : 'var(--ink-primary)', 
+                  padding: '6px 16px', background: timeLeft <= 120 ? 'var(--accent-danger)' : 'var(--bg-base)', borderRadius: '6px',
+                  transition: 'all 0.3s', display: 'flex', alignItems: 'center', pointerEvents: 'none'
                 }}>
-                  <Clock size={16} style={{ marginRight: '8px' }} />
+                  <Clock size={16} style={{ marginRight: '8px', opacity: timeLeft <= 120 ? 1 : 0.7 }} />
                   {formatTime(timeLeft)}
                 </div>
               </div>
             </header>
 
-            {/* Main Content Area */}
+            {/* Horizontal Wrapper for Content + Sidebar */}
             <div 
               style={{ flex: 1, display: 'flex', overflow: 'hidden', userSelect: 'none' }} 
               onCopy={preventIntegrityEvents}
@@ -806,178 +816,251 @@ const DigitalSimulator = ({ setCurrentView }) => {
               onContextMenu={preventIntegrityEvents}
             >
               
-              {/* Testlet Passage (Left Side) */}
-              {isTestlet && (
-                <div style={{ width: '50%', background: 'var(--surface)', borderRight: '1px solid var(--border)', overflowY: 'auto', padding: '40px' }}>
-                   <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '24px', color: 'var(--text)' }}>{currentQ.testletTitle}</h2>
-                   <div style={{ fontSize: '1rem', lineHeight: '1.8', color: 'var(--text)', whiteSpace: 'pre-wrap', fontFamily: 'serif' }}>
-                     {currentQ.testletPassage}
-                   </div>
-                </div>
-              )}
-
-              {/* Question Area */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: isTestlet ? 'var(--bg-main)' : 'var(--surface)', overflowY: 'auto' }}>
-                <main style={{ flex: 1, padding: '40px 10%', maxWidth: isTestlet ? '100%' : '800px', margin: '0 auto', width: '100%' }}>
-                  
-                  {(() => {
-                    const hasPattern = currentQ.section === 'figure_sequences' && (currentQ.question.includes('Row 1:') || currentQ.question.includes('Sequence:'));
-                    const sectionAnswers = globalAnswers[currentSectionIndex];
-
-                    return (
-                      <motion.div
-                        key={currentQIndex} // Animate on question change
-                        initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}
-                      >
-                        {hasPattern ? (
-                          <div style={{ marginBottom: '32px' }}>
-                            <PatternDiagram text={currentQ.question} />
-                          </div>
-                        ) : (
-                          <div style={{ fontSize: '1.15rem', whiteSpace: 'pre-wrap', lineHeight: '1.6', marginBottom: '32px', color: 'var(--text)' }}>
-                            {currentQ.question}
-                          </div>
-                        )}
-
-                        {currentQ.type === 'input' ? (
-                          <div style={{ marginBottom: '24px' }}>
-                            <input 
-                              type="text" 
-                              value={sectionAnswers[currentQIndex] || ''}
-                              onChange={(e) => handleAnswer(e.target.value)}
-                              placeholder="Type your numeric answer here..."
-                              style={{
-                                width: '100%', padding: '16px', fontSize: '1.25rem', background: 'var(--surface)',
-                                border: '2px solid var(--border)', color: 'var(--text)', outline: 'none', borderRadius: '8px',
-                                transition: 'border-color 0.2s'
-                              }}
-                              onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                              onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
-                              autoComplete="off"
-                            />
-                          </div>
-                        ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            {currentQ.options?.map((opt, idx) => {
-                              const isSelected = sectionAnswers[currentQIndex] === idx;
-                              const letter = ['A', 'B', 'C', 'D', 'E'][idx];
-                              return (
-                                <button
-                                  key={idx}
-                                  onClick={() => handleAnswer(idx)}
-                                  style={{
-                                    padding: '16px', background: isSelected ? 'var(--primary)' : 'var(--surface)',
-                                    border: `1px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}`,
-                                    borderRadius: '8px',
-                                    textAlign: 'left', fontSize: '1rem', 
-                                    color: isSelected ? '#fff' : 'var(--text)', cursor: 'pointer', display: 'flex', alignItems: 'center',
-                                    transition: 'all 0.2s'
-                                  }}
-                                >
-                                  <div style={{ 
-                                    width: '28px', height: '28px', borderRadius: '50%', background: isSelected ? 'rgba(255,255,255,0.2)' : 'var(--bg-main)',
-                                    color: isSelected ? '#fff' : 'var(--text-muted)',
-                                    marginRight: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                                    flexShrink: 0, fontWeight: 'bold', fontSize: '0.85rem'
-                                  }}>
-                                    {letter}
-                                  </div>
-                                  {hasPattern ? (
-                                    <div style={{ flex: 1, marginTop: '-8px', marginBottom: '-8px' }}>
-                                      <PatternDiagram text={opt} inline={true} />
-                                    </div>
-                                  ) : (
-                                    <span>{opt}</span>
-                                  )}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </motion.div>
-                    );
-                  })()}
-
-                </main>
-              </div>
-            </div>
-
-            {/* Bottom Navigation Bar */}
-            <div style={{ height: '70px', background: 'var(--surface)', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', flexShrink: 0 }}>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button 
-                  onClick={() => setCurrentQIndex(prev => Math.max(0, prev - 1))}
-                  disabled={currentQIndex === 0}
-                  className="btn-secondary" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', opacity: currentQIndex === 0 ? 0.5 : 1, border: '1px solid var(--border)', background: 'var(--bg-main)', borderRadius: '6px', color: 'var(--text)', cursor: currentQIndex === 0 ? 'not-allowed' : 'pointer' }}
-                >
-                  <ChevronLeft size={18} /> Prev
-                </button>
-                <button 
-                  onClick={() => setCurrentQIndex(prev => Math.min(sectionsData[currentSectionIndex].length - 1, prev + 1))}
-                  disabled={currentQIndex === sectionsData[currentSectionIndex].length - 1}
-                  className="btn-secondary" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', opacity: currentQIndex === sectionsData[currentSectionIndex].length - 1 ? 0.5 : 1, border: '1px solid var(--border)', background: 'var(--bg-main)', borderRadius: '6px', color: 'var(--text)', cursor: currentQIndex === sectionsData[currentSectionIndex].length - 1 ? 'not-allowed' : 'pointer' }}
-                >
-                  Next <ChevronRight size={18} />
-                </button>
-              </div>
-
-              {/* Question Jump Map */}
-              <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', padding: '0 16px', flex: 1, justifyContent: 'center' }}>
-                {sectionsData[currentSectionIndex].map((_, idx) => {
-                  const isAnswered = globalAnswers[currentSectionIndex][idx] !== null && globalAnswers[currentSectionIndex][idx] !== '';
-                  const isFlagged = flaggedQuestions[currentSectionIndex][idx];
-                  const isActive = currentQIndex === idx;
-                  
-                  let bgColor = 'transparent';
-                  let borderColor = 'var(--border)';
-                  let color = 'var(--text)';
-
-                  if (isActive) {
-                    borderColor = 'var(--primary)';
-                    bgColor = 'rgba(37, 99, 235, 0.1)';
-                  } else if (isAnswered) {
-                    bgColor = 'var(--bg-main)';
-                    borderColor = 'var(--border)';
-                  }
-
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentQIndex(idx)}
-                      style={{
-                        width: '32px', height: '32px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '0.85rem', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s',
-                        background: bgColor, border: `1px solid ${borderColor}`, color: color,
-                        position: 'relative'
-                      }}
-                    >
-                      {idx + 1}
-                      {isFlagged && (
-                        <div style={{ position: 'absolute', top: '-6px', right: '-6px', color: 'var(--error)' }}>
-                          <Flag size={14} fill="currentColor" />
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                <button 
-                  onClick={toggleFlag}
-                  style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'transparent', border: 'none', color: flaggedQuestions[currentSectionIndex][currentQIndex] ? 'var(--error)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 'bold', transition: 'color 0.2s' }}
-                >
-                  <Flag size={18} fill={flaggedQuestions[currentSectionIndex][currentQIndex] ? "currentColor" : "none"} /> Flag
-                </button>
+              {/* Main Content Area */}
+              <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
                 
-                <button 
-                  onClick={handleSectionComplete}
-                  className="btn-primary" style={{ padding: '8px 24px', borderRadius: '6px', fontWeight: 'bold', border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer' }}
-                >
-                  Submit Section
-                </button>
+                {/* Testlet Passage (Left Side) */}
+                {isTestlet && (
+                  <div style={{ width: '50%', background: 'var(--surface)', borderRight: '1px solid var(--border-hairline)', overflowY: 'auto', padding: '40px' }}>
+                     <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '24px', color: 'var(--ink-primary)' }}>{currentQ.testletTitle}</h2>
+                     <div style={{ fontSize: '1rem', lineHeight: '1.8', color: 'var(--ink-primary)', whiteSpace: 'pre-wrap', fontFamily: 'serif' }}>
+                       {currentQ.testletPassage}
+                     </div>
+                  </div>
+                )}
+
+                {/* Question Area */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: isTestlet ? 'var(--bg-base)' : 'var(--surface)', overflowY: 'auto' }}>
+                  <main style={{ flex: 1, padding: '40px 10%', maxWidth: isTestlet ? '100%' : '800px', margin: '0 auto', width: '100%' }}>
+                    
+                    {(() => {
+                      const hasPattern = currentQ.section === 'figure_sequences' && (currentQ.question.includes('Row 1:') || currentQ.question.includes('Sequence:'));
+                      const sectionAnswers = globalAnswers[currentSectionIndex];
+
+                      return (
+                        <motion.div
+                          key={currentQIndex} // Animate on question change
+                          initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.15 }}
+                        >
+                          {hasPattern ? (
+                            <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'center' }}>
+                              <PatternDiagram text={currentQ.question} />
+                            </div>
+                          ) : (
+                            <div style={{ fontSize: '1.15rem', whiteSpace: 'pre-wrap', lineHeight: '1.6', marginBottom: '32px', color: 'var(--ink-primary)' }}>
+                              {currentQ.question}
+                            </div>
+                          )}
+
+                          {currentQ.type === 'input' ? (
+                            <div style={{ marginBottom: '24px' }}>
+                              <input 
+                                type="text" 
+                                inputMode="numeric"
+                                value={sectionAnswers[currentQIndex] || ''}
+                                onChange={(e) => handleAnswer(e.target.value)}
+                                placeholder="Type your numeric answer here..."
+                                style={{
+                                  width: '100%', padding: '20px', fontSize: '1.5rem', background: 'var(--surface)', textAlign: 'center',
+                                  border: '2px solid var(--border-hairline)', color: 'var(--ink-primary)', outline: 'none', borderRadius: '8px',
+                                  transition: 'border-color 0.2s', fontWeight: 'bold'
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = 'var(--accent-primary)'}
+                                onBlur={(e) => e.target.style.borderColor = 'var(--border-hairline)'}
+                                autoComplete="off"
+                              />
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                              {currentQ.options?.map((opt, idx) => {
+                                const isSelected = sectionAnswers[currentQIndex] === idx;
+                                const letter = ['A', 'B', 'C', 'D', 'E'][idx];
+                                return (
+                                  <button
+                                    key={idx}
+                                    onClick={() => handleAnswer(idx)}
+                                    style={{
+                                      padding: '16px 20px', background: isSelected ? 'var(--accent-primary)' : 'var(--surface)',
+                                      border: `1px solid ${isSelected ? 'var(--accent-primary)' : 'var(--border-hairline)'}`,
+                                      borderRadius: '8px',
+                                      textAlign: 'left', fontSize: '1rem', 
+                                      color: isSelected ? '#fff' : 'var(--ink-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center',
+                                      transition: 'all 0.15s', outline: 'none'
+                                    }}
+                                    onFocus={(e) => {
+                                      if(!isSelected) e.currentTarget.style.borderColor = 'var(--accent-primary)';
+                                      e.currentTarget.style.boxShadow = '0 0 0 2px rgba(30, 78, 140, 0.2)';
+                                    }}
+                                    onBlur={(e) => {
+                                      if(!isSelected) e.currentTarget.style.borderColor = 'var(--border-hairline)';
+                                      e.currentTarget.style.boxShadow = 'none';
+                                    }}
+                                  >
+                                    <div style={{ 
+                                      width: '28px', height: '28px', borderRadius: '50%', background: isSelected ? 'rgba(255,255,255,0.2)' : 'var(--bg-base)',
+                                      color: isSelected ? '#fff' : 'var(--ink-muted)',
+                                      marginRight: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                                      flexShrink: 0, fontWeight: 'bold', fontSize: '0.85rem'
+                                    }}>
+                                      {letter}
+                                    </div>
+                                    {hasPattern ? (
+                                      <div style={{ flex: 1, marginTop: '-8px', marginBottom: '-8px' }}>
+                                        <PatternDiagram text={opt} inline={true} />
+                                      </div>
+                                    ) : (
+                                      <span>{opt}</span>
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </motion.div>
+                      );
+                    })()}
+
+                  </main>
+                </div>
               </div>
+
+              {/* Right Sidebar Navigation */}
+              <aside style={{ width: '320px', background: 'var(--surface)', borderLeft: '1px solid var(--border-hairline)', display: 'flex', flexDirection: 'column', padding: '24px', flexShrink: 0 }}>
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+                  <button 
+                    onClick={() => setCurrentQIndex(prev => Math.max(0, prev - 1))}
+                    disabled={currentQIndex === 0}
+                    title={currentQIndex === 0 ? "You are on the first question" : "Previous Question"}
+                    style={{ flex: 1, padding: '12px 16px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', border: '1px solid var(--border-hairline)', background: 'var(--bg-base)', borderRadius: '6px 0 0 6px', color: currentQIndex === 0 ? 'var(--ink-muted)' : 'var(--ink-primary)', cursor: currentQIndex === 0 ? 'not-allowed' : 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
+                  >
+                    <ChevronLeft size={18} /> Prev
+                  </button>
+                  <button 
+                    onClick={() => setCurrentQIndex(prev => Math.min(sectionsData[currentSectionIndex].length - 1, prev + 1))}
+                    disabled={currentQIndex === sectionsData[currentSectionIndex].length - 1}
+                    title={currentQIndex === sectionsData[currentSectionIndex].length - 1 ? "You are on the last question" : "Next Question"}
+                    style={{ flex: 1, padding: '12px 16px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', border: '1px solid var(--border-hairline)', borderLeft: 'none', background: 'var(--bg-base)', borderRadius: '0 6px 6px 0', color: currentQIndex === sectionsData[currentSectionIndex].length - 1 ? 'var(--ink-muted)' : 'var(--ink-primary)', cursor: currentQIndex === sectionsData[currentSectionIndex].length - 1 ? 'not-allowed' : 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
+                  >
+                    Next <ChevronRight size={18} />
+                  </button>
+                </div>
+
+                <div style={{ flex: 1, overflowY: 'auto', marginBottom: '24px' }}>
+                  <h3 style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--ink-muted)', marginBottom: '12px', letterSpacing: '0.5px' }}>Question Overview</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+                    {sectionsData[currentSectionIndex].map((_, idx) => {
+                      const isAnswered = globalAnswers[currentSectionIndex][idx] !== null && globalAnswers[currentSectionIndex][idx] !== '';
+                      const isFlagged = flaggedQuestions[currentSectionIndex][idx];
+                      const isActive = currentQIndex === idx;
+                      
+                      let bgColor = 'var(--surface)';
+                      let borderColor = 'var(--border-hairline)';
+                      let color = 'var(--ink-primary)';
+
+                      if (isAnswered) {
+                        bgColor = 'var(--accent-primary)';
+                        borderColor = 'var(--accent-primary)';
+                        color = '#fff';
+                      }
+                      
+                      if (isActive) {
+                        borderColor = 'var(--ink-primary)';
+                        if (!isAnswered) {
+                          bgColor = 'var(--bg-base)';
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => setCurrentQIndex(idx)}
+                          tabIndex={0}
+                          style={{
+                            aspectRatio: '1', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.1s',
+                            background: bgColor, border: isActive ? `2px solid ${borderColor}` : `1px solid ${borderColor}`, color: color,
+                            position: 'relative', outline: 'none'
+                          }}
+                          onFocus={(e) => e.currentTarget.style.boxShadow = '0 0 0 2px rgba(30, 78, 140, 0.3)'}
+                          onBlur={(e) => e.currentTarget.style.boxShadow = 'none'}
+                        >
+                          {idx + 1}
+                          {isFlagged && (
+                            <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '10px', height: '10px', background: 'var(--accent-flag)', borderRadius: '50%', border: '2px solid var(--surface)' }} />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <button 
+                    onClick={toggleFlag}
+                    style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--bg-base)', border: '1px solid var(--border-hairline)', borderRadius: '6px', color: flaggedQuestions[currentSectionIndex][currentQIndex] ? 'var(--accent-flag)' : 'var(--ink-primary)', cursor: 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
+                  >
+                    <Flag size={18} fill={flaggedQuestions[currentSectionIndex][currentQIndex] ? "currentColor" : "none"} /> 
+                    {flaggedQuestions[currentSectionIndex][currentQIndex] ? 'Remove Flag' : 'Flag for Review'}
+                  </button>
+                  
+                  <button 
+                    onClick={() => setShowSubmitModal(true)}
+                    style={{ padding: '16px', borderRadius: '6px', fontWeight: 'bold', border: 'none', background: 'var(--accent-primary)', color: '#fff', cursor: 'pointer', fontSize: '1rem', transition: 'background 0.2s' }}
+                  >
+                    Submit Section
+                  </button>
+                </div>
+              </aside>
             </div>
+
+            {/* Submit Confirmation Modal */}
+            <AnimatePresence>
+              {showSubmitModal && (
+                <motion.div 
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  style={{ position: 'fixed', inset: 0, background: 'rgba(27, 36, 48, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}
+                >
+                  <motion.div 
+                    initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+                    style={{ background: 'var(--surface)', padding: '40px', borderRadius: '8px', maxWidth: '480px', width: '100%', boxShadow: '0 10px 30px rgba(0,0,0,0.15)' }}
+                  >
+                    <h2 style={{ fontSize: '1.5rem', color: 'var(--ink-primary)', marginBottom: '16px', fontWeight: 'bold' }}>Submit Section?</h2>
+                    
+                    <p style={{ color: 'var(--ink-primary)', marginBottom: '24px', lineHeight: 1.6 }}>
+                      You are about to submit <strong>{activeSectionConfig[currentSectionIndex].title}</strong>. You will not be able to return to this section once submitted.
+                    </p>
+
+                    {(() => {
+                      const unansweredCount = sectionsData[currentSectionIndex].length - globalAnswers[currentSectionIndex].filter(a => a !== null && a !== '').length;
+                      if (unansweredCount > 0) {
+                        return (
+                          <div style={{ padding: '16px', background: 'rgba(184, 134, 43, 0.1)', borderLeft: '4px solid var(--accent-flag)', color: 'var(--ink-primary)', marginBottom: '32px', borderRadius: '0 4px 4px 0' }}>
+                            <strong>Warning:</strong> You have {unansweredCount} unanswered question{unansweredCount > 1 ? 's' : ''} in this section.
+                          </div>
+                        );
+                      }
+                      return <div style={{ marginBottom: '32px' }} />;
+                    })()}
+
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
+                      <button 
+                        onClick={() => setShowSubmitModal(false)}
+                        style={{ padding: '12px 24px', background: 'transparent', border: '1px solid var(--border-hairline)', borderRadius: '6px', color: 'var(--ink-primary)', fontWeight: 600, cursor: 'pointer' }}
+                      >
+                        Return to Test
+                      </button>
+                      <button 
+                        onClick={() => { setShowSubmitModal(false); handleSectionComplete(); }}
+                        style={{ padding: '12px 24px', background: 'var(--accent-primary)', border: 'none', borderRadius: '6px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                      >
+                        Confirm Submission
+                      </button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
           </motion.div>
         )}

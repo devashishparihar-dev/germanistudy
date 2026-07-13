@@ -21,7 +21,7 @@ const BrandPanel = () => {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           {[
-            { icon: <Target size={24} color="#F2AF00" />, title: 'Real Test Simulation', desc: 'Practice in an interface designed to closely resemble the official digital DMAT experience.' },
+            { icon: <Target size={24} color="#F2AF00" />, title: 'Real Test Simulation', desc: 'Practice in an interface designed to closely resemble the official digital TestAS experience.' },
             { icon: <BarChart2 size={24} color="#F2AF00" />, title: 'Performance Analytics', desc: 'Track your strengths, weaknesses, accuracy, and time management after every mock test.' },
             { icon: <Zap size={24} color="#F2AF00" />, title: 'Personalized Learning', desc: 'Receive recommendations based on your weakest question types and subject modules.' },
           ].map((feature, idx) => (

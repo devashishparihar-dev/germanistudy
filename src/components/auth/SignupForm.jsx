@@ -8,8 +8,7 @@ import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 
 const SignupForm = ({ onToggleMode, onSignup }) => {
   const [formData, setFormData] = useState({
-    fullName: '', email: '', password: '', confirmPassword: '',
-    country: '', studyLevel: '', targetModule: '', testDate: '', acceptTerms: false
+    email: '', password: '', confirmPassword: '', acceptTerms: false
   });
   const [loading, setLoading] = useState(false);
 
@@ -41,7 +40,7 @@ const SignupForm = ({ onToggleMode, onSignup }) => {
 
       <motion.div variants={itemVariants} style={{ marginBottom: '8px' }}>
         <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text)', marginBottom: '4px' }}>Create your account</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Start your personalized DMAT preparation journey today.</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Start your personalized TestAS preparation journey today.</p>
       </motion.div>
 
       <motion.div variants={itemVariants}>
@@ -57,9 +56,6 @@ const SignupForm = ({ onToggleMode, onSignup }) => {
       <motion.form variants={itemVariants} onSubmit={handleSubmit}>
         <div style={{ display: 'flex', gap: '8px' }}>
           <div style={{ flex: 1 }}>
-            <AuthInput label="Full Name" name="fullName" icon={User} value={formData.fullName} onChange={handleChange} required />
-          </div>
-          <div style={{ flex: 1 }}>
             <AuthInput label="Email Address" type="email" name="email" icon={Mail} value={formData.email} onChange={handleChange} required />
           </div>
         </div>
@@ -73,50 +69,7 @@ const SignupForm = ({ onToggleMode, onSignup }) => {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-          <AuthInput label="Country" name="country" icon={MapPin} value={formData.country} onChange={handleChange} required />
-          <div className="auth-input-group">
-            <input type="date" name="testDate" value={formData.testDate} onChange={handleChange} className="auth-input" style={{ paddingTop: '20px', paddingLeft: '38px' }} required />
-            <Calendar size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-            <label className="auth-label" style={{ top: '6px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary)' }}>Test Date</label>
-          </div>
-        </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-          <div className="auth-input-group">
-            <select name="studyLevel" value={formData.studyLevel} onChange={(e) => { handleChange(e); setFormData(prev => ({ ...prev, targetModule: '' })); }} className="auth-input" style={{ paddingTop: '20px', paddingLeft: '38px', appearance: 'none' }} required>
-              <option value="" disabled></option>
-              <option value="Undergraduate">Undergraduate (Bachelor's)</option>
-              <option value="Master's">Postgraduate (Master's)</option>
-            </select>
-            <GraduationCap size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-            <label className="auth-label" style={{ top: '6px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary)' }}>Study Level</label>
-          </div>
-
-          <div className="auth-input-group">
-            <select name="targetModule" value={formData.targetModule} onChange={handleChange} className="auth-input" style={{ paddingTop: '20px', paddingLeft: '38px', appearance: 'none' }} required disabled={!formData.studyLevel}>
-              <option value="" disabled></option>
-              {formData.studyLevel === 'Undergraduate' ? (
-                <>
-                  <option value="DMAT - Engineering">Engineering</option>
-                  <option value="DMAT - Economics">Economics</option>
-                  <option value="DMAT - Humanities">Humanities</option>
-                  <option value="DMAT - Mathematics">Mathematics</option>
-                  <option value="DMAT - Medical">Medical</option>
-                </>
-              ) : formData.studyLevel === "Master's" ? (
-                <>
-                  <option value="DMAT">DMAT</option>
-                  <option value="GRE">GRE</option>
-                  <option value="GMAT">GMAT</option>
-                  <option value="General/Direct Admission">Direct Admission</option>
-                </>
-              ) : null}
-            </select>
-            <BookOpen size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-            <label className="auth-label" style={{ top: '6px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary)' }}>Target Exam</label>
-          </div>
-        </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
           <input type="checkbox" id="terms" name="acceptTerms" checked={formData.acceptTerms} onChange={handleChange} style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--primary)' }} required />

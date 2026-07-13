@@ -2,13 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { History, Calendar, Clock, Target, ArrowRight, CheckCircle, XCircle } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
+import { supabase } from '../supabaseClient';
 
 const MockHistory = ({ setCurrentView }) => {
   const [pastTests, setPastTests] = useState([]);
 
   useEffect(() => {
-    const history = JSON.parse(localStorage.getItem('mockTestHistory') || '[]');
-    setPastTests(history);
+    const fetchHistory = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: results, error } = await supabase
+        .from('mock_test_results')
+        .select('*, mock_tests(title, duration, total_questions)')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (results) {
+        const formattedHistory = results.map(r => {
+           const totalQ = r.mock_tests?.total_questions || 1; // avoid division by zero
+           return {
+             id: r.id,
+             examName: r.mock_tests?.title || 'Mock Test',
+             date: new Date(r.created_at).toLocaleDateString(),
+             timeTaken: r.mock_tests?.duration ? `${r.mock_tests.duration} Minutes` : 'Standard Time',
+             score: r.score,
+             totalQuestions: r.mock_tests?.total_questions || '?',
+             accuracy: Math.round((r.score / totalQ) * 100),
+             status: 'Completed'
+           };
+        });
+        setPastTests(formattedHistory);
+      }
+    };
+    fetchHistory();
   }, []);
 
   return (
@@ -27,7 +54,7 @@ const MockHistory = ({ setCurrentView }) => {
               <History size={64} style={{ color: 'var(--border)', margin: '0 auto 24px' }} />
               <h3 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text)', marginBottom: '16px' }}>No Mock Tests Taken Yet</h3>
               <p style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>When you complete a mock test, your results and analytics will appear here.</p>
-              <button className="btn-primary" onClick={() => setCurrentView('CoreTest')}>Start a Mock Test</button>
+              <button className="btn-primary" onClick={() => setCurrentView('digital-core-test')}>Start a Mock Test</button>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>

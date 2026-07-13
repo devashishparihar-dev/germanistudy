@@ -75,7 +75,7 @@ const Blogs = ({ setCurrentView }) => {
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '32px', flexWrap: 'wrap' }}>
           <button onClick={() => setCurrentView('Home')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}>Home</button>
-          <button onClick={() => setCurrentView('Auth')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}>DMAT Prep</button>
+          <button onClick={() => setCurrentView('Auth')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}>TestAS Prep</button>
           <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}>Resources</button>
         </div>
         <p style={{ color: 'var(--text-muted)' }}>© 2026 GermaniStudy. The Gateway to Germany. All rights reserved.</p>
