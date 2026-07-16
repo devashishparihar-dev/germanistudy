@@ -6,8 +6,8 @@ const Sidebar = ({ onEndTest, testEnded }) => {
     <aside className="sidebar" style={{ background: 'var(--sidebar-bg)', color: 'white' }}>
       <div className="sidebar-header" style={{ padding: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-          <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '60px', objectFit: 'contain' }} />
-          <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '60px', objectFit: 'contain' }} />
+          <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '90px', objectFit: 'contain' }} />
+          <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '90px', objectFit: 'contain' }} />
         </div>
         <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>TestAS Simulator</p>
       </div>

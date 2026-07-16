@@ -32,6 +32,12 @@ const AuthLayout = ({ children }) => {
         {/* Mobile-only subtle banner fallback if we wanted one, but per instructions, keep it clean */}
         <div style={{ width: '100%', maxWidth: '480px' }}>
           {children}
+          
+          <div style={{ marginTop: '24px', textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '0.85rem' }}>
+            <a href="#PrivacyPolicy" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy Policy</a>
+            <span style={{ color: 'var(--border)' }}>|</span>
+            <a href="#TermsOfService" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Terms of Service</a>
+          </div>
         </div>
 
       </div>

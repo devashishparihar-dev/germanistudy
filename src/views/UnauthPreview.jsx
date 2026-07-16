@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { trackEvent } from '../utils/analytics';
 import { ArrowRight, Lock, Clock, FileCheck, ArrowLeft } from 'lucide-react';
+import HandDrawnCheck from '../components/HandDrawnCheck';
+import ConfettiBurst from '../components/ConfettiBurst';
 
 // Fixed set of questions for SEO and predictable preview
 const PREVIEW_QUESTIONS = [
@@ -12,6 +14,7 @@ const PREVIEW_QUESTIONS = [
     prompt: 'Which of the figures completes the sequence?',
     grid: [1, 2, 3], // Simplified representation
     options: ['A', 'B', 'C', 'D'],
+    correctAnswer: 'C'
   },
   {
     id: 2,
@@ -19,6 +22,7 @@ const PREVIEW_QUESTIONS = [
     title: 'Mathematical Equations',
     prompt: 'Fill in the correct operator to make the equation true: 12 _ 4 = 3',
     options: ['+', '-', '*', '/'],
+    correctAnswer: '/'
   },
   {
     id: 3,
@@ -26,6 +30,7 @@ const PREVIEW_QUESTIONS = [
     title: 'Latin Squares',
     prompt: 'Find the missing element in the grid so that each row and column has exactly one of each shape.',
     options: ['Circle', 'Square', 'Triangle', 'Diamond'],
+    correctAnswer: 'Triangle'
   }
 ];
 
@@ -49,7 +54,7 @@ const UnauthPreview = ({ setCurrentView }) => {
         setShowWall(true);
         trackEvent('unauth_preview_completed');
       }
-    }, 500);
+    }, 800); // Slightly longer delay to let the animation play
   };
 
   if (showWall) {
@@ -60,7 +65,7 @@ const UnauthPreview = ({ setCurrentView }) => {
           className="premium-card" 
           style={{ maxWidth: '600px', width: '100%', textAlign: 'center', padding: '64px 32px' }}
         >
-          <div style={{ display: 'inline-flex', padding: '16px', background: 'rgba(217, 164, 65, 0.1)', borderRadius: '50%', color: 'var(--accent)', marginBottom: '32px' }}>
+          <div style={{ display: 'inline-flex', padding: '16px', background: 'rgba(232, 163, 61, 0.1)', borderRadius: '50%', color: 'var(--primary)', marginBottom: '32px' }}>
             <FileCheck size={48} />
           </div>
           <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '24px', color: 'var(--text)', fontFamily: 'var(--font-heading)' }}>
@@ -83,6 +88,7 @@ const UnauthPreview = ({ setCurrentView }) => {
   }
 
   const q = PREVIEW_QUESTIONS[currentIdx];
+  const hasAnswered = answers[currentIdx] !== undefined;
 
   return (
     <div className="view-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--background)' }}>
@@ -96,11 +102,11 @@ const UnauthPreview = ({ setCurrentView }) => {
             <ArrowLeft size={20} /> Exit Preview
           </button>
           <div style={{ width: '1px', height: '24px', background: 'var(--border)' }} />
-          <span style={{ fontWeight: 700, color: 'var(--primary)', fontFamily: 'var(--font-heading)', fontSize: '1.2rem', letterSpacing: '1px' }}>
+          <span style={{ fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-heading)', fontSize: '1.2rem', letterSpacing: '1px' }}>
             {q.title.toUpperCase()}
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--warning)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--primary)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
           <Clock size={20} /> Preview Mode
         </div>
       </header>
@@ -116,7 +122,7 @@ const UnauthPreview = ({ setCurrentView }) => {
             key={q.id}
             initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
             className="premium-card" 
-            style={{ background: 'var(--surface)', padding: '48px', border: '1px solid var(--border)' }}
+            style={{ background: 'var(--surface)', padding: '48px', border: '1px solid var(--border)', borderRadius: '16px' }}
           >
             <p style={{ fontSize: '1.25rem', fontWeight: 500, color: 'var(--text)', marginBottom: '48px', lineHeight: 1.6 }}>
               {q.prompt}
@@ -134,22 +140,36 @@ const UnauthPreview = ({ setCurrentView }) => {
             )}
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              {q.options.map((opt) => (
-                <button
-                  key={opt}
-                  onClick={() => handleAnswer(opt)}
-                  className="btn-secondary"
-                  style={{ 
-                    padding: '24px', 
-                    fontSize: '1.1rem',
-                    background: answers[currentIdx] === opt ? 'var(--primary)' : 'transparent',
-                    color: answers[currentIdx] === opt ? '#fff' : 'var(--text)',
-                    borderColor: answers[currentIdx] === opt ? 'var(--primary)' : 'var(--border)'
-                  }}
-                >
-                  {opt}
-                </button>
-              ))}
+              {q.options.map((opt) => {
+                const isSelected = answers[currentIdx] === opt;
+                const isCorrect = q.correctAnswer === opt;
+                const showCheck = isSelected && isCorrect;
+
+                return (
+                  <button
+                    key={opt}
+                    onClick={() => !hasAnswered && handleAnswer(opt)}
+                    className="btn-secondary"
+                    style={{ 
+                      position: 'relative',
+                      padding: '24px', 
+                      fontSize: '1.1rem',
+                      background: isSelected ? 'var(--paper)' : 'transparent',
+                      color: 'var(--text)',
+                      borderColor: isSelected ? 'var(--primary)' : 'var(--border)',
+                      cursor: hasAnswered ? 'default' : 'pointer'
+                    }}
+                  >
+                    {opt}
+                    {showCheck && (
+                      <>
+                        <HandDrawnCheck color="var(--coral)" />
+                        <ConfettiBurst isActive={true} />
+                      </>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
 

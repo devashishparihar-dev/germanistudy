@@ -60,6 +60,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
   const [globalAnswers, setGlobalAnswers] = useState([]);
   const [flaggedQuestions, setFlaggedQuestions] = useState([]);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [unverifiableSession, setUnverifiableSession] = useState(false);
 
   // Current Section State
   const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -68,6 +69,10 @@ const DigitalSimulator = ({ setCurrentView }) => {
   // Simulated Freemium State
   const [isPremium, setIsPremium] = useState(false); // Can be tied to Auth/Supabase later
   const [reviewModeSection, setReviewModeSection] = useState(0);
+
+  // Tab switch tracking
+  const [tabSwitchCount, setTabSwitchCount] = useState(0);
+  const [showTabWarning, setShowTabWarning] = useState(false);
 
   useEffect(() => {
     // Determine premium status (mocking for now, in reality fetch from Supabase profile)
@@ -283,15 +288,71 @@ const DigitalSimulator = ({ setCurrentView }) => {
           }
         }
 
-        const savedStateJson = localStorage.getItem('simulator_autosave');
+        // Fetch active session from Supabase
+        const moduleId = selectedCoreModule || selectedSubjectModule || 'core';
         let loadedState = null;
-        if (savedStateJson) {
-          try {
-            const parsed = JSON.parse(savedStateJson);
-            if (parsed.selectedCoreModule === selectedCoreModule && parsed.selectedSubjectModule === selectedSubjectModule) {
-              loadedState = parsed;
+        
+        try {
+          const { data: sessionData, error: sessionError } = await supabase
+            .from('active_test_sessions')
+            .select('*')
+            .eq('test_module_id', moduleId)
+            .maybeSingle();
+
+          if (sessionData) {
+            // Get secure server time to verify expiry
+            let serverTimeData = null;
+            let retries = 2;
+            while (retries >= 0) {
+              const res = await supabase.rpc('get_server_time');
+              if (res.data) {
+                serverTimeData = res.data;
+                break;
+              }
+              if (retries === 0) break;
+              await new Promise(r => setTimeout(r, 1000));
+              retries--;
             }
-          } catch(e) {}
+            
+            if (!serverTimeData) {
+              // Critical Failure: Could not fetch server time
+              setUnverifiableSession(true);
+              setLoading(false);
+              return; // Halt execution
+            }
+
+            const serverTime = new Date(serverTimeData).getTime();
+            
+            const updatedAt = new Date(sessionData.updated_at).getTime();
+            
+            // 120-minute expiry window check
+            if (serverTime - updatedAt > 120 * 60 * 1000) {
+              await supabase.from('active_test_sessions').delete().eq('id', sessionData.id);
+            } else {
+              loadedState = {
+                 ...sessionData,
+                 globalAnswers: sessionData.answers,
+                 flaggedQuestions: sessionData.flagged_questions,
+                 currentSectionIndex: sessionData.current_section_index,
+                 currentQIndex: sessionData.current_q_index,
+              };
+              
+              if (sessionData.tab_switch_count) {
+                 setTabSwitchCount(sessionData.tab_switch_count);
+              }
+
+              if (sessionData.section_end_time) {
+                 const endTime = new Date(sessionData.section_end_time).getTime();
+                 const remaining = Math.max(0, Math.floor((endTime - serverTime) / 1000));
+                 loadedState.timeLeft = remaining;
+                 loadedState.examStage = remaining > 0 ? 'subtest' : 'section_loading';
+              } else {
+                 loadedState.examStage = 'rules';
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to fetch active session from Supabase', e);
         }
 
         setActiveSectionConfig(config);
@@ -303,8 +364,22 @@ const DigitalSimulator = ({ setCurrentView }) => {
            setCurrentSectionIndex(loadedState.currentSectionIndex || 0);
            setCurrentQIndex(loadedState.currentQIndex || 0);
            setExamStage(loadedState.examStage || 'rules');
-           if (loadedState.timeLeft !== undefined) setTimeLeft(loadedState.timeLeft);
-           if (loadedState.breakTimeLeft !== undefined) setBreakTimeLeft(loadedState.breakTimeLeft);
+           if (loadedState.timeLeft !== undefined) {
+             setTimeLeft(loadedState.timeLeft);
+             if (loadedState.timeLeft === 0 && loadedState.examStage === 'section_loading') {
+               // Auto-submit/advance if time expired while away
+               setTimeout(() => {
+                 if (loadedState.currentSectionIndex === config.length - 1) {
+                   finishExam(loadedState.globalAnswers); // Passed directly to avoid state race
+                 } else {
+                   const nextIdx = loadedState.currentSectionIndex + 1;
+                   setCurrentSectionIndex(nextIdx);
+                   setCurrentQIndex(0);
+                   setExamStage('instruction');
+                 }
+               }, 400);
+             }
+           }
         } else {
            setGlobalAnswers(grouped.map(sec => new Array(sec.length).fill(null)));
            setFlaggedQuestions(grouped.map(sec => new Array(sec.length).fill(false)));
@@ -334,23 +409,31 @@ const DigitalSimulator = ({ setCurrentView }) => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [examStage]);
 
-  // Auto-save State to localStorage
+  // Auto-save State to Supabase
   useEffect(() => {
     if (loading || error || examStage === 'results' || activeSectionConfig.length === 0) return;
+    if (examStage === 'rules') return; // Don't persist until they actually start
     
-    const stateToSave = {
-      selectedCoreModule: localStorage.getItem('selectedDigitalModule') || null,
-      selectedSubjectModule: localStorage.getItem('selectedDigitalSubjectModule') || null,
-      globalAnswers,
-      flaggedQuestions,
-      currentSectionIndex,
-      currentQIndex,
-      examStage,
-      timeLeft,
-      breakTimeLeft
+    const saveToSupabase = async () => {
+      const moduleId = localStorage.getItem('selectedDigitalModule') || localStorage.getItem('selectedDigitalSubjectModule') || 'core';
+      try {
+        await supabase.rpc('save_session_progress', {
+          p_module_id: moduleId,
+          p_current_section_index: currentSectionIndex,
+          p_current_q_index: currentQIndex,
+          p_answers: globalAnswers,
+          p_flagged_questions: flaggedQuestions,
+          p_tab_switch_count: tabSwitchCount
+        });
+      } catch(e) {
+        console.warn('Failed to autosave session to Supabase', e);
+      }
     };
-    localStorage.setItem('simulator_autosave', JSON.stringify(stateToSave));
-  }, [globalAnswers, flaggedQuestions, currentSectionIndex, currentQIndex, examStage, timeLeft, breakTimeLeft, activeSectionConfig, loading, error]);
+    
+    // Debounce saves slightly to prevent spamming on rapid clicks
+    const timeoutId = setTimeout(saveToSupabase, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [globalAnswers, flaggedQuestions, currentSectionIndex, currentQIndex, activeSectionConfig, loading, error]);
 
   // Track Question Views
   useEffect(() => {
@@ -376,7 +459,27 @@ const DigitalSimulator = ({ setCurrentView }) => {
         return prev - 1;
       });
     }, 1000);
-    return () => clearInterval(timer);
+    
+    const handleFocusLoss = () => {
+       if (examStage === 'subtest') {
+         setTabSwitchCount(c => c + 1);
+         setShowTabWarning(true);
+         setTimeout(() => setShowTabWarning(false), 5000);
+       }
+    };
+    
+    const handleVisibilityChange = () => {
+      if (document.hidden) handleFocusLoss();
+    };
+
+    window.addEventListener('blur', handleFocusLoss);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('blur', handleFocusLoss);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [examStage, currentSectionIndex, sectionsData]);
 
   // Break Timer
@@ -430,15 +533,16 @@ const DigitalSimulator = ({ setCurrentView }) => {
     }, 400);
   };
 
-  const finishExam = async () => {
+  const finishExam = async (overrideAnswers = null) => {
     setExamStage('calculating');
+    const finalAnswers = overrideAnswers || globalAnswers;
     
     const formattedAnswers = [];
     sectionsData.forEach((sectionQs, sIdx) => {
       sectionQs.forEach((q, qIdx) => {
         formattedAnswers.push({
           question_id: q.id,
-          selected_answer: globalAnswers[sIdx][qIdx]
+          selected_answer: finalAnswers[sIdx] ? finalAnswers[sIdx][qIdx] : null
         });
       });
     });
@@ -470,7 +574,9 @@ const DigitalSimulator = ({ setCurrentView }) => {
       });
       setSectionsData(updatedSectionsData);
 
-      localStorage.removeItem('simulator_autosave');
+      // Clean up the active session securely
+      const moduleId = selectedCoreModule || localStorage.getItem('selectedDigitalSubjectModule') || 'core';
+      await supabase.rpc('delete_active_session', { p_module_id: moduleId });
       
       trackEvent('mock_completed', {
         examName: activeSectionConfig.length > 1 ? 'Digital Core Test Mock' : 'Digital Subject Test Mock',
@@ -479,6 +585,13 @@ const DigitalSimulator = ({ setCurrentView }) => {
       });
       
       setExamStage('results');
+      
+      // Store tab switch count locally for EndTestScreen if it's decoupled
+      if (tabSwitchCount > 0) {
+        localStorage.setItem('last_exam_tab_switches', tabSwitchCount.toString());
+      } else {
+        localStorage.removeItem('last_exam_tab_switches');
+      }
     } catch(err) {
       console.error("Failed to submit test:", err);
       alert("Failed to submit test results. Please try again.");
@@ -497,9 +610,18 @@ const DigitalSimulator = ({ setCurrentView }) => {
     setExamStage('instruction');
   };
 
-  const handleStartSection = () => {
-    setTimeLeft(activeSectionConfig[currentSectionIndex].duration);
+  const handleStartSection = async () => {
     setExamStage('subtest');
+    const duration = activeSectionConfig[currentSectionIndex].duration;
+    setTimeLeft(duration);
+    
+    const moduleId = localStorage.getItem('selectedDigitalModule') || localStorage.getItem('selectedDigitalSubjectModule') || 'core';
+    try {
+      // Use the RPC to securely set section_end_time on the server (duration calculated on backend)
+      await supabase.rpc('start_subtest_timer', { p_module_id: moduleId });
+    } catch(e) {
+      console.error('Failed to start secure subtest timer', e);
+    }
   };
 
   const preventIntegrityEvents = (e) => {
@@ -523,10 +645,57 @@ const DigitalSimulator = ({ setCurrentView }) => {
   const isTestlet = currentQ ? !!currentQ.testletPassage : false;
 
   // Render different stages
+  if (unverifiableSession) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--bg-base)', fontFamily: 'sans-serif' }}>
+        <AlertCircle size={48} color="var(--coral)" style={{ marginBottom: '16px' }} />
+        <h2 style={{ fontFamily: 'var(--font-heading)', color: 'var(--ink)', fontSize: '1.5rem', marginBottom: '8px' }}>Session Unverifiable</h2>
+        <p style={{ color: 'var(--ink-muted)', marginBottom: '24px', textAlign: 'center', maxWidth: '400px', lineHeight: '1.6' }}>
+          We could not securely verify your timer with the server. Please check your internet connection and try again.
+        </p>
+        <button 
+          onClick={() => window.location.reload()} 
+          style={{ background: 'var(--primary)', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}
+        >
+          Retry Connection
+        </button>
+      </div>
+    );
+  }
+
   return (
     <ErrorBoundary>
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--bg-base)', fontFamily: 'sans-serif' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--bg-base)', fontFamily: 'sans-serif', position: 'relative' }}>
       
+      <AnimatePresence>
+        {showTabWarning && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: 'var(--coral)',
+              color: '#fff',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontWeight: '600',
+              boxShadow: '0 4px 12px rgba(228, 87, 74, 0.3)',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}
+          >
+            <AlertCircle size={20} />
+            Tab-switching or losing focus is tracked, matching real exam conditions.
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence mode="wait">
         
         {examStage === 'rules' && (
@@ -670,6 +839,12 @@ const DigitalSimulator = ({ setCurrentView }) => {
 
                   return (
                     <>
+                      {tabSwitchCount > 0 && (
+                        <div style={{ background: 'rgba(228, 87, 74, 0.1)', color: 'var(--coral)', padding: '12px 24px', borderRadius: '8px', marginBottom: '24px', display: 'inline-flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}>
+                          <AlertCircle size={20} />
+                          {tabSwitchCount} tab {tabSwitchCount === 1 ? 'switch' : 'switches'} detected during exam
+                        </div>
+                      )}
                       <div style={{ fontSize: '1.25rem', color: 'var(--ink-muted)', marginBottom: '40px' }}>
                         You scored <strong style={{ color: 'var(--accent-primary)', fontSize: '1.5rem' }}>{totalScore} / {totalQuestions}</strong>
                         <div style={{ marginTop: '12px', fontSize: '1.1rem', color: 'var(--success)' }}>

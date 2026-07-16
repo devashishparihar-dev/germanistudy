@@ -77,30 +77,30 @@ const ExamSidebar = ({ setCurrentView }) => {
       <motion.aside
         initial={false}
         animate={{ 
-          width: isMobile ? 280 : (collapsed ? 70 : 250),
-          x: isMobile ? (mobileOpen ? 0 : -280) : 0
-        }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        onMouseEnter={() => !isMobile && setCollapsed(false)}
-        onMouseLeave={() => !isMobile && setCollapsed(true)}
-        style={{
-          height: '100vh', background: 'var(--background)', color: 'var(--text)',
-          display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border)',
-          position: 'fixed', top: 0, left: 0, overflow: 'hidden', flexShrink: 0, zIndex: 100,
-          boxShadow: collapsed ? 'none' : '4px 0 24px rgba(0,0,0,0.2)'
-        }}
-      >
-      <div style={{ padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => !isMobile && setCollapsed(!collapsed)}>
-        <div style={{ width: (isMobile || !collapsed) ? '230px' : '48px', height: '64px', overflow: 'hidden', transition: 'width 0.2s ease', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+        width: isMobile ? 280 : (collapsed ? 90 : 250),
+        x: isMobile ? (mobileOpen ? 0 : -280) : 0
+      }}
+      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+      onMouseEnter={() => !isMobile && setCollapsed(false)}
+      onMouseLeave={() => !isMobile && setCollapsed(true)}
+      style={{
+        height: '100vh', background: 'var(--background)', color: 'var(--text)',
+        display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border)',
+        position: 'fixed', top: 0, left: 0, overflow: 'hidden', flexShrink: 0, zIndex: 100,
+        boxShadow: collapsed ? 'none' : '4px 0 24px rgba(0,0,0,0.2)'
+      }}
+    >
+      <div style={{ padding: collapsed ? '16px' : '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', transition: 'padding 0.2s' }} onClick={() => !isMobile && setCollapsed(!collapsed)}>
+        <div style={{ width: (isMobile || !collapsed) ? '230px' : '58px', height: '96px', overflow: 'hidden', transition: 'width 0.2s ease', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
           {(isMobile || !collapsed) ? (
             <>
-              <img src="/assets/branding/logo_wide_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '64px', width: '100%', objectFit: 'contain', objectPosition: 'left center', transform: 'scale(1.15)', transformOrigin: 'left center' }} />
-              <img src="/assets/branding/logo_wide_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '64px', width: '100%', objectFit: 'contain', objectPosition: 'left center', transform: 'scale(1.15)', transformOrigin: 'left center' }} />
+              <img src="/assets/branding/logo_wide_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '96px', width: '100%', objectFit: 'contain', objectPosition: 'left center', transform: 'scale(1.15)', transformOrigin: 'left center' }} />
+              <img src="/assets/branding/logo_wide_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '96px', width: '100%', objectFit: 'contain', objectPosition: 'left center', transform: 'scale(1.15)', transformOrigin: 'left center' }} />
             </>
           ) : (
             <>
-              <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '48px', width: 'auto', maxWidth: 'none' }} />
-              <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '48px', width: 'auto', maxWidth: 'none' }} />
+              <img src="/assets/branding/favicon_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              <img src="/assets/branding/favicon_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </>
           )}
         </div>

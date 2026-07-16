@@ -32,23 +32,31 @@
   --accent-danger: #B23B3B;
   --border-hairline: #DADFE5;
 
+  /* V2 Palette Tokens */
+  --paper: #FAF8F3;
+  --ink: #2B2438;
+  --sky: #2F5D8A;
+  --marigold: #E8A33D;
+  --coral: #E4574A;
+  --sage: #7A8B6F;
+
   /* Semantic Core Variables - Light Mode */
-  --background: #F7F6F2; /* --paper */
+  --background: var(--paper);
   --surface: #FFFFFF;
-  --surface-translucent: rgba(255, 255, 255, 0.85);
-  --primary: #D9A441; /* Yellow */
-  --primary-hover: #E8B95E;
-  --accent: #1E3A5F; /* Blue */
-  --text: #1C2321; /* --ink */
-  --text-muted: #6B7280; /* --graphite */
-  --border: #E2E0D8; /* --grid-line */
+  --surface-translucent: rgba(250, 248, 243, 0.85);
+  --primary: var(--marigold);
+  --primary-hover: #D7922A;
+  --accent: var(--sky);
+  --text: var(--ink);
+  --text-muted: #6C6677;
+  --border: #E8E4DB;
   
   --success: #10B981;
   --warning: #F59E0B;
   --error: #EF4444;
 
   /* Typography */
-  --font-heading: 'Barlow Condensed', sans-serif;
+  --font-heading: 'Fraunces', serif;
   --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -174,7 +182,7 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: all 0.15s ease-out;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -187,13 +195,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary:hover {
   background: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(217, 164, 65, 0.25);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 4px 12px rgba(232, 163, 61, 0.25);
 }
 
 .dark .btn-primary:hover {
   background: var(--primary-hover);
-  box-shadow: 0 4px 12px rgba(217, 164, 65, 0.15);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 4px 12px rgba(232, 163, 61, 0.15);
 }
 
 .btn-secondary {
@@ -207,7 +216,7 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: all 0.15s ease-out;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -216,6 +225,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-secondary:hover {
   background: var(--surface);
   border-color: var(--text);
+  transform: translateY(-2px) scale(1.03);
 }
 
 /* Scrollbar styling */

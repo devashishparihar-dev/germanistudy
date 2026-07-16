@@ -20,7 +20,9 @@ import DigitalSubjectTest from './views/DigitalSubjectTest';
 import DigitalSimulator from './views/DigitalSimulator';
 import UnauthPreview from './views/UnauthPreview';
 import PricingCards from './components/PricingCards';
-const publicViews = ['Home', 'Auth', 'Practice', 'Library', 'Blogs', 'BlogPost', 'digital-core-test', 'digital-subject-test', 'DigitalSimulator', 'UnauthPreview', 'Pricing'];
+import PrivacyPolicy from './views/PrivacyPolicy';
+import TermsOfService from './views/TermsOfService';
+const publicViews = ['Home', 'Auth', 'Practice', 'Library', 'Blogs', 'BlogPost', 'digital-core-test', 'digital-subject-test', 'DigitalSimulator', 'UnauthPreview', 'Pricing', 'PrivacyPolicy', 'TermsOfService'];
 
 function App() {
   const getInitialView = () => {
@@ -161,6 +163,10 @@ function App() {
             <PricingCards setCurrentView={setCurrentView} />
           </div>
         );
+      case 'PrivacyPolicy':
+        return <PrivacyPolicy setCurrentView={setCurrentView} />;
+      case 'TermsOfService':
+        return <TermsOfService setCurrentView={setCurrentView} />;
       default:
         if (currentView.startsWith('BlogPost:')) {
           const blogId = currentView.split(':')[1];

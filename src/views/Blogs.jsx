@@ -31,7 +31,7 @@ const Blogs = ({ setCurrentView }) => {
                 style={{ padding: '0', display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--surface)', overflow: 'hidden' }}
               >
                 {post.thumbnail && (
-                  <div style={{ width: '100%', height: '200px', overflow: 'hidden' }}>
+                  <div style={{ width: '100%', height: '300px', overflow: 'hidden' }}>
                     <img src={post.thumbnail} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 )}
@@ -70,8 +70,8 @@ const Blogs = ({ setCurrentView }) => {
       {/* Footer */}
       <footer style={{ backgroundColor: 'var(--surface)', width: '100%', padding: '64px 32px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
-          <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '96px', objectFit: 'contain', filter: 'grayscale(1) opacity(0.5)' }} />
-          <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '96px', objectFit: 'contain', filter: 'grayscale(1) opacity(0.5)' }} />
+          <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '144px', objectFit: 'contain', filter: 'grayscale(1) opacity(0.5)' }} />
+          <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '144px', objectFit: 'contain', filter: 'grayscale(1) opacity(0.5)' }} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '32px', flexWrap: 'wrap' }}>
           <button onClick={() => setCurrentView('Home')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}>Home</button>

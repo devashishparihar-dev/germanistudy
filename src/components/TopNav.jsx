@@ -84,8 +84,8 @@ const TopNav = ({ currentView, setCurrentView, session, isAdmin, isDarkMode, set
         boxShadow: isScrolled ? 'var(--shadow-soft)' : 'none'
       }}>
       <div className="nav-brand" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'transform 0.2s ease' }} onClick={() => setCurrentView(session ? 'Dashboard' : 'Home')} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-        <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '72px', objectFit: 'contain' }} />
-        <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '72px', objectFit: 'contain' }} />
+        <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '108px', objectFit: 'contain' }} />
+        <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '108px', objectFit: 'contain' }} />
       </div>
 
       {/* Desktop Navigation */}

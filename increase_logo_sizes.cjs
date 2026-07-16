@@ -8,7 +8,8 @@ const files = [
   'src/components/auth/SignupForm.jsx',
   'src/views/Home.jsx',
   'src/components/Sidebar.jsx',
-  'src/components/TopNav.jsx'
+  'src/components/TopNav.jsx',
+  'src/components/auth/BrandPanel.jsx'
 ];
 
 let totalReplaced = 0;
@@ -26,7 +27,7 @@ files.forEach(file => {
   content = content.replace(regex, (match, heightStr) => {
     // Only increase if it looks like a logo height (e.g. we know we have 32, 40, 48, 64, 120)
     const h = parseInt(heightStr, 10);
-    if ([32, 40, 48, 64, 120].includes(h)) {
+    if ([32, 40, 48, 60, 64, 72, 96, 120, 200].includes(h)) {
       totalReplaced++;
       const newHeight = Math.round(h * 1.5);
       return `height: '${newHeight}px'`;

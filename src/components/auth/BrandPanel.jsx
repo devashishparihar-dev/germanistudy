@@ -8,7 +8,7 @@ const BrandPanel = () => {
       
       <div>
         <div style={{ marginBottom: '64px' }}>
-          <img src="/assets/branding/logo_wide_dark.png" alt="GermaniStudy Logo" style={{ height: '200px', objectFit: 'contain' }} />
+          <img src="/assets/branding/logo_wide_dark.png" alt="GermaniStudy Logo" style={{ height: '300px', objectFit: 'contain' }} />
         </div>
 
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: '3rem', fontWeight: 700, lineHeight: 1.1, marginBottom: '24px', fontFamily: 'var(--font-heading)', color: '#F8F9FA' }}>
@@ -26,7 +26,7 @@ const BrandPanel = () => {
             { icon: <Zap size={24} color="#F2AF00" />, title: 'Personalized Learning', desc: 'Receive recommendations based on your weakest question types and subject modules.' },
           ].map((feature, idx) => (
             <motion.div key={idx} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + (idx * 0.1) }} style={{ display: 'flex', gap: '16px' }}>
-              <div style={{ width: '48px', height: '48px', background: 'rgba(242, 175, 0, 0.1)', border: '1px solid rgba(242, 175, 0, 0.2)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: '48px', height: '72px', background: 'rgba(242, 175, 0, 0.1)', border: '1px solid rgba(242, 175, 0, 0.2)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {feature.icon}
               </div>
               <div>
