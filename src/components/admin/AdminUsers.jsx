@@ -54,49 +54,49 @@ const AdminUsers = () => {
   };
 
   return (
-    <div style={{ fontFamily: 'var(--font-body)', color: 'var(--ink)' }}>
+    <div style={{ fontFamily: 'var(--font-body)', color: 'var(--text)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', color: 'var(--ink)', marginBottom: '8px' }}>User Accounts</h1>
-          <p style={{ color: 'var(--ink-muted)' }}>Manage user roles and permissions.</p>
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', color: 'var(--text)', marginBottom: '8px' }}>User Accounts</h1>
+          <p style={{ color: 'var(--text-muted)' }}>Manage user roles and permissions.</p>
         </div>
       </div>
 
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '64px' }}>
-          <Loader2 size={32} className="spin" color="var(--sky)" />
+          <Loader2 size={32} className="spin" color="var(--accent)" />
         </div>
       ) : users.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '64px', background: 'var(--paper)', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)' }}>
-          <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>No users found.</p>
+        <div style={{ textAlign: 'center', padding: '64px', background: 'var(--background)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>No users found.</p>
         </div>
       ) : (
-        <div style={{ background: 'var(--paper)', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--background)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead style={{ background: 'rgba(43, 36, 56, 0.03)', borderBottom: '1px solid rgba(43, 36, 56, 0.1)' }}>
+            <thead style={{ background: 'rgba(43, 36, 56, 0.03)', borderBottom: '1px solid var(--border)' }}>
               <tr>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>User ID</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Role</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Joined</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Actions</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>User</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Role</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Joined</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {users.map((u, idx) => (
                 <tr key={u.id || idx} style={{ borderBottom: '1px solid rgba(43, 36, 56, 0.05)' }}>
-                  <td style={{ padding: '16px 24px', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--ink-muted)' }}>
-                    {u.id}
+                  <td style={{ padding: '16px 24px', fontWeight: 500, fontSize: '0.95rem', color: 'var(--text)' }}>
+                    {u.full_name || u.email || u.id}
                   </td>
                   <td style={{ padding: '16px 24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       {u.role === 'admin' ? (
-                        <Shield size={16} color="var(--marigold)" />
+                        <Shield size={16} color="var(--primary)" />
                       ) : (
-                        <User size={16} color="var(--ink-muted)" />
+                        <User size={16} color="var(--text-muted)" />
                       )}
                       <span style={{ 
                         fontWeight: 600, 
-                        color: u.role === 'admin' ? 'var(--marigold)' : 'var(--ink)',
+                        color: u.role === 'admin' ? 'var(--primary)' : 'var(--text)',
                         textTransform: 'capitalize',
                         fontSize: '0.95rem'
                       }}>
@@ -104,7 +104,7 @@ const AdminUsers = () => {
                       </span>
                     </div>
                   </td>
-                  <td style={{ padding: '16px 24px', fontSize: '0.95rem', color: 'var(--ink-muted)' }}>
+                  <td style={{ padding: '16px 24px', fontSize: '0.95rem', color: 'var(--text-muted)' }}>
                     {u.created_at ? new Date(u.created_at).toLocaleDateString() : 'Unknown'}
                   </td>
                   <td style={{ padding: '16px 24px' }}>
@@ -117,7 +117,7 @@ const AdminUsers = () => {
                         padding: '6px 12px',
                         borderRadius: '6px',
                         cursor: updating === u.id ? 'wait' : 'pointer', 
-                        color: u.role === 'admin' ? 'var(--coral)' : 'var(--sky)',
+                        color: u.role === 'admin' ? 'var(--coral)' : 'var(--accent)',
                         fontWeight: 600,
                         fontSize: '0.85rem',
                         transition: 'opacity 0.2s',

@@ -103,11 +103,8 @@ serve(async (req: Request) => {
           // Direct string comparison
           isCorrect = String(userAns).trim().toLowerCase() === String(expectedAnswerText).trim().toLowerCase()
         } else {
-          // Multiple choice: userAns is an index
-          const ansIndex = parseInt(userAns, 10)
-          if (!isNaN(ansIndex) && questionData.options && questionData.options[ansIndex]) {
-            isCorrect = questionData.options[ansIndex] === expectedAnswerText
-          }
+          // Multiple choice: userAns is the actual option string or id
+          isCorrect = String(userAns) === String(expectedAnswerText)
         }
       }
 

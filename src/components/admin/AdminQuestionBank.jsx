@@ -96,27 +96,27 @@ const AdminQuestionBank = () => {
 
   if (isEditing) {
     return (
-      <div style={{ fontFamily: 'var(--font-body)', color: 'var(--ink)' }}>
+      <div style={{ fontFamily: 'var(--font-body)', color: 'var(--text)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', color: 'var(--ink)' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', color: 'var(--text)' }}>
             {currentQuestion.id ? 'Edit Question' : 'Create New Question'}
           </h2>
           <button 
             onClick={() => setIsEditing(false)}
-            style={{ background: 'transparent', border: '1px solid var(--ink)', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+            style={{ background: 'transparent', border: '1px solid var(--text)', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
           >
             Cancel
           </button>
         </div>
 
-        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: 'var(--paper)', padding: '24px', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)' }}>
+        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: 'var(--background)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>Section</label>
               <select 
                 value={currentQuestion.section} 
                 onChange={e => setCurrentQuestion({...currentQuestion, section: e.target.value})}
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)' }}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)' }}
               >
                 <option value="figure_sequences">Figure Sequences</option>
                 <option value="mathematical_equations">Mathematical Equations</option>
@@ -132,7 +132,7 @@ const AdminQuestionBank = () => {
               <select 
                 value={currentQuestion.difficulty} 
                 onChange={e => setCurrentQuestion({...currentQuestion, difficulty: e.target.value})}
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)' }}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)' }}
               >
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
@@ -148,7 +148,7 @@ const AdminQuestionBank = () => {
               onChange={e => setCurrentQuestion({...currentQuestion, question: e.target.value})}
               required
               rows={4}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)', resize: 'vertical' }}
+              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)', resize: 'vertical' }}
             />
           </div>
 
@@ -166,7 +166,7 @@ const AdminQuestionBank = () => {
               }}
               required
               rows={5}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-mono)', fontSize: '0.9rem' }}
+              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-mono)', fontSize: '0.9rem' }}
             />
           </div>
 
@@ -178,7 +178,7 @@ const AdminQuestionBank = () => {
                 value={currentQuestion.correct_answer || ''} 
                 onChange={e => setCurrentQuestion({...currentQuestion, correct_answer: e.target.value})}
                 required
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)' }}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)' }}
               />
             </div>
             <div>
@@ -187,7 +187,7 @@ const AdminQuestionBank = () => {
                 type="text"
                 value={currentQuestion.question_type || 'multiple_choice'} 
                 onChange={e => setCurrentQuestion({...currentQuestion, question_type: e.target.value})}
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)' }}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)' }}
               />
             </div>
           </div>
@@ -198,7 +198,7 @@ const AdminQuestionBank = () => {
               value={currentQuestion.explanation || ''} 
               onChange={e => setCurrentQuestion({...currentQuestion, explanation: e.target.value})}
               rows={4}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)', resize: 'vertical' }}
+              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)', resize: 'vertical' }}
             />
           </div>
 
@@ -207,8 +207,8 @@ const AdminQuestionBank = () => {
               type="submit"
               disabled={saving}
               style={{ 
-                background: 'var(--marigold)', 
-                color: 'var(--ink)', 
+                background: 'var(--primary)', 
+                color: 'var(--text)', 
                 border: 'none', 
                 padding: '12px 32px', 
                 borderRadius: '8px', 
@@ -226,36 +226,23 @@ const AdminQuestionBank = () => {
   }
 
   return (
-    <div style={{ fontFamily: 'var(--font-body)', color: 'var(--ink)' }}>
+    <div style={{ fontFamily: 'var(--font-body)', color: 'var(--text)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', color: 'var(--ink)', marginBottom: '8px' }}>Question Bank</h1>
-          <p style={{ color: 'var(--ink-muted)' }}>Manage the core module questions used in simulations.</p>
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', color: 'var(--text)', marginBottom: '8px' }}>Question Bank</h1>
+          <p style={{ color: 'var(--text-muted)' }}>Manage the core module questions used in simulations.</p>
         </div>
-        <button 
-          onClick={handleCreate}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '8px',
-            background: 'var(--sky)', color: '#fff', border: 'none', 
-            padding: '12px 24px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer',
-            transition: 'transform 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-          }}
-          onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
-          onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          <Plus size={18} /> New Question
-        </button>
       </div>
 
-      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', background: 'var(--paper)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)' }}>
+      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', background: 'var(--background)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Filter size={18} color="var(--ink-muted)" />
-          <span style={{ fontWeight: 600, color: 'var(--ink-muted)', fontSize: '0.9rem' }}>Filters:</span>
+          <Filter size={18} color="var(--text-muted)" />
+          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Filters:</span>
         </div>
         <select 
           value={filterSection} 
           onChange={e => setFilterSection(e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'transparent', fontFamily: 'var(--font-body)', fontSize: '0.9rem' }}
+          style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', fontFamily: 'var(--font-body)', fontSize: '0.9rem' }}
         >
           <option value="All">All Sections</option>
           <option value="figure_sequences">Figure Sequences</option>
@@ -270,7 +257,7 @@ const AdminQuestionBank = () => {
         <select 
           value={filterDifficulty} 
           onChange={e => setFilterDifficulty(e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'transparent', fontFamily: 'var(--font-body)', fontSize: '0.9rem' }}
+          style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', fontFamily: 'var(--font-body)', fontSize: '0.9rem' }}
         >
           <option value="All">All Difficulties</option>
           <option value="easy">Easy</option>
@@ -281,28 +268,28 @@ const AdminQuestionBank = () => {
 
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '64px' }}>
-          <Loader2 size={32} className="spin" color="var(--sky)" />
+          <Loader2 size={32} className="spin" color="var(--accent)" />
         </div>
       ) : questions.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '64px', background: 'var(--paper)', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)' }}>
-          <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>No questions found matching the current filters.</p>
+        <div style={{ textAlign: 'center', padding: '64px', background: 'var(--background)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>No questions found matching the current filters.</p>
         </div>
       ) : (
-        <div style={{ background: 'var(--paper)', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--background)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead style={{ background: 'rgba(43, 36, 56, 0.03)', borderBottom: '1px solid rgba(43, 36, 56, 0.1)' }}>
+            <thead style={{ background: 'rgba(43, 36, 56, 0.03)', borderBottom: '1px solid var(--border)' }}>
               <tr>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Question ID</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Section</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Snippet</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Diff</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Actions</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Question ID</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Section</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Snippet</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Diff</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {questions.map((q, idx) => (
                 <tr key={q.id || idx} style={{ borderBottom: '1px solid rgba(43, 36, 56, 0.05)' }}>
-                  <td style={{ padding: '16px 24px', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--ink-muted)' }}>
+                  <td style={{ padding: '16px 24px', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                     {q.id ? q.id.slice(0, 8) : 'NEW'}...
                   </td>
                   <td style={{ padding: '16px 24px', fontSize: '0.95rem' }}>
@@ -318,7 +305,7 @@ const AdminQuestionBank = () => {
                     <span style={{ 
                       padding: '4px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase',
                       background: q.difficulty === 'hard' ? 'rgba(228, 87, 74, 0.1)' : q.difficulty === 'easy' ? 'rgba(122, 139, 111, 0.1)' : 'rgba(47, 93, 138, 0.1)',
-                      color: q.difficulty === 'hard' ? 'var(--coral)' : q.difficulty === 'easy' ? 'var(--sage)' : 'var(--sky)'
+                      color: q.difficulty === 'hard' ? 'var(--coral)' : q.difficulty === 'easy' ? 'var(--sage)' : 'var(--accent)'
                     }}>
                       {q.difficulty}
                     </span>
@@ -326,7 +313,7 @@ const AdminQuestionBank = () => {
                   <td style={{ padding: '16px 24px', display: 'flex', gap: '12px' }}>
                     <button 
                       onClick={() => handleEdit(q)}
-                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--sky)', display: 'flex', alignItems: 'center' }}
+                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--accent)', display: 'flex', alignItems: 'center' }}
                       title="Edit"
                     >
                       <Edit2 size={18} />

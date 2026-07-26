@@ -20,7 +20,42 @@ const QuestionCard = ({
         </div>
         <div className="question-split-container">
           <div className="question-left-col">
-            <p className="question-text">{question.text}</p>
+            {question.type === 'latin_square' && question.grid && (
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
+                <table style={{ borderCollapse: 'collapse', textAlign: 'center', fontSize: '1.2rem', color: 'var(--text-main)', border: '2px solid var(--border-color)' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ border: '1px solid var(--border-color)', padding: '12px' }}></th>
+                      {question.grid.columns.map((col, idx) => (
+                        <th key={idx} style={{ border: '1px solid var(--border-color)', padding: '12px', minWidth: '40px' }}>{col}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {question.grid.rows.map((row, rIdx) => (
+                      <tr key={rIdx}>
+                        <th style={{ border: '1px solid var(--border-color)', padding: '12px' }}>{rIdx + 1}</th>
+                        {row.map((cell, cIdx) => (
+                          <td key={cIdx} style={{ border: '1px solid var(--border-color)', padding: '12px', minWidth: '40px', fontWeight: cell === '?' ? 'bold' : 'normal', color: cell === '?' ? 'var(--primary)' : 'inherit' }}>
+                            {cell || ''}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            
+            {question.type === 'figural_sequence' && question.question_image && (
+              <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
+                <img src={question.question_image} alt="Figural Sequence" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }} />
+              </div>
+            )}
+
+            {question.type !== 'figural_sequence' && (
+              <p className="question-text">{question.text || question.question}</p>
+            )}
             <div className="options-container">
               {question.options.map((opt, index) => (
                 <label className="option-label" key={index}>
@@ -32,7 +67,11 @@ const QuestionCard = ({
                     onChange={() => onAnswerChange(index)}
                     disabled={testEnded}
                   />
-                  {opt}
+                  {question.type === 'figural_sequence' && typeof opt === 'object' && opt.image ? (
+                     <img src={opt.image} alt={`Option`} style={{ maxWidth: '150px', maxHeight: '100px', marginLeft: '12px', borderRadius: '4px' }} />
+                  ) : (
+                     <span style={{ marginLeft: '12px' }}>{typeof opt === 'object' ? opt.id : opt}</span>
+                  )}
                 </label>
               ))}
             </div>

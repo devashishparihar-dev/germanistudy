@@ -4,7 +4,6 @@ import TopNav from './components/TopNav';
 import WhatsAppWidget from './components/WhatsAppWidget';
 import Home from './views/Home';
 import Dashboard from './views/Dashboard';
-import TopicPractice from './views/TopicPractice';
 import Library from './views/Library';
 import Analytics from './views/Analytics';
 import AdminPanel from './views/AdminPanel';
@@ -22,7 +21,7 @@ import UnauthPreview from './views/UnauthPreview';
 import PricingCards from './components/PricingCards';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import TermsOfService from './views/TermsOfService';
-const publicViews = ['Home', 'Auth', 'Practice', 'Library', 'Blogs', 'BlogPost', 'digital-core-test', 'digital-subject-test', 'DigitalSimulator', 'UnauthPreview', 'Pricing', 'PrivacyPolicy', 'TermsOfService'];
+const publicViews = ['Home', 'Auth', 'Library', 'Blogs', 'BlogPost', 'digital-core-test', 'digital-subject-test', 'DigitalSimulator', 'UnauthPreview', 'Pricing', 'PrivacyPolicy', 'TermsOfService'];
 
 function App() {
   const getInitialView = () => {
@@ -147,8 +146,6 @@ function App() {
         return <DigitalCoreTest setCurrentView={setCurrentView} />;
       case 'digital-subject-test':
         return <DigitalSubjectTest setCurrentView={setCurrentView} />;
-      case 'Practice':
-        return <TopicPractice setCurrentView={setCurrentView} />;
       case 'Library':
         return <Library setCurrentView={setCurrentView} />;
       case 'Profile':
@@ -172,7 +169,7 @@ function App() {
           const blogId = currentView.split(':')[1];
           return <BlogPost setCurrentView={setCurrentView} blogId={blogId} />;
         }
-        return <Home setCurrentView={setCurrentView} />;
+        return <NotFound setCurrentView={setCurrentView} />;
     }
   };
 
@@ -182,7 +179,7 @@ function App() {
 
   return (
     <div className="platform-container">
-      {(['Home', 'admin-panel', 'Blogs', 'Pricing'].includes(currentView) || currentView.startsWith('BlogPost:')) && (
+      {(['Home', 'Blogs', 'Pricing'].includes(currentView) || currentView.startsWith('BlogPost:')) && (
         <TopNav 
           currentView={currentView} 
           setCurrentView={setCurrentView} 
@@ -195,7 +192,7 @@ function App() {
       {(['Home', 'Blogs', 'Pricing'].includes(currentView) || currentView.startsWith('BlogPost:')) && (
         <WhatsAppWidget />
       )}
-      <div className={`platform-content ${!(['Home', 'admin-panel', 'Blogs', 'Pricing'].includes(currentView) || currentView.startsWith('BlogPost:')) ? 'simulator-active' : ''}`}>
+      <div className={`platform-content ${!(['Home', 'Blogs', 'Pricing'].includes(currentView) || currentView.startsWith('BlogPost:')) ? 'simulator-active' : ''}`}>
         {renderView()}
       </div>
     </div>

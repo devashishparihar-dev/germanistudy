@@ -81,20 +81,20 @@ const AdminBlogs = () => {
 
   if (isEditing) {
     return (
-      <div style={{ fontFamily: 'var(--font-body)', color: 'var(--ink)' }}>
+      <div style={{ fontFamily: 'var(--font-body)', color: 'var(--text)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', color: 'var(--ink)' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', color: 'var(--text)' }}>
             {currentBlog.id ? 'Edit Blog Post' : 'Create New Blog Post'}
           </h2>
           <button 
             onClick={() => setIsEditing(false)}
-            style={{ background: 'transparent', border: '1px solid var(--ink)', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+            style={{ background: 'transparent', border: '1px solid var(--text)', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
           >
             Cancel
           </button>
         </div>
 
-        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: 'var(--paper)', padding: '24px', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)' }}>
+        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: 'var(--background)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>Title</label>
             <input 
@@ -102,7 +102,7 @@ const AdminBlogs = () => {
               value={currentBlog.title || ''} 
               onChange={e => setCurrentBlog({...currentBlog, title: e.target.value})}
               required
-              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)' }}
+              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)' }}
             />
           </div>
 
@@ -114,7 +114,7 @@ const AdminBlogs = () => {
                 value={currentBlog.category || ''} 
                 onChange={e => setCurrentBlog({...currentBlog, category: e.target.value})}
                 required
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)' }}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)' }}
               />
             </div>
             <div>
@@ -124,7 +124,7 @@ const AdminBlogs = () => {
                 value={currentBlog.readTime || ''} 
                 onChange={e => setCurrentBlog({...currentBlog, readTime: e.target.value})}
                 placeholder="e.g. 5 min read"
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)' }}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)' }}
               />
             </div>
           </div>
@@ -135,7 +135,7 @@ const AdminBlogs = () => {
               type="text"
               value={currentBlog.thumbnail || ''} 
               onChange={e => setCurrentBlog({...currentBlog, thumbnail: e.target.value})}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)' }}
+              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)' }}
             />
           </div>
 
@@ -146,7 +146,7 @@ const AdminBlogs = () => {
               onChange={e => setCurrentBlog({...currentBlog, excerpt: e.target.value})}
               required
               rows={3}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-body)', resize: 'vertical' }}
+              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-body)', resize: 'vertical' }}
             />
           </div>
 
@@ -157,7 +157,7 @@ const AdminBlogs = () => {
               onChange={e => setCurrentBlog({...currentBlog, content: e.target.value})}
               required
               rows={12}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'var(--paper)', fontFamily: 'var(--font-mono)', resize: 'vertical' }}
+              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', fontFamily: 'var(--font-mono)', resize: 'vertical' }}
             />
           </div>
 
@@ -166,8 +166,8 @@ const AdminBlogs = () => {
               type="submit"
               disabled={saving}
               style={{ 
-                background: 'var(--marigold)', 
-                color: 'var(--ink)', 
+                background: 'var(--primary)', 
+                color: 'var(--text)', 
                 border: 'none', 
                 padding: '12px 32px', 
                 borderRadius: '8px', 
@@ -185,17 +185,17 @@ const AdminBlogs = () => {
   }
 
   return (
-    <div style={{ fontFamily: 'var(--font-body)', color: 'var(--ink)' }}>
+    <div style={{ fontFamily: 'var(--font-body)', color: 'var(--text)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', color: 'var(--ink)', marginBottom: '8px' }}>Blog Posts</h1>
-          <p style={{ color: 'var(--ink-muted)' }}>Manage blog posts and articles.</p>
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', color: 'var(--text)', marginBottom: '8px' }}>Blog Posts</h1>
+          <p style={{ color: 'var(--text-muted)' }}>Manage blog posts and articles.</p>
         </div>
         <button 
           onClick={handleCreate}
           style={{ 
             display: 'flex', alignItems: 'center', gap: '8px',
-            background: 'var(--sky)', color: '#fff', border: 'none', 
+            background: 'var(--accent)', color: '#fff', border: 'none', 
             padding: '12px 24px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer',
             transition: 'transform 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
           }}
@@ -208,21 +208,21 @@ const AdminBlogs = () => {
 
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '64px' }}>
-          <Loader2 size={32} className="spin" color="var(--sky)" />
+          <Loader2 size={32} className="spin" color="var(--accent)" />
         </div>
       ) : blogs.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '64px', background: 'var(--paper)', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)' }}>
-          <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>No blog posts found.</p>
+        <div style={{ textAlign: 'center', padding: '64px', background: 'var(--background)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>No blog posts found.</p>
         </div>
       ) : (
-        <div style={{ background: 'var(--paper)', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--background)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead style={{ background: 'rgba(43, 36, 56, 0.03)', borderBottom: '1px solid rgba(43, 36, 56, 0.1)' }}>
+            <thead style={{ background: 'rgba(43, 36, 56, 0.03)', borderBottom: '1px solid var(--border)' }}>
               <tr>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Title</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Category</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Date</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Actions</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Title</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Category</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Date</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -231,16 +231,16 @@ const AdminBlogs = () => {
                   <td style={{ padding: '16px 24px', fontSize: '0.95rem', fontWeight: 500 }}>
                     {b.title}
                   </td>
-                  <td style={{ padding: '16px 24px', fontSize: '0.95rem', color: 'var(--ink-muted)' }}>
+                  <td style={{ padding: '16px 24px', fontSize: '0.95rem', color: 'var(--text-muted)' }}>
                     {b.category}
                   </td>
-                  <td style={{ padding: '16px 24px', fontSize: '0.95rem', color: 'var(--ink-muted)' }}>
+                  <td style={{ padding: '16px 24px', fontSize: '0.95rem', color: 'var(--text-muted)' }}>
                     {b.created_at ? new Date(b.created_at).toLocaleDateString() : 'Draft'}
                   </td>
                   <td style={{ padding: '16px 24px', display: 'flex', gap: '12px' }}>
                     <button 
                       onClick={() => handleEdit(b)}
-                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--sky)', display: 'flex', alignItems: 'center' }}
+                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--accent)', display: 'flex', alignItems: 'center' }}
                       title="Edit"
                     >
                       <Edit2 size={18} />

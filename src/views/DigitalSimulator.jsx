@@ -51,20 +51,42 @@ const DigitalSimulator = ({ setCurrentView }) => {
   const [error, setError] = useState(null);
   const [serverResults, setServerResults] = useState(null);
 
+  const getSessionState = (key, defaultValue) => {
+    try {
+      const stored = sessionStorage.getItem(`simulator_${key}`);
+      return stored ? JSON.parse(stored) : defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  };
+
   // Global Test State
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [examStage, setExamStage] = useState('rules'); // 'rules', 'instruction', 'subtest', 'break', 'calculating', 'results'
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(() => getSessionState('currentSectionIndex', 0));
+  const [examStage, setExamStage] = useState(() => getSessionState('examStage', 'rules')); // 'rules', 'instruction', 'subtest', 'break', 'calculating', 'results'
   const [breakTimeLeft, setBreakTimeLeft] = useState(0);
   
   // These represent the answers and flags for each section
-  const [globalAnswers, setGlobalAnswers] = useState([]);
-  const [flaggedQuestions, setFlaggedQuestions] = useState([]);
+  const [globalAnswers, setGlobalAnswers] = useState(() => getSessionState('globalAnswers', []));
+  const [flaggedQuestions, setFlaggedQuestions] = useState(() => getSessionState('flaggedQuestions', []));
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [unverifiableSession, setUnverifiableSession] = useState(false);
 
   // Current Section State
-  const [currentQIndex, setCurrentQIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [currentQIndex, setCurrentQIndex] = useState(() => getSessionState('currentQIndex', 0));
+  const [timeLeft, setTimeLeft] = useState(() => getSessionState('timeLeft', 0));
+
+  useEffect(() => {
+    if (examStage === 'results' || examStage === 'calculating') {
+      ['currentSectionIndex', 'examStage', 'globalAnswers', 'flaggedQuestions', 'currentQIndex', 'timeLeft'].forEach(k => sessionStorage.removeItem(`simulator_${k}`));
+    } else {
+      sessionStorage.setItem('simulator_currentSectionIndex', JSON.stringify(currentSectionIndex));
+      sessionStorage.setItem('simulator_examStage', JSON.stringify(examStage));
+      sessionStorage.setItem('simulator_globalAnswers', JSON.stringify(globalAnswers));
+      sessionStorage.setItem('simulator_flaggedQuestions', JSON.stringify(flaggedQuestions));
+      sessionStorage.setItem('simulator_currentQIndex', JSON.stringify(currentQIndex));
+      sessionStorage.setItem('simulator_timeLeft', JSON.stringify(timeLeft));
+    }
+  }, [currentSectionIndex, examStage, globalAnswers, flaggedQuestions, currentQIndex, timeLeft]);
 
   // Simulated Freemium State
   const [isPremium, setIsPremium] = useState(false); // Can be tied to Auth/Supabase later
@@ -146,7 +168,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
                 const qIds = mappings.map(m => m.question_id);
                 const { data: questions, error: qError } = await supabase
                   .from('core_test_questions')
-                  .select('id, question, options, section, difficulty, explanation, type:question_type, image_url')
+                  .select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image')
                   .in('id', qIds);
                   
                 if (qError) {
@@ -169,17 +191,22 @@ const DigitalSimulator = ({ setCurrentView }) => {
 
           // If duration is provided in the DB, use it (divided by 3 sections). 
           // However, if it's a short mock (<= 15 questions), enforce 20 mins total. Otherwise 75 mins total (or mockDuration).
-          let durationPerSection = 25 * 60;
-          const displayTotalDuration = rawData.length <= 15 ? 20 : (mockDuration || 75);
-          durationPerSection = Math.floor((displayTotalDuration * 60) / 3);
-          config = CORE_SECTION_CONFIG.map(c => ({...c, duration: durationPerSection}));
-
           let tempGrouped = [[], [], []];
           rawData.forEach(q => {
             const targetSec = mapSectionId(q.section);
-            const sIdx = config.findIndex(sc => sc.id === targetSec);
+            const sIdx = CORE_SECTION_CONFIG.findIndex(sc => sc.id === targetSec);
             if(sIdx !== -1) tempGrouped[sIdx].push(q);
           });
+          
+          let activeSectionsCount = 0;
+          tempGrouped.forEach(group => {
+             if (group.length > 0) activeSectionsCount++;
+          });
+          
+          const displayTotalDuration = rawData.length <= 15 ? 20 : (mockDuration || 75);
+          let durationPerSection = Math.floor((displayTotalDuration * 60) / Math.max(1, activeSectionsCount));
+          
+          config = CORE_SECTION_CONFIG.map(c => ({...c, duration: durationPerSection}));
           
           const finalConfig = [];
           grouped = [];
@@ -224,7 +251,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
 
             const { data: coreQuestions } = await supabase
               .from('core_test_questions')
-              .select('id, question, options, section, difficulty, explanation, type:question_type, image_url')
+              .select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image')
               .or(`section.eq.${selectedCoreModule},section.eq.${querySection}`);
               
             if (coreQuestions && coreQuestions.length > 0) {
@@ -246,7 +273,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
           
           let rawData = [];
           try {
-            const { data: coreQuestions } = await supabase.from('core_test_questions').select('id, question, options, section, difficulty, explanation, type:question_type, image_url');
+            const { data: coreQuestions } = await supabase.from('core_test_questions').select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image');
             if (coreQuestions && coreQuestions.length > 0) {
                rawData = coreQuestions;
             } else {
@@ -361,8 +388,13 @@ const DigitalSimulator = ({ setCurrentView }) => {
         if (loadedState) {
            setGlobalAnswers(loadedState.globalAnswers || grouped.map(sec => new Array(sec.length).fill(null)));
            setFlaggedQuestions(loadedState.flaggedQuestions || grouped.map(sec => new Array(sec.length).fill(false)));
-           setCurrentSectionIndex(loadedState.currentSectionIndex || 0);
-           setCurrentQIndex(loadedState.currentQIndex || 0);
+           
+           const restoredSecIdx = Math.min(loadedState.currentSectionIndex || 0, Math.max(0, grouped.length - 1));
+           const maxQIdx = grouped[restoredSecIdx] ? Math.max(0, grouped[restoredSecIdx].length - 1) : 0;
+           const restoredQIdx = Math.min(loadedState.currentQIndex || 0, maxQIdx);
+           
+           setCurrentSectionIndex(restoredSecIdx);
+           setCurrentQIndex(restoredQIdx);
            setExamStage(loadedState.examStage || 'rules');
            if (loadedState.timeLeft !== undefined) {
              setTimeLeft(loadedState.timeLeft);
@@ -381,11 +413,11 @@ const DigitalSimulator = ({ setCurrentView }) => {
              }
            }
         } else {
-           setGlobalAnswers(grouped.map(sec => new Array(sec.length).fill(null)));
-           setFlaggedQuestions(grouped.map(sec => new Array(sec.length).fill(false)));
-           setCurrentSectionIndex(0);
-           setCurrentQIndex(0);
-           setExamStage('rules');
+           setGlobalAnswers(prev => prev.length > 0 ? prev : grouped.map(sec => new Array(sec.length).fill(null)));
+           setFlaggedQuestions(prev => prev.length > 0 ? prev : grouped.map(sec => new Array(sec.length).fill(false)));
+           setCurrentSectionIndex(prev => prev !== 0 ? prev : 0);
+           setCurrentQIndex(prev => prev !== 0 ? prev : 0);
+           setExamStage(prev => prev !== 'rules' ? prev : 'rules');
         }
         setLoading(false);
       } catch (err) {
@@ -524,14 +556,20 @@ const DigitalSimulator = ({ setCurrentView }) => {
 
   const handleSectionComplete = () => {
     setExamStage('section_loading');
-    setTimeout(() => {
-      if (currentSectionIndex === activeSectionConfig.length - 1) {
-        finishExam();
-      } else {
-        startNextSection();
-      }
-    }, 400);
   };
+
+  useEffect(() => {
+    if (examStage === 'section_loading' && activeSectionConfig.length > 0) {
+      const timer = setTimeout(() => {
+        if (currentSectionIndex === activeSectionConfig.length - 1) {
+          finishExam();
+        } else {
+          startNextSection();
+        }
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [examStage, currentSectionIndex, activeSectionConfig]);
 
   const finishExam = async (overrideAnswers = null) => {
     setExamStage('calculating');
@@ -540,9 +578,19 @@ const DigitalSimulator = ({ setCurrentView }) => {
     const formattedAnswers = [];
     sectionsData.forEach((sectionQs, sIdx) => {
       sectionQs.forEach((q, qIdx) => {
+        let userAns = finalAnswers[sIdx] ? finalAnswers[sIdx][qIdx] : null;
+        let selected_val = null;
+        if (userAns !== null) {
+          if (q.type === 'input') {
+            selected_val = userAns;
+          } else {
+            const opt = q.options[userAns];
+            selected_val = typeof opt === 'object' && opt !== null ? opt.id : opt;
+          }
+        }
         formattedAnswers.push({
           question_id: q.id,
-          selected_answer: finalAnswers[sIdx] ? finalAnswers[sIdx][qIdx] : null
+          selected_answer: selected_val
         });
       });
     });
@@ -593,9 +641,69 @@ const DigitalSimulator = ({ setCurrentView }) => {
         localStorage.removeItem('last_exam_tab_switches');
       }
     } catch(err) {
-      console.error("Failed to submit test:", err);
-      alert("Failed to submit test results. Please try again.");
-      setExamStage('subtest');
+      console.warn("Failed to submit test to server, falling back to local grading:", err);
+      
+      // Local fallback grading
+      let totalScore = 0;
+      const sectionStats = {};
+      const questionResults = [];
+
+      sectionsData.forEach((sectionQs, sIdx) => {
+        sectionQs.forEach((q, qIdx) => {
+           const sec = q.section || 'unknown';
+           if (!sectionStats[sec]) sectionStats[sec] = { correct: 0, total: 0 };
+           sectionStats[sec].total += 1;
+
+           const userAns = finalAnswers[sIdx] ? finalAnswers[sIdx][qIdx] : null;
+           let isCorrect = false;
+           let expectedAns = q.correct_answer;
+           let selected_val = null;
+
+           if (userAns !== null && userAns !== undefined && userAns !== '') {
+             if (q.type === 'input') {
+               selected_val = userAns;
+               isCorrect = String(userAns).trim().toLowerCase() === String(expectedAns).trim().toLowerCase();
+             } else {
+               const opt = q.options ? q.options[userAns] : null;
+               selected_val = typeof opt === 'object' && opt !== null ? opt.id : opt;
+               isCorrect = String(selected_val) === String(expectedAns);
+             }
+           }
+
+           if (isCorrect) {
+             totalScore++;
+             sectionStats[sec].correct += 1;
+           }
+
+           questionResults.push({
+             question_id: q.id,
+             selected_answer: selected_val,
+             correct_answer: expectedAns,
+             is_correct: isCorrect,
+             explanation: q.explanation || null
+           });
+        });
+      });
+
+      const sectionBreakdown = Object.keys(sectionStats).map(sec => ({
+        section: sec,
+        correct: sectionStats[sec].correct,
+        total: sectionStats[sec].total
+      }));
+
+      setServerResults({
+        score: totalScore,
+        section_breakdown: sectionBreakdown,
+        question_results: questionResults
+      });
+      
+      // Still clear session if possible
+      try {
+        const moduleId = localStorage.getItem('selectedDigitalModule') || localStorage.getItem('selectedDigitalSubjectModule') || 'core';
+        await supabase.rpc('delete_active_session', { p_module_id: moduleId });
+      } catch (e) {}
+
+      setExamStage('results');
     }
   };
 
@@ -871,21 +979,9 @@ const DigitalSimulator = ({ setCurrentView }) => {
               <div className="premium-card" style={{ padding: '48px', background: 'var(--surface)' }}>
                 <h3 style={{ fontSize: '1.75rem', marginBottom: '24px', color: 'var(--ink-primary)', display: 'flex', alignItems: 'center', gap: '12px' }}>
                   Item-by-Item Review
-                  {!isPremium && <Lock size={20} style={{ color: 'var(--ink-muted)' }} />}
                 </h3>
                 
-                {!isPremium ? (
-                  <div style={{ textAlign: 'center', padding: '48px 24px', background: 'var(--bg-base)', borderRadius: '12px', border: '1px solid var(--border-hairline)' }}>
-                    <Lock size={48} style={{ color: 'var(--ink-muted)', margin: '0 auto 16px' }} />
-                    <h4 style={{ fontSize: '1.25rem', marginBottom: '12px', color: 'var(--ink-primary)' }}>Premium Feature</h4>
-                    <p style={{ color: 'var(--ink-muted)', marginBottom: '24px', maxWidth: '400px', margin: '0 auto 24px' }}>
-                      Upgrade to unlock comprehensive explanations and review every question to understand your mistakes.
-                    </p>
-                    <button className="btn-primary" onClick={() => alert('Redirect to upgrade/subscription page')}>
-                      Upgrade to Premium
-                    </button>
-                  </div>
-                ) : (
+
                   <div>
                      <div style={{ display: 'flex', gap: '12px', marginBottom: '32px', overflowX: 'auto', paddingBottom: '12px' }}>
                         {activeSectionConfig.map((sec, idx) => (
@@ -906,10 +1002,15 @@ const DigitalSimulator = ({ setCurrentView }) => {
                         {sectionsData[reviewModeSection].map((q, idx) => {
                            const userAns = globalAnswers[reviewModeSection][idx];
                            let isCorrect = false;
+                           const safeUserAns = userAns !== null && userAns !== undefined ? String(userAns) : null;
+                           const safeCorrectAns = q.correct_answer !== null && q.correct_answer !== undefined ? String(q.correct_answer) : '';
+                           
                            if (q.type === 'input') {
-                             isCorrect = userAns && userAns.trim().toLowerCase() === q.correct_answer.trim().toLowerCase();
+                             isCorrect = safeUserAns && safeUserAns.trim().toLowerCase() === safeCorrectAns.trim().toLowerCase();
                            } else {
-                             isCorrect = userAns !== null && q.options[userAns] === q.correct_answer;
+                             const selectedOpt = (q.options && userAns !== null) ? q.options[userAns] : null;
+                             const selectedVal = typeof selectedOpt === 'object' && selectedOpt !== null ? selectedOpt.id : selectedOpt;
+                             isCorrect = userAns !== null && String(selectedVal) === safeCorrectAns;
                            }
 
                            return (
@@ -920,10 +1021,38 @@ const DigitalSimulator = ({ setCurrentView }) => {
                                    {isCorrect ? 'Correct' : 'Incorrect'}
                                  </span>
                                </div>
+                               {q.grid && (
+                                 <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
+                                   <table style={{ borderCollapse: 'collapse', textAlign: 'center', fontSize: '1rem', color: 'var(--ink-primary)', border: '1px solid var(--border-hairline)' }}>
+                                     <thead>
+                                       <tr>
+                                         <th style={{ border: '1px solid var(--border-hairline)', padding: '8px', background: 'var(--surface)' }}></th>
+                                         {q.grid.columns ? q.grid.columns.map((col, idx) => (
+                                           <th key={idx} style={{ border: '1px solid var(--border-hairline)', padding: '8px', minWidth: '32px', background: 'var(--surface)' }}>{col}</th>
+                                         )) : Array.from({ length: q.grid.cols || 0 }).map((_, idx) => (
+                                           <th key={idx} style={{ border: '1px solid var(--border-hairline)', padding: '8px', minWidth: '32px', background: 'var(--surface)' }}></th>
+                                         ))}
+                                       </tr>
+                                     </thead>
+                                     <tbody>
+                                       {(Array.isArray(q.grid.cells) ? q.grid.cells : Array.isArray(q.grid.rows) ? q.grid.rows : []).map((row, rIdx) => (
+                                         <tr key={rIdx}>
+                                           <th style={{ border: '1px solid var(--border-hairline)', padding: '8px', background: 'var(--surface)' }}>{rIdx + 1}</th>
+                                           {Array.isArray(row) ? row.map((cell, cIdx) => (
+                                             <td key={cIdx} style={{ border: '1px solid var(--border-hairline)', padding: '8px', minWidth: '32px', fontWeight: cell === '?' ? 'bold' : 'normal', color: cell === '?' ? 'var(--accent-primary)' : 'inherit' }}>
+                                               {cell || ''}
+                                             </td>
+                                           )) : null}
+                                         </tr>
+                                       ))}
+                                     </tbody>
+                                   </table>
+                                 </div>
+                               )}
                                <div style={{ whiteSpace: 'pre-wrap', color: 'var(--ink-primary)', marginBottom: '16px' }}>{q.question}</div>
                                <div style={{ background: 'var(--surface)', padding: '16px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.95rem' }}>
-                                 <div><strong>Your Answer:</strong> {q.type === 'input' ? (userAns || 'None') : (userAns !== null ? q.options[userAns] : 'None')}</div>
-                                 <div style={{ marginTop: '8px' }}><strong>Correct Answer:</strong> {q.correct_answer}</div>
+                                 <div><strong>Your Answer:</strong> {q.type === 'input' ? (userAns !== null && userAns !== undefined ? String(userAns) : 'None') : (userAns !== null && q.options ? (typeof q.options[userAns] === 'object' && q.options[userAns] !== null ? q.options[userAns].id : q.options[userAns]) : 'None')}</div>
+                                 <div style={{ marginTop: '8px' }}><strong>Correct Answer:</strong> {typeof q.correct_answer === 'object' && q.correct_answer !== null ? q.correct_answer.id : String(q.correct_answer || '')}</div>
                                </div>
                                {q.explanation && (
                                  <div style={{ fontSize: '0.95rem', color: 'var(--ink-muted)' }}>
@@ -935,7 +1064,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
                         })}
                      </div>
                   </div>
-                )}
+
               </div>
             </div>
           </motion.div>
@@ -1008,24 +1137,61 @@ const DigitalSimulator = ({ setCurrentView }) => {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: isTestlet ? 'var(--bg-base)' : 'var(--surface)', overflowY: 'auto' }}>
                   <main style={{ flex: 1, padding: '40px 10%', maxWidth: isTestlet ? '100%' : '800px', margin: '0 auto', width: '100%' }}>
                     
-                    {(() => {
-                      const hasPattern = currentQ.section === 'figure_sequences' && (currentQ.question.includes('Row 1:') || currentQ.question.includes('Sequence:'));
-                      const sectionAnswers = globalAnswers[currentSectionIndex];
+                    {!currentQ ? (
+                      <div style={{ textAlign: 'center', padding: '40px', color: 'var(--ink-muted)' }}>Loading question data...</div>
+                    ) : (() => {
+                      const hasPattern = currentQ.section === 'figure_sequences' && (currentQ.question?.includes('Row 1:') || currentQ.question?.includes('Sequence:'));
+                      const sectionAnswers = globalAnswers[currentSectionIndex] || [];
 
                       return (
                         <motion.div
                           key={currentQIndex} // Animate on question change
                           initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.15 }}
                         >
+                          {currentQ.grid && (
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
+                              <table style={{ borderCollapse: 'collapse', textAlign: 'center', fontSize: '1.2rem', color: 'var(--ink-primary)', border: '2px solid var(--border-hairline)', background: 'var(--bg-base)' }}>
+                                <thead>
+                                  <tr>
+                                    <th style={{ border: '1px solid var(--border-hairline)', padding: '12px', background: 'var(--surface)' }}></th>
+                                    {currentQ.grid.columns ? currentQ.grid.columns.map((col, idx) => (
+                                      <th key={idx} style={{ border: '1px solid var(--border-hairline)', padding: '12px', minWidth: '40px', background: 'var(--surface)' }}>{col}</th>
+                                    )) : Array.from({ length: currentQ.grid.cols || 0 }).map((_, idx) => (
+                                      <th key={idx} style={{ border: '1px solid var(--border-hairline)', padding: '12px', minWidth: '40px', background: 'var(--surface)' }}></th>
+                                    ))}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {(Array.isArray(currentQ.grid.cells) ? currentQ.grid.cells : Array.isArray(currentQ.grid.rows) ? currentQ.grid.rows : []).map((row, rIdx) => (
+                                    <tr key={rIdx}>
+                                      <th style={{ border: '1px solid var(--border-hairline)', padding: '12px', background: 'var(--surface)' }}>{rIdx + 1}</th>
+                                      {Array.isArray(row) ? row.map((cell, cIdx) => (
+                                        <td key={cIdx} style={{ border: '1px solid var(--border-hairline)', padding: '12px', minWidth: '40px', fontWeight: cell === '?' ? 'bold' : 'normal', color: cell === '?' ? 'var(--accent-primary)' : 'inherit' }}>
+                                          {cell || ''}
+                                        </td>
+                                      )) : null}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+
+                          {currentQ.type === 'figural_sequence' && currentQ.question_image && (
+                            <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
+                              <img src={currentQ.question_image} alt="Figural Sequence" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }} />
+                            </div>
+                          )}
+
                           {hasPattern ? (
                             <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'center' }}>
                               <PatternDiagram text={currentQ.question} />
                             </div>
-                          ) : (
+                          ) : currentQ.question && currentQ.type !== 'figural_sequence' ? (
                             <div style={{ fontSize: '1.15rem', whiteSpace: 'pre-wrap', lineHeight: '1.6', marginBottom: '32px', color: 'var(--ink-primary)' }}>
                               {currentQ.question}
                             </div>
-                          )}
+                          ) : null}
 
                           {currentQ.type === 'input' ? (
                             <div style={{ marginBottom: '24px' }}>
@@ -1079,12 +1245,16 @@ const DigitalSimulator = ({ setCurrentView }) => {
                                     }}>
                                       {letter}
                                     </div>
-                                    {hasPattern ? (
+                                    {currentQ.type === 'figural_sequence' && typeof opt === 'object' && opt.image ? (
+                                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <img src={opt.image} alt={`Option ${letter}`} style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '4px' }} />
+                                      </div>
+                                    ) : hasPattern ? (
                                       <div style={{ flex: 1, marginTop: '-8px', marginBottom: '-8px' }}>
-                                        <PatternDiagram text={opt} inline={true} />
+                                        <PatternDiagram text={typeof opt === 'object' ? opt.id : opt} inline={true} />
                                       </div>
                                     ) : (
-                                      <span>{opt}</span>
+                                      <span>{typeof opt === 'object' ? opt.id : opt}</span>
                                     )}
                                   </button>
                                 );
@@ -1125,8 +1295,9 @@ const DigitalSimulator = ({ setCurrentView }) => {
                   <h3 style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--ink-muted)', marginBottom: '12px', letterSpacing: '0.5px' }}>Question Overview</h3>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
                     {sectionsData[currentSectionIndex].map((_, idx) => {
-                      const isAnswered = globalAnswers[currentSectionIndex][idx] !== null && globalAnswers[currentSectionIndex][idx] !== '';
-                      const isFlagged = flaggedQuestions[currentSectionIndex][idx];
+                      const ans = globalAnswers[currentSectionIndex] ? globalAnswers[currentSectionIndex][idx] : null;
+                      const isAnswered = ans !== null && ans !== undefined && ans !== '';
+                      const isFlagged = flaggedQuestions[currentSectionIndex] && flaggedQuestions[currentSectionIndex][idx];
                       const isActive = currentQIndex === idx;
                       
                       let bgColor = 'var(--surface)';
@@ -1173,10 +1344,10 @@ const DigitalSimulator = ({ setCurrentView }) => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <button 
                     onClick={toggleFlag}
-                    style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--bg-base)', border: '1px solid var(--border-hairline)', borderRadius: '6px', color: flaggedQuestions[currentSectionIndex][currentQIndex] ? 'var(--accent-flag)' : 'var(--ink-primary)', cursor: 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
+                    style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--bg-base)', border: '1px solid var(--border-hairline)', borderRadius: '6px', color: (flaggedQuestions[currentSectionIndex] && flaggedQuestions[currentSectionIndex][currentQIndex]) ? 'var(--accent-flag)' : 'var(--ink-primary)', cursor: 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
                   >
-                    <Flag size={18} fill={flaggedQuestions[currentSectionIndex][currentQIndex] ? "currentColor" : "none"} /> 
-                    {flaggedQuestions[currentSectionIndex][currentQIndex] ? 'Remove Flag' : 'Flag for Review'}
+                    <Flag size={18} fill={(flaggedQuestions[currentSectionIndex] && flaggedQuestions[currentSectionIndex][currentQIndex]) ? "currentColor" : "none"} /> 
+                    {(flaggedQuestions[currentSectionIndex] && flaggedQuestions[currentSectionIndex][currentQIndex]) ? 'Remove Flag' : 'Flag for Review'}
                   </button>
                   
                   <button 
@@ -1207,7 +1378,8 @@ const DigitalSimulator = ({ setCurrentView }) => {
                     </p>
 
                     {(() => {
-                      const unansweredCount = sectionsData[currentSectionIndex].length - globalAnswers[currentSectionIndex].filter(a => a !== null && a !== '').length;
+                      const currentAnswers = globalAnswers[currentSectionIndex] || [];
+                      const unansweredCount = (sectionsData[currentSectionIndex] ? sectionsData[currentSectionIndex].length : 0) - currentAnswers.filter(a => a !== null && a !== '').length;
                       if (unansweredCount > 0) {
                         return (
                           <div style={{ padding: '16px', background: 'rgba(184, 134, 43, 0.1)', borderLeft: '4px solid var(--accent-flag)', color: 'var(--ink-primary)', marginBottom: '32px', borderRadius: '0 4px 4px 0' }}>

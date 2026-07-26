@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Star, Zap, Globe, Shield, RefreshCw } from 'lucide-react';
 import { PRICING } from '../config/pricing';
 
 const PricingCards = ({ setCurrentView }) => {
-  const [currency, setCurrency] = useState('inr'); // 'inr' or 'eur'
+  const [currency, setCurrency] = useState('eur'); // Default to eur, update via IP
   const currentPricing = PRICING[currency];
 
-  const toggleCurrency = () => {
-    setCurrency(prev => prev === 'inr' ? 'eur' : 'inr');
-  };
+  useEffect(() => {
+    fetch('https://api.country.is')
+      .then(res => res.json())
+      .then(data => {
+        if (data.country === 'IN') {
+          setCurrency('inr');
+        } else {
+          setCurrency('eur');
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching country:', err);
+      });
+  }, []);
 
   const handleSignup = () => {
     // Navigate to Auth (signup view is handled by Auth component logic, typically defaulting to login/signup toggle)
@@ -45,49 +56,7 @@ const PricingCards = ({ setCurrentView }) => {
             Start practicing for the TestAS immediately. Choose the plan that fits your study timeline.
           </p>
 
-          {/* Currency Toggle */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
-            <div style={{ display: 'inline-flex', background: 'var(--surface)', padding: '6px', borderRadius: '32px', border: '1px solid var(--border)', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
-              <button 
-                onClick={() => setCurrency('inr')}
-                style={{
-                  padding: '10px 24px',
-                  borderRadius: '24px',
-                  border: 'none',
-                  background: currency === 'inr' ? 'var(--primary)' : 'transparent',
-                  color: currency === 'inr' ? 'white' : 'var(--text-muted)',
-                  fontWeight: 600,
-                  fontSize: '0.95rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                ₹ INR
-              </button>
-              <button 
-                onClick={() => setCurrency('eur')}
-                style={{
-                  padding: '10px 24px',
-                  borderRadius: '24px',
-                  border: 'none',
-                  background: currency === 'eur' ? 'var(--primary)' : 'transparent',
-                  color: currency === 'eur' ? 'white' : 'var(--text-muted)',
-                  fontWeight: 600,
-                  fontSize: '0.95rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                € EUR
-              </button>
-            </div>
-          </div>
+          {/* Currency dynamically set based on IP */}
         </div>
 
         {/* Pricing Cards Grid */}

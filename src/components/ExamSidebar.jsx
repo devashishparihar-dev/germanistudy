@@ -29,7 +29,6 @@ const ExamSidebar = ({ setCurrentView }) => {
     { label: 'Dashboard', icon: <LayoutDashboard size={20} />, view: 'Dashboard' },
     { label: 'Core Module', icon: <Target size={20} />, view: 'digital-core-test' },
     { label: 'Subject Module', icon: <Layers size={20} />, view: 'digital-subject-test' },
-    { label: 'Practice', icon: <BookOpen size={20} />, view: 'Practice' },
     { label: 'Library', icon: <FolderOpen size={20} />, view: 'Library' },
     { label: 'Analytics', icon: <BarChart3 size={20} />, view: 'Analytics' },
     { label: 'History', icon: <History size={20} />, view: 'History' },

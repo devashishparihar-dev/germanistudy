@@ -43,32 +43,32 @@ const AdminResults = () => {
   };
 
   return (
-    <div style={{ fontFamily: 'var(--font-body)', color: 'var(--ink)' }}>
+    <div style={{ fontFamily: 'var(--font-body)', color: 'var(--text)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', color: 'var(--ink)', marginBottom: '8px' }}>Mock Test Results</h1>
-          <p style={{ color: 'var(--ink-muted)' }}>View analytics and scores from user mock tests.</p>
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', color: 'var(--text)', marginBottom: '8px' }}>Mock Test Results</h1>
+          <p style={{ color: 'var(--text-muted)' }}>View analytics and scores from user mock tests.</p>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', background: 'var(--paper)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)' }}>
+      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', background: 'var(--background)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-          <Search size={18} color="var(--ink-muted)" />
+          <Search size={18} color="var(--text-muted)" />
           <input 
             type="text"
             placeholder="Search by User ID..."
             value={searchUser}
             onChange={e => setSearchUser(e.target.value)}
-            style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'transparent', fontFamily: 'var(--font-body)', fontSize: '0.9rem' }}
+            style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', fontFamily: 'var(--font-body)', fontSize: '0.9rem' }}
           />
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Filter size={18} color="var(--ink-muted)" />
+          <Filter size={18} color="var(--text-muted)" />
           <select 
             value={filterScore} 
             onChange={e => setFilterScore(e.target.value)}
-            style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(43, 36, 56, 0.2)', background: 'transparent', fontFamily: 'var(--font-body)', fontSize: '0.9rem' }}
+            style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', fontFamily: 'var(--font-body)', fontSize: '0.9rem' }}
           >
             <option value="All">All Scores</option>
             <option value="15+">Score 15+</option>
@@ -80,32 +80,32 @@ const AdminResults = () => {
 
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '64px' }}>
-          <Loader2 size={32} className="spin" color="var(--sky)" />
+          <Loader2 size={32} className="spin" color="var(--accent)" />
         </div>
       ) : results.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '64px', background: 'var(--paper)', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)' }}>
-          <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>No results found.</p>
+        <div style={{ textAlign: 'center', padding: '64px', background: 'var(--background)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>No results found.</p>
         </div>
       ) : (
-        <div style={{ background: 'var(--paper)', borderRadius: '12px', border: '1px solid rgba(43, 36, 56, 0.1)', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--background)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead style={{ background: 'rgba(43, 36, 56, 0.03)', borderBottom: '1px solid rgba(43, 36, 56, 0.1)' }}>
+            <thead style={{ background: 'rgba(43, 36, 56, 0.03)', borderBottom: '1px solid var(--border)' }}>
               <tr>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Date</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>User ID</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Test Module</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Score</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--ink-muted)' }}>Completion</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Date</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>User</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Test Module</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Score</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Completion</th>
               </tr>
             </thead>
             <tbody>
               {results.map((r, idx) => (
                 <tr key={r.id || idx} style={{ borderBottom: '1px solid rgba(43, 36, 56, 0.05)' }}>
-                  <td style={{ padding: '16px 24px', fontSize: '0.95rem', color: 'var(--ink-muted)' }}>
+                  <td style={{ padding: '16px 24px', fontSize: '0.95rem', color: 'var(--text-muted)' }}>
                     {new Date(r.created_at).toLocaleDateString()} {new Date(r.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                   </td>
-                  <td style={{ padding: '16px 24px', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--sky)' }}>
-                    {r.user_id.slice(0, 8)}...
+                  <td style={{ padding: '16px 24px', fontWeight: 500, fontSize: '0.95rem', color: 'var(--text)' }}>
+                    {r.profiles?.full_name || r.profiles?.email || (r.user_id.slice(0, 8) + '...')}
                   </td>
                   <td style={{ padding: '16px 24px', fontSize: '0.95rem', fontWeight: 500 }}>
                     {r.mock_tests?.test_name || r.mock_test_id.slice(0, 8)}

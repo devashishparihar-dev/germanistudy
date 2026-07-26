@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PlayCircle, Target, BookOpen, AlertCircle, Award, History, ChevronRight, BarChart3, Sun, Moon, ArrowRight } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
+import { supabase } from '../supabaseClient';
 
 const SUBTEST_MAP = {
   'figure_sequences': 'Completing Patterns',
@@ -57,11 +58,50 @@ const SubtestProgress = ({ title, percentage, notAttempted, delay }) => (
 
 const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
   const [pastTests, setPastTests] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
   const studentName = session?.user?.user_metadata?.full_name || 'Student';
 
   useEffect(() => {
-    const history = JSON.parse(localStorage.getItem('mockTestHistory') || '[]');
-    setPastTests(history);
+    const fetchDashboardData = async () => {
+      const studyHistory = JSON.parse(localStorage.getItem('studyActivity') || '[]');
+
+      let mockHistory = [];
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: results } = await supabase
+          .from('mock_test_results')
+          .select('*, mock_tests(title, section, total_questions)')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (results) {
+           mockHistory = results.map(r => {
+             const totalQ = r.mock_tests?.total_questions || 1;
+             return {
+               id: r.id,
+               type: 'mock',
+               examName: r.mock_tests?.title || 'Mock Test',
+               date: new Date(r.created_at).toLocaleDateString(),
+               timestamp: new Date(r.created_at).getTime(),
+               score: r.score,
+               total: totalQ,
+               accuracy: Math.round((r.score / totalQ) * 100),
+               section: r.mock_tests?.section
+             };
+           });
+        }
+      } else {
+        const history = JSON.parse(localStorage.getItem('mockTestHistory') || '[]');
+        mockHistory = history.map(h => ({ ...h, type: 'mock', timestamp: new Date(h.date).getTime() }));
+      }
+      
+      setPastTests(mockHistory);
+      
+      const combined = [...studyHistory, ...mockHistory].sort((a, b) => b.timestamp - a.timestamp);
+      setRecentActivity(combined.slice(0, 3));
+    };
+    
+    fetchDashboardData();
   }, []);
 
   const totalMocks = pastTests.length;
@@ -96,6 +136,10 @@ const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
           subtestStats['latin_squares'].total += latin.total;
           subtestStats['latin_squares'].attempts += 1;
         }
+      } else if (test.section && subtestStats[test.section]) {
+        subtestStats[test.section].score += test.score;
+        subtestStats[test.section].total += test.total || 20;
+        subtestStats[test.section].attempts += 1;
       }
     });
 
@@ -153,8 +197,6 @@ const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
       }
     }
   };
-
-  const recentActivity = pastTests.slice(0, 3);
 
   return (
     <div className="view-container" style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
@@ -277,16 +319,6 @@ const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
                   <Target size={32} color="var(--primary)" />
                   <span style={{ fontWeight: 600, color: 'var(--text)' }}>Core Mock</span>
                 </button>
-                <button 
-                  className="premium-card" 
-                  onClick={() => setCurrentView('Practice')}
-                  style={{ flex: 1, padding: '20px', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', cursor: 'pointer', transition: 'all 0.2s' }}
-                  onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
-                >
-                  <BookOpen size={32} color="var(--primary)" />
-                  <span style={{ fontWeight: 600, color: 'var(--text)' }}>Topic Practice</span>
-                </button>
               </motion.div>
 
               {/* Recent Activity */}
@@ -312,13 +344,15 @@ const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
                     {recentActivity.map((activity, idx) => (
                       <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingBottom: '16px', borderBottom: idx < recentActivity.length - 1 ? '1px solid var(--border)' : 'none' }}>
                         <div style={{ padding: '10px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '10px', color: 'var(--text-muted)' }}>
-                          <Award size={20} />
+                          {activity.type === 'note' ? <BookOpen size={20} /> : <Award size={20} />}
                         </div>
                         <div style={{ flex: 1 }}>
                           <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text)', marginBottom: '4px' }}>{activity.examName}</h4>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{activity.date}</span>
-                            <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--primary)' }}>{activity.accuracy}%</span>
+                            <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--primary)' }}>
+                              {activity.type === 'note' ? 'Read' : `${activity.accuracy}%`}
+                            </span>
                           </div>
                         </div>
                       </div>

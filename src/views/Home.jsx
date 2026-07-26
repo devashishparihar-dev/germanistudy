@@ -69,7 +69,6 @@ const Home = ({ setCurrentView }) => {
     { question: "Do I need German language skills?", answer: "While many Master's programs are offered in English, having basic German language skills can significantly enhance your daily life and career prospects." },
     { question: "What is TestAS and do I need it?", answer: "TestAS is a central standardized scholastic aptitude test for foreign students. Many German universities use it to assess cognitive skills, and a good score can significantly improve your chances of admission." },
     { question: "How can I prepare for the TestAS?", answer: "We offer specialized simulation tests and practice materials tailored to both the core test and subject-specific modules of the TestAS to help you achieve a top percentile score." },
-    { question: "How do I apply for a student visa?", answer: "We provide detailed guides and resources to help you independently navigate the APS Certification, Blocked Account setup, and the student visa application process." },
     { question: "Are public universities in Germany really free?", answer: "Yes, most public universities in Germany do not charge tuition fees for international students, only a small semester contribution." }
   ];
 
