@@ -10,6 +10,7 @@ import { freeMockTestQuestions } from '../data/freeMockTest';
 import { supabase } from '../supabaseClient';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { trackEvent } from '../utils/analytics';
+import ExamFeedbackFlow from '../components/ExamFeedbackFlow';
 
 const CORE_SECTION_CONFIG = [
   { 
@@ -70,6 +71,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
   const [flaggedQuestions, setFlaggedQuestions] = useState(() => getSessionState('flaggedQuestions', []));
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [unverifiableSession, setUnverifiableSession] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   // Current Section State
   const [currentQIndex, setCurrentQIndex] = useState(() => getSessionState('currentQIndex', 0));
@@ -168,7 +170,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
                 const qIds = mappings.map(m => m.question_id);
                 const { data: questions, error: qError } = await supabase
                   .from('core_test_questions')
-                  .select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image')
+                  .select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image, correct_answer')
                   .in('id', qIds);
                   
                 if (qError) {
@@ -251,7 +253,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
 
             const { data: coreQuestions } = await supabase
               .from('core_test_questions')
-              .select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image')
+              .select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image, correct_answer')
               .or(`section.eq.${selectedCoreModule},section.eq.${querySection}`);
               
             if (coreQuestions && coreQuestions.length > 0) {
@@ -273,7 +275,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
           
           let rawData = [];
           try {
-            const { data: coreQuestions } = await supabase.from('core_test_questions').select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image');
+            const { data: coreQuestions } = await supabase.from('core_test_questions').select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image, correct_answer');
             if (coreQuestions && coreQuestions.length > 0) {
                rawData = coreQuestions;
             } else {
@@ -633,6 +635,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
       });
       
       setExamStage('results');
+      setShowFeedbackModal(true);
       
       // Store tab switch count locally for EndTestScreen if it's decoupled
       if (tabSwitchCount > 0) {
@@ -704,6 +707,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
       } catch (e) {}
 
       setExamStage('results');
+      setShowFeedbackModal(true);
     }
   };
 
@@ -1179,7 +1183,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
 
                           {currentQ.type === 'figural_sequence' && currentQ.question_image && (
                             <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
-                              <img src={currentQ.question_image} alt="Figural Sequence" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }} />
+                              <img src={currentQ.question_image} alt="Figure Sequence" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }} />
                             </div>
                           )}
 
@@ -1411,7 +1415,16 @@ const DigitalSimulator = ({ setCurrentView }) => {
 
           </motion.div>
         )}
+
       </AnimatePresence>
+      {showFeedbackModal && (
+        <ExamFeedbackFlow 
+          examId={localStorage.getItem('selectedDigitalModule') || 'custom_dmat'}
+          examName={activeSectionConfig.length > 1 ? 'dMAT Core Module' : 'dMAT Subject Module'}
+          onClose={() => setShowFeedbackModal(false)}
+          onComplete={() => setShowFeedbackModal(false)}
+        />
+      )}
     </div>
     </ErrorBoundary>
   );

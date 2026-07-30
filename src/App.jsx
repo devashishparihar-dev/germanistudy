@@ -12,6 +12,7 @@ import NotFound from './views/NotFound';
 import Profile from './views/Profile';
 import Settings from './views/Settings';
 import Blogs from './views/Blogs';
+import APSGuide from './views/APSGuide';
 import BlogPost from './views/BlogPost';
 import MockHistory from './views/MockHistory';
 import DigitalCoreTest from './views/DigitalCoreTest';
@@ -21,7 +22,36 @@ import UnauthPreview from './views/UnauthPreview';
 import PricingCards from './components/PricingCards';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import TermsOfService from './views/TermsOfService';
-const publicViews = ['Home', 'Auth', 'Library', 'Blogs', 'BlogPost', 'digital-core-test', 'digital-subject-test', 'DigitalSimulator', 'UnauthPreview', 'Pricing', 'PrivacyPolicy', 'TermsOfService'];
+import DMATHandbook from './views/DMATHandbook';
+
+// Study Materials
+import StudyCoreFigureSequences from './views/study/StudyCoreFigureSequences';
+import StudyCoreMathEquations from './views/study/StudyCoreMathEquations';
+import StudyCoreLatinSquares from './views/study/StudyCoreLatinSquares';
+import StudySubjectMath from './views/study/StudySubjectMath';
+import StudySubjectEngineering from './views/study/StudySubjectEngineering';
+import StudySubjectNaturalSciences from './views/study/StudySubjectNaturalSciences';
+import StudySubjectBusiness from './views/study/StudySubjectBusiness';
+import StudySubjectEconomics from './views/study/StudySubjectEconomics';
+import StudySubjectSocialSciences from './views/study/StudySubjectSocialSciences';
+
+// Practice
+import PracticeCoreFigureSequences from './views/practice/PracticeCoreFigureSequences';
+import PracticeCoreMathEquations from './views/practice/PracticeCoreMathEquations';
+import PracticeCoreLatinSquares from './views/practice/PracticeCoreLatinSquares';
+import PracticeSubjectMath from './views/practice/PracticeSubjectMath';
+import PracticeSubjectEngineering from './views/practice/PracticeSubjectEngineering';
+import PracticeSubjectNaturalSciences from './views/practice/PracticeSubjectNaturalSciences';
+import PracticeSubjectBusiness from './views/practice/PracticeSubjectBusiness';
+import PracticeSubjectEconomics from './views/practice/PracticeSubjectEconomics';
+import PracticeSubjectSocialSciences from './views/practice/PracticeSubjectSocialSciences';
+
+// Mocks
+import MockTestsFull from './views/mocks/MockTestsFull';
+import MockTestsCore from './views/mocks/MockTestsCore';
+import MockTestsSubject from './views/mocks/MockTestsSubject';
+
+const publicViews = ['Home', 'Auth', 'Library', 'Blogs', 'BlogPost', 'digital-core-test', 'digital-subject-test', 'DigitalSimulator', 'UnauthPreview', 'Pricing', 'PrivacyPolicy', 'TermsOfService', 'APSGuide', 'DMATHandbook'];
 
 function App() {
   const getInitialView = () => {
@@ -33,34 +63,44 @@ function App() {
     }
   };
 
-  const [currentView, setCurrentView] = useState(getInitialView);
+  const [currentView, _setCurrentView] = useState(getInitialView);
 
-  useEffect(() => {
-    try {
-      const hash = window.location.hash.replace('#', '');
-      if (decodeURIComponent(hash) !== currentView) {
-        if (!hash) {
-          window.history.replaceState(null, '', `#${encodeURIComponent(currentView)}`);
-        } else {
-          window.history.pushState(null, '', `#${encodeURIComponent(currentView)}`);
-        }
-      }
-    } catch (e) {
-      console.error(e);
+  const setCurrentView = (view) => {
+    if (typeof view === 'function') {
+      view = view(currentView);
     }
-  }, [currentView]);
+    if (view === currentView) return;
+    
+    _setCurrentView(view);
+    
+    const encodedView = encodeURIComponent(view);
+    if (window.location.hash.replace('#', '') !== encodedView) {
+      window.location.hash = encodedView;
+    }
+  };
 
   useEffect(() => {
-    const handlePopState = () => {
+    if (!window.location.hash) {
+      window.history.replaceState(null, '', `#${encodeURIComponent(getInitialView())}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleNavigation = () => {
       try {
         const hash = window.location.hash.replace('#', '');
-        setCurrentView(hash ? decodeURIComponent(hash) : 'Home');
+        _setCurrentView(hash ? decodeURIComponent(hash) : 'Home');
       } catch {
-        setCurrentView('Home');
+        _setCurrentView('Home');
       }
     };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    
+    window.addEventListener('hashchange', handleNavigation);
+    window.addEventListener('popstate', handleNavigation);
+    return () => {
+      window.removeEventListener('hashchange', handleNavigation);
+      window.removeEventListener('popstate', handleNavigation);
+    };
   }, []);
   const [session, setSession] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -122,6 +162,8 @@ function App() {
     switch (currentView) {
       case 'Home':
         return <Home setCurrentView={setCurrentView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
+      case 'APSGuide':
+        return <APSGuide setCurrentView={setCurrentView} />;
       case 'UnauthPreview':
         return <UnauthPreview setCurrentView={setCurrentView} />;
       case 'Auth':
@@ -134,6 +176,8 @@ function App() {
         return <MockHistory setCurrentView={setCurrentView} />;
       case 'Analytics':
         return <Analytics setCurrentView={setCurrentView} />;
+      case 'DMATHandbook':
+        return <DMATHandbook setCurrentView={setCurrentView} />;
       case 'admin-panel':
         if (!session?.user) {
           return <NotFound setCurrentView={setCurrentView} />;
@@ -164,6 +208,31 @@ function App() {
         return <PrivacyPolicy setCurrentView={setCurrentView} />;
       case 'TermsOfService':
         return <TermsOfService setCurrentView={setCurrentView} />;
+        
+      case 'StudyCoreFigureSequences': return <StudyCoreFigureSequences setCurrentView={setCurrentView} />;
+      case 'StudyCoreMathEquations': return <StudyCoreMathEquations setCurrentView={setCurrentView} />;
+      case 'StudyCoreLatinSquares': return <StudyCoreLatinSquares setCurrentView={setCurrentView} />;
+      case 'StudySubjectMath': return <StudySubjectMath setCurrentView={setCurrentView} />;
+      case 'StudySubjectEngineering': return <StudySubjectEngineering setCurrentView={setCurrentView} />;
+      case 'StudySubjectNaturalSciences': return <StudySubjectNaturalSciences setCurrentView={setCurrentView} />;
+      case 'StudySubjectBusiness': return <StudySubjectBusiness setCurrentView={setCurrentView} />;
+      case 'StudySubjectEconomics': return <StudySubjectEconomics setCurrentView={setCurrentView} />;
+      case 'StudySubjectSocialSciences': return <StudySubjectSocialSciences setCurrentView={setCurrentView} />;
+
+      case 'PracticeCoreFigureSequences': return <PracticeCoreFigureSequences setCurrentView={setCurrentView} />;
+      case 'PracticeCoreMathEquations': return <PracticeCoreMathEquations setCurrentView={setCurrentView} />;
+      case 'PracticeCoreLatinSquares': return <PracticeCoreLatinSquares setCurrentView={setCurrentView} />;
+      case 'PracticeSubjectMath': return <PracticeSubjectMath setCurrentView={setCurrentView} />;
+      case 'PracticeSubjectEngineering': return <PracticeSubjectEngineering setCurrentView={setCurrentView} />;
+      case 'PracticeSubjectNaturalSciences': return <PracticeSubjectNaturalSciences setCurrentView={setCurrentView} />;
+      case 'PracticeSubjectBusiness': return <PracticeSubjectBusiness setCurrentView={setCurrentView} />;
+      case 'PracticeSubjectEconomics': return <PracticeSubjectEconomics setCurrentView={setCurrentView} />;
+      case 'PracticeSubjectSocialSciences': return <PracticeSubjectSocialSciences setCurrentView={setCurrentView} />;
+
+      case 'MockTestsFull': return <MockTestsFull setCurrentView={setCurrentView} />;
+      case 'MockTestsCore': return <MockTestsCore setCurrentView={setCurrentView} />;
+      case 'MockTestsSubject': return <MockTestsSubject setCurrentView={setCurrentView} />;
+
       default:
         if (currentView.startsWith('BlogPost:')) {
           const blogId = currentView.split(':')[1];
@@ -179,7 +248,7 @@ function App() {
 
   return (
     <div className="platform-container">
-      {(['Home', 'Blogs', 'Pricing'].includes(currentView) || currentView.startsWith('BlogPost:')) && (
+      {(['Home', 'Blogs', 'Pricing', 'DMATHandbook'].includes(currentView) || currentView.startsWith('BlogPost:')) && (
         <TopNav 
           currentView={currentView} 
           setCurrentView={setCurrentView} 
@@ -189,10 +258,10 @@ function App() {
           setIsDarkMode={setIsDarkMode}
         />
       )}
-      {(['Home', 'Blogs', 'Pricing'].includes(currentView) || currentView.startsWith('BlogPost:')) && (
+      {(['Home', 'Blogs', 'Pricing', 'DMATHandbook'].includes(currentView) || currentView.startsWith('BlogPost:')) && (
         <WhatsAppWidget />
       )}
-      <div className={`platform-content ${!(['Home', 'Blogs', 'Pricing'].includes(currentView) || currentView.startsWith('BlogPost:')) ? 'simulator-active' : ''}`}>
+      <div className={`platform-content ${!(['Home', 'Blogs', 'Pricing', 'DMATHandbook'].includes(currentView) || currentView.startsWith('BlogPost:')) ? 'simulator-active' : ''}`}>
         {renderView()}
       </div>
     </div>

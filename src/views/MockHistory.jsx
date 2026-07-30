@@ -23,7 +23,7 @@ const MockHistory = ({ setCurrentView }) => {
            const totalQ = r.mock_tests?.total_questions || 1; // avoid division by zero
            return {
              id: r.id,
-             examName: r.mock_tests?.title || 'Mock Test',
+             examName: r.mock_tests?.title || 'dMAT Mock Test',
              date: new Date(r.created_at).toLocaleDateString(),
              timeTaken: r.mock_tests?.duration ? `${r.mock_tests.duration} Minutes` : 'Standard Time',
              score: r.score,
@@ -38,6 +38,18 @@ const MockHistory = ({ setCurrentView }) => {
     fetchHistory();
   }, []);
 
+  const calculateStandardizedScore = (accuracy) => {
+    return Math.round((accuracy / 100) * 200);
+  };
+
+  const calculatePercentile = (accuracy) => {
+    if (accuracy >= 90) return '99th';
+    if (accuracy >= 80) return '90th';
+    if (accuracy >= 70) return '75th';
+    if (accuracy >= 60) return '50th';
+    return '<50th';
+  };
+
   return (
     <div className="view-container" style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
       <ExamSidebar setCurrentView={setCurrentView} />
@@ -46,14 +58,14 @@ const MockHistory = ({ setCurrentView }) => {
         <div style={{ maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
           <div style={{ marginBottom: '40px' }}>
             <h2 style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: '8px' }}>Mock History</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Review your past mock exams and track your progress over time.</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Review your past mock exams and track your dMAT progress over time.</p>
           </div>
 
           {pastTests.length === 0 ? (
             <div className="premium-card" style={{ padding: '64px 32px', textAlign: 'center', background: 'var(--surface)' }}>
               <History size={64} style={{ color: 'var(--border)', margin: '0 auto 24px' }} />
               <h3 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text)', marginBottom: '16px' }}>No Mock Tests Taken Yet</h3>
-              <p style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>When you complete a mock test, your results and analytics will appear here.</p>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>When you complete a dMAT mock test, your results and analytics will appear here.</p>
               <button className="btn-primary" onClick={() => setCurrentView('digital-core-test')}>Start a Mock Test</button>
             </div>
           ) : (
@@ -81,8 +93,8 @@ const MockHistory = ({ setCurrentView }) => {
                       width: '64px', 
                       height: '64px', 
                       borderRadius: '16px', 
-                      background: test.status === 'Completed' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
-                      color: test.status === 'Completed' ? 'var(--success)' : 'var(--error)', 
+                      background: test.status === 'Completed' ? 'rgba(217, 164, 65, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
+                      color: test.status === 'Completed' ? 'var(--primary)' : 'var(--error)', 
                       display: 'flex', 
                       alignItems: 'center', 
                       justifyContent: 'center',
@@ -103,15 +115,15 @@ const MockHistory = ({ setCurrentView }) => {
                   {test.status === 'Completed' && (
                     <div style={{ display: 'flex', gap: '32px', flex: '0 1 auto' }}>
                       <div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Score</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Percentile</div>
                         <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)' }}>
-                          {test.score} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>/ {test.totalQuestions}</span>
+                          {calculatePercentile(test.accuracy)}
                         </div>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Accuracy</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Std. Score</div>
                         <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)' }}>
-                          {test.accuracy}%
+                          {calculateStandardizedScore(test.accuracy)} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>/ 200</span>
                         </div>
                       </div>
                     </div>
@@ -129,7 +141,7 @@ const MockHistory = ({ setCurrentView }) => {
                         alignItems: 'center', 
                         gap: '8px', 
                         padding: '12px 24px', 
-                        background: test.status === 'Completed' ? 'rgba(255, 212, 130, 0.1)' : 'transparent', 
+                        background: test.status === 'Completed' ? 'rgba(217, 164, 65, 0.1)' : 'transparent', 
                         color: test.status === 'Completed' ? 'var(--primary)' : 'var(--text-muted)',
                         border: test.status === 'Completed' ? 'none' : '1px solid var(--border)',
                         borderRadius: '8px',
@@ -139,14 +151,14 @@ const MockHistory = ({ setCurrentView }) => {
                       }}
                       onMouseEnter={(e) => {
                         if (test.status === 'Completed') {
-                          e.currentTarget.style.background = 'rgba(255, 212, 130, 0.2)';
+                          e.currentTarget.style.background = 'rgba(217, 164, 65, 0.2)';
                         } else {
                           e.currentTarget.style.background = 'var(--bg-main)';
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (test.status === 'Completed') {
-                          e.currentTarget.style.background = 'rgba(255, 212, 130, 0.1)';
+                          e.currentTarget.style.background = 'rgba(217, 164, 65, 0.1)';
                         } else {
                           e.currentTarget.style.background = 'transparent';
                         }

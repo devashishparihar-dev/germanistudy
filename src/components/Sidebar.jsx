@@ -9,7 +9,7 @@ const Sidebar = ({ onEndTest, testEnded }) => {
           <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '90px', objectFit: 'contain' }} />
           <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '90px', objectFit: 'contain' }} />
         </div>
-        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>TestAS Simulator</p>
+        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>dMAT Simulator</p>
       </div>
       <div className="sidebar-content" style={{ padding: '0 24px' }}>
         <div className="info-block" style={{ marginBottom: '16px' }}>

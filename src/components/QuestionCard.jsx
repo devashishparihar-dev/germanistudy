@@ -49,7 +49,7 @@ const QuestionCard = ({
             
             {question.type === 'figural_sequence' && question.question_image && (
               <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
-                <img src={question.question_image} alt="Figural Sequence" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }} />
+                <img src={question.question_image} alt="Figure Sequence" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }} />
               </div>
             )}
 

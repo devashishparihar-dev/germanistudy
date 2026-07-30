@@ -139,16 +139,22 @@ serve(async (req: Request) => {
       return acc
     }, {})
 
-    // 5. Insert into mock_test_results
-    const { error: insertError } = await supabaseAdminClient
-      .from('mock_test_results')
-      .insert({
-        user_id: user.id,
-        mock_test_id: mock_test_id,
-        selected_answers: selectedAnswersDbFormat,
-        score: totalScore,
-        completion_percentage: completionPercentage
-      })
+    // 5. Insert into mock_test_results (only if mock_test_id is a valid UUID)
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(mock_test_id);
+    let insertError = null;
+
+    if (isUuid) {
+      const { error } = await supabaseAdminClient
+        .from('mock_test_results')
+        .insert({
+          user_id: user.id,
+          mock_test_id: mock_test_id,
+          selected_answers: selectedAnswersDbFormat,
+          score: totalScore,
+          completion_percentage: completionPercentage
+        })
+      insertError = error;
+    }
 
     if (insertError) {
       console.error('Error saving mock test result:', insertError)

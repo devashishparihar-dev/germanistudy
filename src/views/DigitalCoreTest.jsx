@@ -75,7 +75,7 @@ const DigitalCoreTest = ({ setCurrentView }) => {
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           
           <header style={{ textAlign: 'center', marginBottom: '56px', marginTop: '32px' }}>
-            <h1 style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px', letterSpacing: '-1px' }}>Digital TestAS Core Module</h1>
+            <h1 style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px', letterSpacing: '-1px' }}>Digital dMAT Core Module</h1>
 
           </header>
 
@@ -191,9 +191,9 @@ const DigitalCoreTest = ({ setCurrentView }) => {
                 {renderMockList(latinMocks, "No Latin Squares mocks uploaded yet.")}
 
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: '24px', borderBottom: '1px solid var(--border)', paddingBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Target size={22} style={{ color: 'var(--primary)' }} /> Figural Sequences
+                  <Target size={22} style={{ color: 'var(--primary)' }} /> Figure Sequences
                 </h2>
-                {renderMockList(figuralMocks, "No Figural Sequences mocks uploaded yet.")}
+                {renderMockList(figuralMocks, "No Figure Sequences mocks uploaded yet.")}
 
                 {otherMocks.length > 0 && (
                   <>

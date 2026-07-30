@@ -8,13 +8,14 @@ const TopNav = ({ currentView, setCurrentView, session, isAdmin, isDarkMode, set
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const navItems = [
-    { label: 'Home', view: 'Home', isPublic: true, hideWhenLogged: true },
-    { label: 'Dashboard', view: 'Dashboard', isPublic: false },
-    { label: 'Core Test', view: 'digital-core-test', isPublic: false },
-    { label: 'Analytics', view: 'Analytics', isPublic: false },
-    { label: 'Pricing', view: 'Pricing', isPublic: true },
+    { label: 'Home', view: 'Home', isPublic: true },
+    { label: 'Study Materials', view: 'StudyCoreMathEquations', isPublic: true },
+    { label: 'Practice', view: 'PracticeCoreMathEquations', isPublic: true },
+    { label: 'Mock Tests', view: 'MockTestsCore', isPublic: true },
+    { label: 'Analytics', view: 'Analytics', isPublic: true },
     { label: 'About', action: 'scroll-about', isPublic: true },
-    { label: 'Blog', view: 'Blogs', isPublic: true },
+    { label: 'Dashboard', view: 'Dashboard', isPublic: false },
+    { label: 'DMAT Handbook', view: 'DMATHandbook', isPublic: true, icon: BookOpen },
   ];
 
   if (isAdmin) {
@@ -120,7 +121,10 @@ const TopNav = ({ currentView, setCurrentView, session, isAdmin, isDarkMode, set
                 }
               }}
             >
-              {item.label}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                {item.icon && <item.icon size={16} />}
+                {item.label}
+              </div>
               {activeTab === item.label && (
                 <motion.div
                   layoutId="nav-indicator"
@@ -172,7 +176,7 @@ const TopNav = ({ currentView, setCurrentView, session, isAdmin, isDarkMode, set
               onClick={() => setCurrentView('Auth')}
               style={{ background: 'transparent', border: 'none', color: 'var(--text)', fontWeight: 600, cursor: 'pointer', padding: '8px 16px', fontSize: '0.95rem' }}
             >
-              Log In
+              Sign In
             </button>
             <button 
               className="btn-primary"
@@ -228,7 +232,10 @@ const TopNav = ({ currentView, setCurrentView, session, isAdmin, isDarkMode, set
                       setMobileMenuOpen(false); 
                     }}
                   >
-                    {item.label}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {item.icon && <item.icon size={18} />}
+                      {item.label}
+                    </div>
                   </button>
                 </li>
               ))}
@@ -238,7 +245,7 @@ const TopNav = ({ currentView, setCurrentView, session, isAdmin, isDarkMode, set
                     onClick={() => { setCurrentView('Auth'); setMobileMenuOpen(false); }}
                     style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)', fontWeight: 600, padding: '12px', width: '100%', borderRadius: '0' }}
                   >
-                    Log In
+                    Sign In
                   </button>
                   <button 
                     className="btn-primary"

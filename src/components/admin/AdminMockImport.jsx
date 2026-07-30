@@ -135,7 +135,7 @@ const AdminMockImport = () => {
         for (let o = 0; o < q.options.length; o++) {
           const opt = q.options[o];
           if (typeof opt !== 'object' || opt === null || !opt.id || !opt.image) {
-            setMessage({ type: 'error', text: `${qRef}: option ${o} must be an object with 'id' and 'image' for figural sequences.` });
+            setMessage({ type: 'error', text: `${qRef}: option ${o} must be an object with 'id' and 'image' for figure sequences.` });
             return;
           }
         }
@@ -325,7 +325,7 @@ const AdminMockImport = () => {
               borderRadius: '8px', background: 'var(--bg-light)', color: 'var(--text-main)' 
             }}
           >
-            <option value="figure_sequences">Figural Sequences</option>
+            <option value="figure_sequences">Figure Sequences</option>
             <option value="mathematical_equations">Mathematical Equations</option>
             <option value="latin_squares">Latin Squares</option>
           </select>
