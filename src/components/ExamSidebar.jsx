@@ -214,11 +214,11 @@ const ExamSidebar = ({ setCurrentView, currentView }) => {
         }}
       >
         <div style={{ padding: collapsed ? '16px' : '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', transition: 'padding 0.2s' }} onClick={() => !isMobile && setCollapsed(!collapsed)}>
-          <div style={{ width: (isMobile || !collapsed) ? '200px' : '58px', height: '64px', overflow: 'hidden', transition: 'width 0.2s ease', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+          <div style={{ width: (isMobile || !collapsed) ? '100%' : '58px', height: (isMobile || !collapsed) ? 'auto' : '58px', overflow: 'hidden', transition: 'all 0.2s ease', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
             {(isMobile || !collapsed) ? (
               <>
-                <img src="/assets/branding/logo_wide_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '64px', width: '100%', objectFit: 'contain', objectPosition: 'left center' }} />
-                <img src="/assets/branding/logo_wide_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '64px', width: '100%', objectFit: 'contain', objectPosition: 'left center' }} />
+                <img src="/assets/branding/logo_wide_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: 'auto', width: '100%', objectFit: 'contain', objectPosition: 'left center' }} />
+                <img src="/assets/branding/logo_wide_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: 'auto', width: '100%', objectFit: 'contain', objectPosition: 'left center' }} />
               </>
             ) : (
               <>
