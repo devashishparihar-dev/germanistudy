@@ -169,8 +169,8 @@ const DigitalSimulator = ({ setCurrentView }) => {
               if (mappings && mappings.length > 0) {
                 const qIds = mappings.map(m => m.question_id);
                 const { data: questions, error: qError } = await supabase
-                  .from('core_test_questions')
-                  .select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image, correct_answer')
+                  .from('student_core_test_questions')
+                  .select('id, question, options, section, difficulty, type:question_type, grid, question_image')
                   .in('id', qIds);
                   
                 if (qError) {
@@ -252,8 +252,8 @@ const DigitalSimulator = ({ setCurrentView }) => {
             else if (selectedCoreModule === 'latin_squares') querySection = 'relationships';
 
             const { data: coreQuestions } = await supabase
-              .from('core_test_questions')
-              .select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image, correct_answer')
+              .from('student_core_test_questions')
+              .select('id, question, options, section, difficulty, type:question_type, grid, question_image')
               .or(`section.eq.${selectedCoreModule},section.eq.${querySection}`);
               
             if (coreQuestions && coreQuestions.length > 0) {
@@ -275,7 +275,7 @@ const DigitalSimulator = ({ setCurrentView }) => {
           
           let rawData = [];
           try {
-            const { data: coreQuestions } = await supabase.from('core_test_questions').select('id, question, options, section, difficulty, explanation, type:question_type, grid, question_image, correct_answer');
+            const { data: coreQuestions } = await supabase.from('student_core_test_questions').select('id, question, options, section, difficulty, type:question_type, grid, question_image');
             if (coreQuestions && coreQuestions.length > 0) {
                rawData = coreQuestions;
             } else {
