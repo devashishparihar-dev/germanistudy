@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import ScrollToTop from './components/ScrollToTop';
 import TopNav from './components/TopNav';
 import WhatsAppWidget from './components/WhatsAppWidget';
+
 import Home from './views/Home';
 import Dashboard from './views/Dashboard';
 import Library from './views/Library';
@@ -51,57 +54,39 @@ import MockTestsFull from './views/mocks/MockTestsFull';
 import MockTestsCore from './views/mocks/MockTestsCore';
 import MockTestsSubject from './views/mocks/MockTestsSubject';
 
-const publicViews = ['Home', 'Auth', 'Library', 'Blogs', 'BlogPost', 'digital-core-test', 'digital-subject-test', 'DigitalSimulator', 'UnauthPreview', 'Pricing', 'PrivacyPolicy', 'TermsOfService', 'APSGuide', 'DMATHandbook'];
+const AuthGuard = ({ session, children }) => {
+  if (!session) {
+    return <Navigate to="/auth" replace />;
+  }
+  return children;
+};
+
+const AppLayout = ({ session, isAdmin, isDarkMode, setIsDarkMode }) => {
+  const location = useLocation();
+  const path = location.pathname;
+  
+  const showNavAndWidget = path === '/' || path === '/blogs' || path.startsWith('/blogs/') || path === '/pricing' || path === '/guides/dmat';
+  const simulatorActive = !showNavAndWidget;
+
+  return (
+    <div className="platform-container">
+      {showNavAndWidget && (
+        <TopNav 
+          session={session} 
+          isAdmin={isAdmin}
+          isDarkMode={isDarkMode}
+          setIsDarkMode={setIsDarkMode}
+        />
+      )}
+      {showNavAndWidget && <WhatsAppWidget />}
+      <div className={`platform-content ${simulatorActive ? 'simulator-active' : ''}`}>
+        <Outlet />
+      </div>
+    </div>
+  );
+};
 
 function App() {
-  const getInitialView = () => {
-    try {
-      const hash = window.location.hash.replace('#', '');
-      return hash ? decodeURIComponent(hash) : 'Home';
-    } catch {
-      return 'Home';
-    }
-  };
-
-  const [currentView, _setCurrentView] = useState(getInitialView);
-
-  const setCurrentView = (view) => {
-    if (typeof view === 'function') {
-      view = view(currentView);
-    }
-    if (view === currentView) return;
-    
-    _setCurrentView(view);
-    
-    const encodedView = encodeURIComponent(view);
-    if (window.location.hash.replace('#', '') !== encodedView) {
-      window.location.hash = encodedView;
-    }
-  };
-
-  useEffect(() => {
-    if (!window.location.hash) {
-      window.history.replaceState(null, '', `#${encodeURIComponent(getInitialView())}`);
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleNavigation = () => {
-      try {
-        const hash = window.location.hash.replace('#', '');
-        _setCurrentView(hash ? decodeURIComponent(hash) : 'Home');
-      } catch {
-        _setCurrentView('Home');
-      }
-    };
-    
-    window.addEventListener('hashchange', handleNavigation);
-    window.addEventListener('popstate', handleNavigation);
-    return () => {
-      window.removeEventListener('hashchange', handleNavigation);
-      window.removeEventListener('popstate', handleNavigation);
-    };
-  }, []);
   const [session, setSession] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
@@ -135,136 +120,77 @@ function App() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       checkAdminStatus(session);
-      // If user logs out and is on a private route, redirect home or auth
-      const isPublic = publicViews.includes(currentView) || currentView.startsWith('BlogPost:');
-      if (!session && !isPublic) {
-        setCurrentView('Auth');
-      }
     });
 
     return () => subscription.unsubscribe();
-  }, [currentView]);
-
-  useEffect(() => {
-    if (session && currentView === 'Home') {
-      setCurrentView('Dashboard');
-    }
-  }, [session, currentView]);
-
-  const renderView = () => {
-    // Auth Guard
-    const isPublic = publicViews.includes(currentView) || currentView.startsWith('BlogPost:');
-    if (!session && !isPublic) {
-      // Force redirect to Auth if not logged in
-      return <Auth setCurrentView={setCurrentView} />;
-    }
-
-    switch (currentView) {
-      case 'Home':
-        return <Home setCurrentView={setCurrentView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
-      case 'APSGuide':
-        return <APSGuide setCurrentView={setCurrentView} />;
-      case 'UnauthPreview':
-        return <UnauthPreview setCurrentView={setCurrentView} />;
-      case 'Auth':
-        return <Auth setCurrentView={setCurrentView} />;
-      case 'Dashboard':
-        return <Dashboard setCurrentView={setCurrentView} session={session} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
-      case 'Blogs':
-        return <Blogs setCurrentView={setCurrentView} />;
-      case 'History':
-        return <MockHistory setCurrentView={setCurrentView} />;
-      case 'Analytics':
-        return <Analytics setCurrentView={setCurrentView} />;
-      case 'DMATHandbook':
-        return <DMATHandbook setCurrentView={setCurrentView} />;
-      case 'admin-panel':
-        if (!session?.user) {
-          return <NotFound setCurrentView={setCurrentView} />;
-        }
-        // Admin access is checked in the AdminPanel component via Supabase profiles
-        // OR we can do a check here. Since it's a synchronous switch statement, 
-        // we'll let AdminPanel handle the loading state & redirect if unauthorized.
-        return <AdminPanel setCurrentView={setCurrentView} session={session} />;
-      case 'digital-core-test':
-        return <DigitalCoreTest setCurrentView={setCurrentView} />;
-      case 'digital-subject-test':
-        return <DigitalSubjectTest setCurrentView={setCurrentView} />;
-      case 'Library':
-        return <Library setCurrentView={setCurrentView} />;
-      case 'Profile':
-        return <Profile setCurrentView={setCurrentView} session={session} />;
-      case 'Settings':
-        return <Settings setCurrentView={setCurrentView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
-      case 'DigitalSimulator':
-        return <DigitalSimulator setCurrentView={setCurrentView} />;
-      case 'Pricing':
-        return (
-          <div style={{ paddingTop: '80px', minHeight: '100vh', background: 'var(--background)' }}>
-            <PricingCards setCurrentView={setCurrentView} />
-          </div>
-        );
-      case 'PrivacyPolicy':
-        return <PrivacyPolicy setCurrentView={setCurrentView} />;
-      case 'TermsOfService':
-        return <TermsOfService setCurrentView={setCurrentView} />;
-        
-      case 'StudyCoreFigureSequences': return <StudyCoreFigureSequences setCurrentView={setCurrentView} />;
-      case 'StudyCoreMathEquations': return <StudyCoreMathEquations setCurrentView={setCurrentView} />;
-      case 'StudyCoreLatinSquares': return <StudyCoreLatinSquares setCurrentView={setCurrentView} />;
-      case 'StudySubjectMath': return <StudySubjectMath setCurrentView={setCurrentView} />;
-      case 'StudySubjectEngineering': return <StudySubjectEngineering setCurrentView={setCurrentView} />;
-      case 'StudySubjectNaturalSciences': return <StudySubjectNaturalSciences setCurrentView={setCurrentView} />;
-      case 'StudySubjectBusiness': return <StudySubjectBusiness setCurrentView={setCurrentView} />;
-      case 'StudySubjectEconomics': return <StudySubjectEconomics setCurrentView={setCurrentView} />;
-      case 'StudySubjectSocialSciences': return <StudySubjectSocialSciences setCurrentView={setCurrentView} />;
-
-      case 'PracticeCoreFigureSequences': return <PracticeCoreFigureSequences setCurrentView={setCurrentView} />;
-      case 'PracticeCoreMathEquations': return <PracticeCoreMathEquations setCurrentView={setCurrentView} />;
-      case 'PracticeCoreLatinSquares': return <PracticeCoreLatinSquares setCurrentView={setCurrentView} />;
-      case 'PracticeSubjectMath': return <PracticeSubjectMath setCurrentView={setCurrentView} />;
-      case 'PracticeSubjectEngineering': return <PracticeSubjectEngineering setCurrentView={setCurrentView} />;
-      case 'PracticeSubjectNaturalSciences': return <PracticeSubjectNaturalSciences setCurrentView={setCurrentView} />;
-      case 'PracticeSubjectBusiness': return <PracticeSubjectBusiness setCurrentView={setCurrentView} />;
-      case 'PracticeSubjectEconomics': return <PracticeSubjectEconomics setCurrentView={setCurrentView} />;
-      case 'PracticeSubjectSocialSciences': return <PracticeSubjectSocialSciences setCurrentView={setCurrentView} />;
-
-      case 'MockTestsFull': return <MockTestsFull setCurrentView={setCurrentView} />;
-      case 'MockTestsCore': return <MockTestsCore setCurrentView={setCurrentView} />;
-      case 'MockTestsSubject': return <MockTestsSubject setCurrentView={setCurrentView} />;
-
-      default:
-        if (currentView.startsWith('BlogPost:')) {
-          const blogId = currentView.split(':')[1];
-          return <BlogPost setCurrentView={setCurrentView} blogId={blogId} />;
-        }
-        return <NotFound setCurrentView={setCurrentView} />;
-    }
-  };
+  }, []);
 
   if (isInitializing) {
     return <div style={{ minHeight: '100vh', background: 'var(--background)' }} />;
   }
 
   return (
-    <div className="platform-container">
-      {(['Home', 'Blogs', 'Pricing', 'DMATHandbook'].includes(currentView) || currentView.startsWith('BlogPost:')) && (
-        <TopNav 
-          currentView={currentView} 
-          setCurrentView={setCurrentView} 
-          session={session} 
-          isAdmin={isAdmin}
-          isDarkMode={isDarkMode}
-          setIsDarkMode={setIsDarkMode}
-        />
-      )}
-      {(['Home', 'Blogs', 'Pricing', 'DMATHandbook'].includes(currentView) || currentView.startsWith('BlogPost:')) && (
-        <WhatsAppWidget />
-      )}
-      <div className={`platform-content ${!(['Home', 'Blogs', 'Pricing', 'DMATHandbook'].includes(currentView) || currentView.startsWith('BlogPost:')) ? 'simulator-active' : ''}`}>
-        {renderView()}
-      </div>
-    </div>
+    <BrowserRouter>
+      <ScrollToTop />
+      <Routes>
+        <Route element={<AppLayout session={session} isAdmin={isAdmin} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />}>
+          
+          {/* Public Routes */}
+          <Route path="/" element={session ? <Navigate to="/dashboard" replace /> : <Home isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />} />
+          <Route path="/auth" element={session ? <Navigate to="/dashboard" replace /> : <Auth />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/blogs/:blogId" element={<BlogPost />} />
+          <Route path="/pricing" element={<div style={{ paddingTop: '80px', minHeight: '100vh', background: 'var(--background)' }}><PricingCards /></div>} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/guides/aps" element={<APSGuide />} />
+          <Route path="/guides/dmat" element={<DMATHandbook />} />
+          <Route path="/simulator/core" element={<DigitalCoreTest />} />
+          <Route path="/simulator/subject" element={<DigitalSubjectTest />} />
+          <Route path="/simulator" element={<DigitalSimulator />} />
+          <Route path="/simulator/preview" element={<UnauthPreview />} />
+
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={<AuthGuard session={session}><Dashboard session={session} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} /></AuthGuard>} />
+          <Route path="/history" element={<AuthGuard session={session}><MockHistory /></AuthGuard>} />
+          <Route path="/analytics" element={<AuthGuard session={session}><Analytics /></AuthGuard>} />
+          <Route path="/profile" element={<AuthGuard session={session}><Profile session={session} /></AuthGuard>} />
+          <Route path="/settings" element={<AuthGuard session={session}><Settings isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} /></AuthGuard>} />
+          <Route path="/admin" element={<AuthGuard session={session}><AdminPanel session={session} /></AuthGuard>} />
+
+          {/* Study Routes (Protected) */}
+          <Route path="/study/core/figure-sequences" element={<AuthGuard session={session}><StudyCoreFigureSequences /></AuthGuard>} />
+          <Route path="/study/core/math-equations" element={<AuthGuard session={session}><StudyCoreMathEquations /></AuthGuard>} />
+          <Route path="/study/core/latin-squares" element={<AuthGuard session={session}><StudyCoreLatinSquares /></AuthGuard>} />
+          <Route path="/study/subject/math" element={<AuthGuard session={session}><StudySubjectMath /></AuthGuard>} />
+          <Route path="/study/subject/engineering" element={<AuthGuard session={session}><StudySubjectEngineering /></AuthGuard>} />
+          <Route path="/study/subject/natural-sciences" element={<AuthGuard session={session}><StudySubjectNaturalSciences /></AuthGuard>} />
+          <Route path="/study/subject/business" element={<AuthGuard session={session}><StudySubjectBusiness /></AuthGuard>} />
+          <Route path="/study/subject/economics" element={<AuthGuard session={session}><StudySubjectEconomics /></AuthGuard>} />
+          <Route path="/study/subject/social-sciences" element={<AuthGuard session={session}><StudySubjectSocialSciences /></AuthGuard>} />
+
+          {/* Practice Routes (Protected) */}
+          <Route path="/practice/core/figure-sequences" element={<AuthGuard session={session}><PracticeCoreFigureSequences /></AuthGuard>} />
+          <Route path="/practice/core/math-equations" element={<AuthGuard session={session}><PracticeCoreMathEquations /></AuthGuard>} />
+          <Route path="/practice/core/latin-squares" element={<AuthGuard session={session}><PracticeCoreLatinSquares /></AuthGuard>} />
+          <Route path="/practice/subject/math" element={<AuthGuard session={session}><PracticeSubjectMath /></AuthGuard>} />
+          <Route path="/practice/subject/engineering" element={<AuthGuard session={session}><PracticeSubjectEngineering /></AuthGuard>} />
+          <Route path="/practice/subject/natural-sciences" element={<AuthGuard session={session}><PracticeSubjectNaturalSciences /></AuthGuard>} />
+          <Route path="/practice/subject/business" element={<AuthGuard session={session}><PracticeSubjectBusiness /></AuthGuard>} />
+          <Route path="/practice/subject/economics" element={<AuthGuard session={session}><PracticeSubjectEconomics /></AuthGuard>} />
+          <Route path="/practice/subject/social-sciences" element={<AuthGuard session={session}><PracticeSubjectSocialSciences /></AuthGuard>} />
+
+          {/* Mock Routes (Protected) */}
+          <Route path="/mocks/full" element={<AuthGuard session={session}><MockTestsFull /></AuthGuard>} />
+          <Route path="/mocks/core" element={<AuthGuard session={session}><MockTestsCore /></AuthGuard>} />
+          <Route path="/mocks/subject" element={<AuthGuard session={session}><MockTestsSubject /></AuthGuard>} />
+
+          {/* Fallback */}
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

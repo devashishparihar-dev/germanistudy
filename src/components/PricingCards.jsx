@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Star, Zap, Globe, Shield, RefreshCw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { PRICING } from '../config/pricing';
 
-const PricingCards = ({ setCurrentView }) => {
+const PricingCards = () => {
+  const navigate = useNavigate();
   const [currency, setCurrency] = useState('eur'); // Default to eur, update via IP
   const currentPricing = PRICING[currency];
 
@@ -24,7 +26,7 @@ const PricingCards = ({ setCurrentView }) => {
 
   const handleSignup = () => {
     // Navigate to Auth (signup view is handled by Auth component logic, typically defaulting to login/signup toggle)
-    setCurrentView('Auth');
+    navigate('/auth');
   };
 
   // Shared Animation Variants
