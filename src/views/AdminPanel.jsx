@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useSEO } from '../hooks/useSEO';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { Loader2, Database, Users, FileText, CheckSquare, Upload, BookMarked } from 'lucide-react';
 import AdminQuestionBank from '../components/admin/AdminQuestionBank';
@@ -8,7 +10,14 @@ import AdminResults from '../components/admin/AdminResults';
 import AdminMockImport from '../components/admin/AdminMockImport';
 import AdminNotes from '../components/admin/AdminNotes';
 
-const AdminPanel = ({ setCurrentView, session }) => {
+const AdminPanel = ({ session }) => {
+  useSEO({
+    title: 'Admin Panel',
+    description: "View Admin Panel on GermaniStudy.",
+  });
+
+  const navigate = useNavigate();
+
   const [activeTab, setActiveTab] = useState('questions');
   const [isAdmin, setIsAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +65,7 @@ const AdminPanel = ({ setCurrentView, session }) => {
         <h1 style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--text)', marginBottom: '16px', fontFamily: 'var(--font-heading)' }}>403 Unauthorized</h1>
         <p style={{ color: 'var(--text-muted)' }}>You do not have permission to access this panel.</p>
         <button 
-          onClick={() => setCurrentView('Home')}
+          onClick={() => navigate('/')}
           style={{ 
             marginTop: '24px',
             background: 'var(--primary)',
@@ -107,7 +116,7 @@ const AdminPanel = ({ setCurrentView, session }) => {
           </div>
 
           <button 
-            onClick={() => setCurrentView('Dashboard')}
+            onClick={() => navigate('/dashboard')}
             style={{
               marginBottom: '32px',
               padding: '8px 16px',
