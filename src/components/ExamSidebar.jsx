@@ -120,7 +120,7 @@ const ExamSidebar = ({ currentView }) => {
             if (hasSubItems) {
               toggleMenu(item.label);
             } else if (item.view) {
-              if(setCurrentView) navigate(item.view);
+              if (item.view) navigate(item.view);
               if(isMobile) setMobileOpen(false);
             }
           }}

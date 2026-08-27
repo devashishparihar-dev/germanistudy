@@ -8,6 +8,7 @@ import ForgotPasswordModal from '../components/auth/ForgotPasswordModal';
 import EmailVerificationCard from '../components/auth/EmailVerificationCard';
 
 const Auth = () => {
+  const navigate = useNavigate();
   useSEO({
     title: 'Auth',
     description: "View Auth on GermaniStudy.",
@@ -25,11 +26,9 @@ const Auth = () => {
       }
     };
     checkSession();
-  }, [setCurrentView]);
+  }, [navigate]);
 
   const handleLoginSuccess = () => {
-  const navigate = useNavigate();
-
     if (localStorage.getItem('redirectAfterAuth') === 'free_mock') {
       localStorage.removeItem('redirectAfterAuth');
       localStorage.setItem('selectedDigitalModule', 'free_mock');

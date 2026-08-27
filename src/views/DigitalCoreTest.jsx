@@ -76,7 +76,7 @@ const DigitalCoreTest = () => {
   return (
     <ErrorBoundary>
       <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
-        <ExamSidebar setCurrentView={setCurrentView} />
+        <ExamSidebar />
       
       <main style={{ flex: 1, padding: '48px', overflowY: 'auto' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
