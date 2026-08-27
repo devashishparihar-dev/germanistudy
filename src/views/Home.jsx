@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSEO } from '../hooks/useSEO';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronDown, CheckCircle2, ChevronRight, BookOpen, Clock, Activity, Target, LayoutDashboard, BrainCircuit, ExternalLink, Shield, Info, ArrowDown } from 'lucide-react';
 import { trackEvent } from '../utils/analytics';
@@ -22,12 +20,7 @@ const ScrollSection = ({ children, style, className, id }) => (
   </motion.section>
 );
 
-const Home = () => {
-  useSEO({
-    title: 'Home',
-    description: "The premium preparation platform for German Master's applicants. Ace the Digital Master Test (dMAT).",
-  });
-
+const Home = ({ setCurrentView }) => {
   const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
@@ -45,6 +38,7 @@ const Home = () => {
 
   return (
     <div className="view-container home-view" style={{ maxWidth: '100%', padding: '0', background: 'var(--background)' }}>
+      
       {/* 1. Hero Section ("Am I on the right website?") */}
       <section style={{ width: '100%', padding: '180px 32px 100px', display: 'flex', justifyContent: 'center', position: 'relative', overflow: 'hidden', textAlign: 'center' }}>
         <div style={{ maxWidth: '800px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 1 }}>
@@ -55,7 +49,7 @@ const Home = () => {
             The premium preparation platform for German Master's applicants.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button className="btn-primary" onClick={() => navigate('/auth')} style={{ padding: '16px 32px', fontSize: '1.1rem' }}>
+            <button className="btn-primary" onClick={() => setCurrentView('Auth')} style={{ padding: '16px 32px', fontSize: '1.1rem' }}>
               Start Free Practice
             </button>
             <button className="btn-secondary" onClick={() => { document.getElementById('what-is-dmat').scrollIntoView({ behavior: 'smooth' }); }} style={{ padding: '16px 32px', fontSize: '1.1rem', background: 'var(--surface)' }}>
@@ -231,7 +225,7 @@ const Home = () => {
             "Important Dates",
             "Frequently Asked Questions"
           ].map((topic, idx) => (
-            <button key={idx} onClick={() => navigate('/guides/dmat')} style={{ padding: '32px 24px', background: 'var(--background)', border: '1px solid var(--border)', borderRadius: '8px', cursor: 'pointer', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--primary)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border)'}>
+            <button key={idx} onClick={() => setCurrentView('DMATHandbook')} style={{ padding: '32px 24px', background: 'var(--background)', border: '1px solid var(--border)', borderRadius: '8px', cursor: 'pointer', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--primary)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border)'}>
               <span style={{ fontSize: '1.15rem', fontWeight: 600, color: 'var(--text)' }}>{topic}</span>
               <ArrowRight size={20} color="var(--primary)" />
             </button>
@@ -277,7 +271,7 @@ const Home = () => {
       {/* 11. Final CTA */}
       <section style={{ backgroundColor: 'var(--background)', width: '100%', padding: '120px 32px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
         <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text)', marginBottom: '32px' }}>Ready to start preparing?</h2>
-        <button className="btn-primary" onClick={() => navigate('/auth')} style={{ padding: '16px 40px', fontSize: '1.1rem' }}>
+        <button className="btn-primary" onClick={() => setCurrentView('Auth')} style={{ padding: '16px 40px', fontSize: '1.1rem' }}>
           Start Free
         </button>
       </section>
@@ -288,8 +282,8 @@ const Home = () => {
           <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: '24px' }}>GermaniStudy</h2>
           <div style={{ display: 'flex', gap: '32px', marginBottom: '32px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <a href="#" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 500 }}>Home</a>
-            <a href="#PrivacyPolicy" onClick={(e) => { e.preventDefault(); navigate('/privacy-policy'); window.scrollTo(0, 0); }} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 500 }}>Privacy Policy</a>
-            <a href="#TermsOfService" onClick={(e) => { e.preventDefault(); navigate('/terms-of-service'); window.scrollTo(0, 0); }} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 500 }}>Terms of Service</a>
+            <a href="#PrivacyPolicy" onClick={(e) => { e.preventDefault(); setCurrentView('PrivacyPolicy'); window.scrollTo(0, 0); }} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 500 }}>Privacy Policy</a>
+            <a href="#TermsOfService" onClick={(e) => { e.preventDefault(); setCurrentView('TermsOfService'); window.scrollTo(0, 0); }} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 500 }}>Terms of Service</a>
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>© 2026 GermaniStudy. All rights reserved.</p>
         </div>

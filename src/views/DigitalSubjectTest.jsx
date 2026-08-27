@@ -1,30 +1,21 @@
 import React from 'react';
-import { useSEO } from '../hooks/useSEO';
-import { useNavigate } from 'react-router-dom';
 import { PlayCircle, Target, Clock, BookOpen, AlertCircle, ChevronRight, Monitor, Zap } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
 import { motion } from 'framer-motion';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { trackEvent } from '../utils/analytics';
 
-const DigitalSubjectTest = () => {
-  useSEO({
-    title: 'Digital Subject Test',
-    description: "View Digital Subject Test on GermaniStudy.",
-  });
-
+const DigitalSubjectTest = ({ setCurrentView }) => {
   const startModule = (moduleId) => {
-  const navigate = useNavigate();
-
     localStorage.setItem('selectedDigitalSubjectModule', moduleId);
     trackEvent('mock_started', { type: 'subject_module', moduleId });
-    navigate('/simulator');
+    setCurrentView('DigitalSimulator');
   };
 
   return (
     <ErrorBoundary>
       <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
-        <ExamSidebar />
+        <ExamSidebar setCurrentView={setCurrentView} />
       
       <main style={{ flex: 1, padding: '48px', overflowY: 'auto' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>

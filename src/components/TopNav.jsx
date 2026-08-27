@@ -2,45 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Moon, Sun, Bell, User, Menu, X, BookOpen, GraduationCap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-const TopNav = ({ session, isAdmin, isDarkMode, setIsDarkMode }) => {
+const TopNav = ({ currentView, setCurrentView, session, isAdmin, isDarkMode, setIsDarkMode }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-
   const navItems = [
-    { label: 'Home', path: '/', isPublic: true },
-    { label: 'Study Materials', path: '/study/core/math-equations', isPublic: true },
-    { label: 'Practice', path: '/practice/core/math-equations', isPublic: true },
-    { label: 'Mock Tests', path: '/mocks/core', isPublic: true },
-    { label: 'Analytics', path: '/analytics', isPublic: true },
-    { label: 'About', path: '/#about-section', action: 'scroll-about', isPublic: true },
-    { label: 'Dashboard', path: '/dashboard', isPublic: false },
-    { label: 'DMAT Handbook', path: '/guides/dmat', isPublic: true, icon: BookOpen },
+    { label: 'Home', view: 'Home', isPublic: true },
+    { label: 'Study Materials', view: 'StudyCoreMathEquations', isPublic: true },
+    { label: 'Practice', view: 'PracticeCoreMathEquations', isPublic: true },
+    { label: 'Mock Tests', view: 'MockTestsCore', isPublic: true },
+    { label: 'Analytics', view: 'Analytics', isPublic: true },
+    { label: 'About', action: 'scroll-about', isPublic: true },
+    { label: 'Dashboard', view: 'Dashboard', isPublic: false },
+    { label: 'DMAT Handbook', view: 'DMATHandbook', isPublic: true, icon: BookOpen },
   ];
 
   if (isAdmin) {
-    navItems.push({ label: 'Admin Panel', path: '/admin', isPublic: false });
+    navItems.push({ label: 'Admin Panel', view: 'admin-panel', isPublic: false });
   }
 
-  const [activeTab, setActiveTab] = useState('Home');
+  const [activeTab, setActiveTab] = useState(() => {
+    const item = navItems.find(i => i.view === currentView);
+    return item ? item.label : currentView;
+  });
 
   useEffect(() => {
-    const path = location.pathname;
-    const item = navItems.find(i => i.path === path);
+    const item = navItems.find(i => i.view === currentView);
     if (item) setActiveTab(item.label);
-    else if (path === '/') setActiveTab('Home');
-    else setActiveTab('');
-  }, [location.pathname]);
+    else setActiveTab(currentView);
+  }, [currentView]);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
 
-      if (location.pathname === '/') {
+      if (currentView === 'Home') {
         const aboutEl = document.getElementById('about-section');
         if (aboutEl) {
           const rect = aboutEl.getBoundingClientRect();
@@ -55,11 +52,11 @@ const TopNav = ({ session, isAdmin, isDarkMode, setIsDarkMode }) => {
     window.addEventListener('scroll', handleScroll);
     handleScroll(); // Trigger once on mount/update
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [location.pathname]);
+  }, [currentView]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate('/');
+    setCurrentView('Home');
     setMobileMenuOpen(false);
   };
 
@@ -87,22 +84,19 @@ const TopNav = ({ session, isAdmin, isDarkMode, setIsDarkMode }) => {
         width: '100%',
         boxShadow: isScrolled ? 'var(--shadow-soft)' : 'none'
       }}>
-      <Link to={session ? '/dashboard' : '/'} className="nav-brand" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'transform 0.2s ease', textDecoration: 'none' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+      <div className="nav-brand" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'transform 0.2s ease' }} onClick={() => setCurrentView(session ? 'Dashboard' : 'Home')} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
         <img src="/assets/branding/logo_light.png" alt="GermaniStudy Logo" className="logo-light-mode" style={{ height: '108px', objectFit: 'contain' }} />
         <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '108px', objectFit: 'contain' }} />
-      </Link>
+      </div>
 
       {/* Desktop Navigation */}
       <ul className="nav-links-desktop hide-on-mobile" style={{ display: 'flex', gap: '4px', listStyle: 'none', margin: 0, padding: 0, alignItems: 'center' }}>
         {navItems.filter(item => (item.isPublic || session) && !(session && item.hideWhenLogged)).map((item) => (
           <li key={item.label}>
-            <Link 
-              to={item.path}
+            <button 
               style={{
-                display: 'block',
                 background: 'transparent',
                 border: 'none',
-                textDecoration: 'none',
                 padding: '8px 16px',
                 borderRadius: '8px',
                 fontSize: '0.95rem',
@@ -114,16 +108,16 @@ const TopNav = ({ session, isAdmin, isDarkMode, setIsDarkMode }) => {
               }}
               onMouseEnter={(e) => e.target.style.color = 'var(--text)'}
               onMouseLeave={(e) => e.target.style.color = activeTab === item.label ? 'var(--primary)' : 'var(--text-muted)'}
-              onClick={(e) => {
+              onClick={() => {
                 if (item.action === 'scroll-about') {
-                  if (location.pathname !== '/') {
-                    e.preventDefault();
-                    navigate('/');
+                  if (currentView !== 'Home') {
+                    setCurrentView('Home');
                     setTimeout(() => document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
                   } else {
-                    e.preventDefault();
                     document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' });
                   }
+                } else {
+                  setCurrentView(item.view);
                 }
               }}
             >
@@ -139,7 +133,7 @@ const TopNav = ({ session, isAdmin, isDarkMode, setIsDarkMode }) => {
                   style={{ position: 'absolute', bottom: 0, left: 16, right: 16, height: '2px', background: 'var(--primary)', borderRadius: '2px' }}
                 />
               )}
-            </Link>
+            </button>
           </li>
         ))}
       </ul>
@@ -178,23 +172,22 @@ const TopNav = ({ session, isAdmin, isDarkMode, setIsDarkMode }) => {
           </>
         ) : (
           <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Link 
-              to="/auth"
-              style={{ textDecoration: 'none', background: 'transparent', border: 'none', color: 'var(--text)', fontWeight: 600, cursor: 'pointer', padding: '8px 16px', fontSize: '0.95rem' }}
+            <button 
+              onClick={() => setCurrentView('Auth')}
+              style={{ background: 'transparent', border: 'none', color: 'var(--text)', fontWeight: 600, cursor: 'pointer', padding: '8px 16px', fontSize: '0.95rem' }}
             >
               Sign In
-            </Link>
-            <Link 
-              to="/auth"
+            </button>
+            <button 
               className="btn-primary"
+              onClick={() => setCurrentView('Auth')}
               style={{ 
-                textDecoration: 'none',
                 display: 'flex', alignItems: 'center', gap: '8px',
                 boxShadow: '0 4px 6px -1px rgba(59, 0, 0, 0.2)'
               }}
             >
               Get Started
-            </Link>
+            </button>
           </div>
         )}
         
@@ -223,19 +216,18 @@ const TopNav = ({ session, isAdmin, isDarkMode, setIsDarkMode }) => {
             <ul style={{ listStyle: 'none', margin: 0, padding: '16px 32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {navItems.filter(item => (item.isPublic || session) && !(session && item.hideWhenLogged)).map((item) => (
                 <li key={item.label}>
-                  <Link 
-                    to={item.path}
-                    style={{ textDecoration: 'none', display: 'block', background: 'transparent', border: 'none', fontSize: '1.1rem', fontWeight: 500, color: activeTab === item.label ? 'var(--primary)' : 'var(--text)', cursor: 'pointer', padding: '8px 0', width: '100%', textAlign: 'left' }}
-                    onClick={(e) => { 
+                  <button 
+                    style={{ background: 'transparent', border: 'none', fontSize: '1.1rem', fontWeight: 500, color: activeTab === item.label ? 'var(--primary)' : 'var(--text)', cursor: 'pointer', padding: '8px 0', width: '100%', textAlign: 'left' }}
+                    onClick={() => { 
                       if (item.action === 'scroll-about') {
-                        if (location.pathname !== '/') {
-                          e.preventDefault();
-                          navigate('/');
+                        if (currentView !== 'Home') {
+                          setCurrentView('Home');
                           setTimeout(() => document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
                         } else {
-                          e.preventDefault();
                           document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' });
                         }
+                      } else {
+                        setCurrentView(item.view); 
                       }
                       setMobileMenuOpen(false); 
                     }}
@@ -244,26 +236,24 @@ const TopNav = ({ session, isAdmin, isDarkMode, setIsDarkMode }) => {
                       {item.icon && <item.icon size={18} />}
                       {item.label}
                     </div>
-                  </Link>
+                  </button>
                 </li>
               ))}
               {!session && (
                 <li style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <Link 
-                    to="/auth"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{ textDecoration: 'none', textAlign: 'center', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)', fontWeight: 600, padding: '12px', width: '100%', borderRadius: '0' }}
+                  <button 
+                    onClick={() => { setCurrentView('Auth'); setMobileMenuOpen(false); }}
+                    style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)', fontWeight: 600, padding: '12px', width: '100%', borderRadius: '0' }}
                   >
                     Sign In
-                  </Link>
-                  <Link 
-                    to="/auth"
+                  </button>
+                  <button 
                     className="btn-primary"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{ textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}
+                    onClick={() => { setCurrentView('Auth'); setMobileMenuOpen(false); }}
+                    style={{ width: '100%', padding: '12px' }}
                   >
                     Get Started
-                  </Link>
+                  </button>
                 </li>
               )}
             </ul>

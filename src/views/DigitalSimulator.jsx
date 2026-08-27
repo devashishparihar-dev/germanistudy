@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSEO } from '../hooks/useSEO';
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, AlertCircle, Clock, Flag, ChevronRight, ChevronLeft, Lock } from 'lucide-react';
 import PatternDiagram from '../components/PatternDiagram';
@@ -47,12 +45,7 @@ const CORE_SECTION_CONFIG = [
   }
 ];
 
-const DigitalSimulator = () => {
-  useSEO({
-    title: 'Digital Simulator',
-    description: "View Digital Simulator on GermaniStudy.",
-  });
-
+const DigitalSimulator = ({ setCurrentView }) => {
   const [activeSectionConfig, setActiveSectionConfig] = useState([]);
   const [sectionsData, setSectionsData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,8 +53,6 @@ const DigitalSimulator = () => {
   const [serverResults, setServerResults] = useState(null);
 
   const getSessionState = (key, defaultValue) => {
-  const navigate = useNavigate();
-
     try {
       const stored = sessionStorage.getItem(`simulator_${key}`);
       return stored ? JSON.parse(stored) : defaultValue;
@@ -939,7 +930,7 @@ const DigitalSimulator = () => {
             {/* Results Header */}
             <header style={{ height: '70px', background: 'var(--surface)', borderBottom: '1px solid var(--border-hairline)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', flexShrink: 0 }}>
               <div style={{ fontWeight: 'bold', fontSize: '1.25rem', color: 'var(--ink-primary)' }}>Mock Exam Results</div>
-              <button onClick={() => navigate('/dashboard')} className="btn-secondary" style={{ padding: '8px 16px' }}>
+              <button onClick={() => setCurrentView('Dashboard')} className="btn-secondary" style={{ padding: '8px 16px' }}>
                 Exit to Dashboard
               </button>
             </header>

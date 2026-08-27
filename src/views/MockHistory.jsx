@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useSEO } from '../hooks/useSEO';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { History, Calendar, Clock, Target, ArrowRight, CheckCircle, XCircle } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
 import { supabase } from '../supabaseClient';
 
-const MockHistory = () => {
-  useSEO({
-    title: 'Mock History',
-    description: "View Mock History on GermaniStudy.",
-  });
-
+const MockHistory = ({ setCurrentView }) => {
   const [pastTests, setPastTests] = useState([]);
 
   useEffect(() => {
@@ -46,8 +39,6 @@ const MockHistory = () => {
   }, []);
 
   const calculateStandardizedScore = (accuracy) => {
-  const navigate = useNavigate();
-
     return Math.round((accuracy / 100) * 200);
   };
 
@@ -61,7 +52,7 @@ const MockHistory = () => {
 
   return (
     <div className="view-container" style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
-      <ExamSidebar />
+      <ExamSidebar setCurrentView={setCurrentView} />
 
       <main style={{ flex: 1, padding: '48px', overflowY: 'auto' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
@@ -75,7 +66,7 @@ const MockHistory = () => {
               <History size={64} style={{ color: 'var(--border)', margin: '0 auto 24px' }} />
               <h3 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text)', marginBottom: '16px' }}>No Mock Tests Taken Yet</h3>
               <p style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>When you complete a dMAT mock test, your results and analytics will appear here.</p>
-              <button className="btn-primary" onClick={() => navigate('/simulator/core')}>Start a Mock Test</button>
+              <button className="btn-primary" onClick={() => setCurrentView('digital-core-test')}>Start a Mock Test</button>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -143,7 +134,7 @@ const MockHistory = () => {
                     <button 
                       onClick={() => {
                         localStorage.setItem('lastTestResult', JSON.stringify(test));
-                        navigate('/analytics');
+                        setCurrentView('Analytics');
                       }}
                       style={{ 
                         display: 'flex', 

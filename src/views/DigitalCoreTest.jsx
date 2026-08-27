@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Target, Clock, AlertCircle, ChevronRight, Monitor, Database, CheckCircle, RotateCcw } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { PlayCircle, Target, Clock, BookOpen, AlertCircle, ChevronRight, Monitor, Database, CheckCircle, RotateCcw } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
 import { motion } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { trackEvent } from '../utils/analytics';
-import { useSEO } from '../hooks/useSEO';
 
-const DigitalCoreTest = () => {
-  useSEO({
-    title: 'Digital Core Test',
-    description: 'Take a mock core test on the GermaniStudy simulator.',
-  });
-  const navigate = useNavigate();
+const DigitalCoreTest = ({ setCurrentView }) => {
   const [mockTests, setMockTests] = useState([]);
   const [completedMocks, setCompletedMocks] = useState({});
   const [loading, setLoading] = useState(true);
@@ -21,7 +14,7 @@ const DigitalCoreTest = () => {
   useEffect(() => {
     const fetchMockTests = async () => {
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('mock_tests')
           .select('id, title, total_questions, duration, section');
         
@@ -58,19 +51,19 @@ const DigitalCoreTest = () => {
   const startModule = (moduleId) => {
     localStorage.setItem('selectedDigitalModule', moduleId);
     trackEvent('mock_started', { type: 'subtest', moduleId });
-    navigate('/simulator/core');
+    setCurrentView('DigitalSimulator');
   };
 
   const startFullTest = () => {
     localStorage.removeItem('selectedDigitalModule');
     trackEvent('mock_started', { type: 'full_core' });
-    navigate('/simulator/core');
+    setCurrentView('DigitalSimulator');
   };
 
   const startCustomMock = (testId) => {
     localStorage.setItem('selectedDigitalModule', testId);
     trackEvent('mock_started', { type: 'custom_mock', testId });
-    navigate('/simulator/core');
+    setCurrentView('DigitalSimulator');
   };
 
   return (

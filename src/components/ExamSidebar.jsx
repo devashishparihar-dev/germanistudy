@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, BarChart3, Settings, User, Compass, Target, FolderOpen, History, Menu, X, Shield, Layers, ChevronDown, ChevronRight } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ExamSidebar = ({ currentView }) => {
-  const navigate = useNavigate();
-
+const ExamSidebar = ({ setCurrentView, currentView }) => {
   const [collapsed, setCollapsed] = useState(false); // Default to open for better navigation discovery
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -120,7 +117,7 @@ const ExamSidebar = ({ currentView }) => {
             if (hasSubItems) {
               toggleMenu(item.label);
             } else if (item.view) {
-              if(setCurrentView) navigate(item.view);
+              if(setCurrentView) setCurrentView(item.view);
               if(isMobile) setMobileOpen(false);
             }
           }}

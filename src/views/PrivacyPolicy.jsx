@@ -1,15 +1,9 @@
 import React, { useEffect } from 'react';
-import { useSEO } from '../hooks/useSEO';
 import { motion } from 'framer-motion';
 import { Shield } from 'lucide-react';
 import Topbar from '../components/Topbar';
 
 const PrivacyPolicy = () => {
-  useSEO({
-    title: 'Privacy Policy',
-    description: "View Privacy Policy on GermaniStudy.",
-  });
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

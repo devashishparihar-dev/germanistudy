@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSEO } from '../hooks/useSEO';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PlayCircle, Target, BookOpen, AlertCircle, Award, History, ChevronRight, Sun, Moon, ArrowRight, BrainCircuit, Activity, Calendar, Compass } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
@@ -38,14 +36,7 @@ const StatCard = ({ icon: Icon, title, value, delay, highlight }) => (
   </motion.div>
 );
 
-const Dashboard = ({ session, isDarkMode, setIsDarkMode }) => {
-  useSEO({
-    title: 'Dashboard',
-    description: "View Dashboard on GermaniStudy.",
-  });
-
-  const navigate = useNavigate();
-
+const Dashboard = ({ setCurrentView, session, isDarkMode, setIsDarkMode }) => {
   const [pastTests, setPastTests] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const studentName = session?.user?.user_metadata?.full_name || 'Student';
@@ -164,7 +155,7 @@ const Dashboard = ({ session, isDarkMode, setIsDarkMode }) => {
 
   return (
     <div className="view-container" style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
-      <ExamSidebar currentView="Dashboard" />
+      <ExamSidebar setCurrentView={setCurrentView} currentView="Dashboard" />
 
       <main style={{ flex: 1, padding: '48px', overflowY: 'auto' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -212,7 +203,7 @@ const Dashboard = ({ session, isDarkMode, setIsDarkMode }) => {
                 <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', marginBottom: '24px', maxWidth: '600px' }}>
                   Pick up where you left off. Review the core concepts and jump back into the practice sets.
                 </p>
-                <button className="btn-primary" onClick={() => navigate('/study/core/math-equations')} style={{ padding: '12px 24px', fontSize: '1rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <button className="btn-primary" onClick={() => setCurrentView('StudyCoreMathEquations')} style={{ padding: '12px 24px', fontSize: '1rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                   Resume Topic <ArrowRight size={20} />
                 </button>
               </motion.div>
@@ -251,7 +242,7 @@ const Dashboard = ({ session, isDarkMode, setIsDarkMode }) => {
                   <motion.button 
                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}
                     className="premium-card" 
-                    onClick={() => navigate('/mocks/core')}
+                    onClick={() => setCurrentView('MockTestsCore')}
                     style={{ flex: 1, padding: '24px', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', cursor: 'pointer', transition: 'all 0.2s' }}
                     onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
                     onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
@@ -264,7 +255,7 @@ const Dashboard = ({ session, isDarkMode, setIsDarkMode }) => {
                   <motion.button 
                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}
                     className="premium-card" 
-                    onClick={() => navigate('/mocks/subject')}
+                    onClick={() => setCurrentView('MockTestsSubject')}
                     style={{ flex: 1, padding: '24px', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', cursor: 'pointer', transition: 'all 0.2s' }}
                     onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
                     onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
@@ -284,7 +275,7 @@ const Dashboard = ({ session, isDarkMode, setIsDarkMode }) => {
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>Recent Mock Tests</h3>
                 </div>
                 {totalMocks > 3 && (
-                  <button onClick={() => navigate('/analytics')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <button onClick={() => setCurrentView('Analytics')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     View Analytics <ChevronRight size={16} />
                   </button>
                 )}

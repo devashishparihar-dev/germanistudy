@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSEO } from '../hooks/useSEO';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import AuthLayout from '../components/auth/AuthLayout';
 import UnifiedAuthCard from '../components/auth/UnifiedAuthCard';
 import ForgotPasswordModal from '../components/auth/ForgotPasswordModal';
 import EmailVerificationCard from '../components/auth/EmailVerificationCard';
 
-const Auth = () => {
-  useSEO({
-    title: 'Auth',
-    description: "View Auth on GermaniStudy.",
-  });
-
+const Auth = ({ setCurrentView }) => {
   const [viewState, setViewState] = useState('main'); // 'main', 'forgot', 'verify'
   const [registeredEmail, setRegisteredEmail] = useState('');
 
@@ -21,21 +14,19 @@ const Auth = () => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate('/dashboard');
+        setCurrentView('Dashboard');
       }
     };
     checkSession();
   }, [setCurrentView]);
 
   const handleLoginSuccess = () => {
-  const navigate = useNavigate();
-
     if (localStorage.getItem('redirectAfterAuth') === 'free_mock') {
       localStorage.removeItem('redirectAfterAuth');
       localStorage.setItem('selectedDigitalModule', 'free_mock');
-      navigate('/simulator');
+      setCurrentView('DigitalSimulator');
     } else {
-      navigate('/dashboard');
+      setCurrentView('Dashboard');
     }
   };
 

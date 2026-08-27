@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
-import { useSEO } from '../hooks/useSEO';
-import { useNavigate } from 'react-router-dom';
 import { Camera, User, Lock, Trash2, Check, AlertTriangle } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
 import { supabase } from '../supabaseClient';
 
-const Profile = ({ session }) => {
-  useSEO({
-    title: 'Profile',
-    description: "View Profile on GermaniStudy.",
-  });
-
-  const navigate = useNavigate();
-
+const Profile = ({ setCurrentView, session }) => {
   const [name, setName] = useState(session?.user?.user_metadata?.full_name || '');
   const [country, setCountry] = useState(session?.user?.user_metadata?.country || '');
   const [studyLevel, setStudyLevel] = useState(session?.user?.user_metadata?.study_level || '');
@@ -60,7 +51,7 @@ const Profile = ({ session }) => {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-main)' }}>
-      <ExamSidebar />
+      <ExamSidebar setCurrentView={setCurrentView} />
       
       <main style={{ flex: 1, padding: '48px', overflowY: 'auto' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>

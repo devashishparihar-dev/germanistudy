@@ -1,28 +1,17 @@
 import React from 'react';
-import { useSEO } from '../hooks/useSEO';
-import { useNavigate, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ArrowLeft, Clock } from 'lucide-react';
 import { blogPosts } from '../data/blogs';
 
-const BlogPost = () => {
-  const { blogId } = useParams();
-  const navigate = useNavigate();
-
+const BlogPost = ({ setCurrentView, blogId }) => {
   const post = blogPosts.find(p => p.id === blogId);
-  useSEO({
-    title: post ? post.title : 'Loading...',
-    description: post ? post.excerpt : '',
-    ogImage: post ? post.thumbnail : undefined,
-  });
 
   if (!post) {
     return (
       <div className="view-container" style={{ padding: '120px 32px', textAlign: 'center', background: 'var(--background)' }}>
-        
         <h2>Blog post not found</h2>
-        <button onClick={() => navigate('/blogs')} className="btn-primary" style={{ marginTop: '24px' }}>
+        <button onClick={() => setCurrentView('Blogs')} className="btn-primary" style={{ marginTop: '24px' }}>
           Back to Blogs
         </button>
       </div>
@@ -35,7 +24,7 @@ const BlogPost = () => {
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           
           <button 
-            onClick={() => navigate('/blogs')}
+            onClick={() => setCurrentView('Blogs')}
             style={{ 
               background: 'none', border: 'none', color: 'var(--text-muted)', 
               display: 'flex', alignItems: 'center', gap: '8px', 
