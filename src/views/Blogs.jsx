@@ -1,15 +1,21 @@
 import React from 'react';
+import { useSEO } from '../hooks/useSEO';
+import { useNavigate } from 'react-router-dom';
 import { Newspaper, ChevronRight, Clock } from 'lucide-react';
 
 import { motion } from 'framer-motion';
 
 import { blogPosts } from '../data/blogs';
 
-const Blogs = ({ setCurrentView }) => {
+const Blogs = () => {
+  useSEO({
+    title: 'Blogs & Insights',
+    description: "Read the latest tips, guides, and student experiences to help you on your journey to studying a Master's degree in Germany.",
+  });
+
 
   return (
     <div className="view-container blogs-view" style={{ maxWidth: '100%', padding: '0', background: 'var(--background)' }}>
-      
       <main style={{ width: '100%', padding: '120px 32px 100px', minHeight: 'calc(100vh - 200px)' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           
@@ -55,7 +61,7 @@ const Blogs = ({ setCurrentView }) => {
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '24px' }}>
                   <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{post.date}</span>
-                  <button onClick={() => setCurrentView(`BlogPost:${post.id}`)} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '1rem' }}>
+                  <button onClick={() => navigate(`/blogs/${post.id}`)} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '1rem' }}>
                     Read Full Post <ChevronRight size={18} />
                   </button>
                 </div>
@@ -74,8 +80,8 @@ const Blogs = ({ setCurrentView }) => {
           <img src="/assets/branding/logo_dark.png" alt="GermaniStudy Logo" className="logo-dark-mode" style={{ height: '144px', objectFit: 'contain', filter: 'grayscale(1) opacity(0.5)' }} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '32px', flexWrap: 'wrap' }}>
-          <button onClick={() => setCurrentView('Home')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}>Home</button>
-          <button onClick={() => setCurrentView('Auth')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}>TestAS Prep</button>
+          <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}>Home</button>
+          <button onClick={() => navigate('/auth')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}>TestAS Prep</button>
           <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}>Resources</button>
         </div>
         <p style={{ color: 'var(--text-muted)' }}>© 2026 GermaniStudy. The Gateway to Germany. All rights reserved.</p>

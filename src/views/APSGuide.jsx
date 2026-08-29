@@ -1,9 +1,16 @@
 import React, { useEffect } from 'react';
+import { useSEO } from '../hooks/useSEO';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle, Info, FileText, ArrowRight, ShieldCheck } from 'lucide-react';
 import { trackEvent } from '../utils/analytics';
 
-const APSGuide = ({ setCurrentView }) => {
+const APSGuide = () => {
+  useSEO({
+    title: 'A P S Guide',
+    description: "View A P S Guide on GermaniStudy.",
+  });
+
   useEffect(() => {
     trackEvent('page_view', { page: 'APSGuide' });
   }, []);
@@ -82,7 +89,7 @@ const APSGuide = ({ setCurrentView }) => {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} style={{ textAlign: 'center', marginTop: '32px' }}>
-            <button className="btn-primary" onClick={() => setCurrentView('Auth')} style={{ padding: '16px 32px', fontSize: '1.1rem' }}>
+            <button className="btn-primary" onClick={() => navigate('/auth')} style={{ padding: '16px 32px', fontSize: '1.1rem' }}>
               Start Preparing for the dMAT <ArrowRight size={20} style={{ marginLeft: '8px' }} />
             </button>
           </motion.div>

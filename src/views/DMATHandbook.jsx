@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSEO } from '../hooks/useSEO';
+import { useNavigate } from 'react-router-dom';
 import { handbookData } from '../data/handbook';
 import { GuideSidebar } from '../components/handbook/GuideSidebar';
 import { StickyPanel } from '../components/handbook/StickyPanel';
@@ -8,7 +10,12 @@ import { FAQAccordion } from '../components/handbook/FAQAccordion';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const DMATHandbook = ({ setCurrentView }) => {
+const DMATHandbook = () => {
+  useSEO({
+    title: 'D M A T Handbook',
+    description: "View D M A T Handbook on GermaniStudy.",
+  });
+
   const [activeChapterId, setActiveChapterId] = useState(handbookData[0].id);
   const [searchQuery, setSearchQuery] = useState('');
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -24,6 +31,8 @@ const DMATHandbook = ({ setCurrentView }) => {
 
   useEffect(() => {
     const handleScroll = () => {
+  const navigate = useNavigate();
+
       // Calculate scroll progress percentage
       const totalScroll = document.documentElement.scrollTop;
       const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;

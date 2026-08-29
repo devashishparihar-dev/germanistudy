@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useSEO } from '../hooks/useSEO';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BarChart3, TrendingUp, Target, Award, ArrowUpRight } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
 
 const SECTION_TITLES = ['Figure Sequences', 'Mathematical Equations', 'Latin Squares', 'General Academic'];
 
-const Analytics = ({ setCurrentView }) => {
+const Analytics = () => {
+  useSEO({
+    title: 'Analytics',
+    description: "View Analytics on GermaniStudy.",
+  });
+
   const [testData, setTestData] = useState(null);
 
   useEffect(() => {
@@ -22,6 +29,8 @@ const Analytics = ({ setCurrentView }) => {
   const hasData = !!testData;
 
   const calculatePercentile = (accuracy) => {
+  const navigate = useNavigate();
+
     // Mock percentile logic based on accuracy
     if (accuracy >= 90) return '99th';
     if (accuracy >= 80) return '90th';
@@ -37,7 +46,7 @@ const Analytics = ({ setCurrentView }) => {
 
   return (
     <div className="view-container" style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
-      <ExamSidebar setCurrentView={setCurrentView} />
+      <ExamSidebar />
 
       <main style={{ flex: 1, padding: '48px', overflowY: 'auto' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto', width: '100%' }}>

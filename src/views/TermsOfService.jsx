@@ -1,9 +1,15 @@
 import React, { useEffect } from 'react';
+import { useSEO } from '../hooks/useSEO';
 import { motion } from 'framer-motion';
 import { Scale } from 'lucide-react';
 import Topbar from '../components/Topbar';
 
 const TermsOfService = () => {
+  useSEO({
+    title: 'Terms Of Service',
+    description: "View Terms Of Service on GermaniStudy.",
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
