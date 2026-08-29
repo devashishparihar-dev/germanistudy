@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useSEO } from '../hooks/useSEO';
+import { useNavigate } from 'react-router-dom';
 import { FileText, Download, Loader2 } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
 import { motion } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 
-const Library = ({ setCurrentView }) => {
+const Library = () => {
+  useSEO({
+    title: 'Library',
+    description: "View Library on GermaniStudy.",
+  });
+
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,6 +36,8 @@ const Library = ({ setCurrentView }) => {
   };
 
   const toDirectDownloadUrl = (driveUrl) => {
+  const navigate = useNavigate();
+
     if (!driveUrl) return '#';
     const match = driveUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
     if (!match) return driveUrl; // fallback
@@ -37,7 +46,7 @@ const Library = ({ setCurrentView }) => {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
-      <ExamSidebar setCurrentView={setCurrentView} />
+      <ExamSidebar />
       
       <main style={{ flex: 1, padding: '48px', overflowY: 'auto' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>

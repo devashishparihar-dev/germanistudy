@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useSEO } from '../hooks/useSEO';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { trackEvent } from '../utils/analytics';
 import { ArrowRight, Lock, Clock, FileCheck, ArrowLeft } from 'lucide-react';
@@ -34,7 +36,12 @@ const PREVIEW_QUESTIONS = [
   }
 ];
 
-const UnauthPreview = ({ setCurrentView }) => {
+const UnauthPreview = () => {
+  useSEO({
+    title: 'Unauth Preview',
+    description: "View Unauth Preview on GermaniStudy.",
+  });
+
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showWall, setShowWall] = useState(false);
@@ -44,6 +51,8 @@ const UnauthPreview = ({ setCurrentView }) => {
   }, []);
 
   const handleAnswer = (opt) => {
+  const navigate = useNavigate();
+
     setAnswers({ ...answers, [currentIdx]: opt });
     
     // Auto advance
@@ -75,10 +84,10 @@ const UnauthPreview = ({ setCurrentView }) => {
             You've completed the preview. To see your results, review detailed explanations, and access the full 25-minute mock exams, create your free account.
           </p>
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-            <button className="btn-secondary" onClick={() => setCurrentView('Home')}>
+            <button className="btn-secondary" onClick={() => navigate('/')}>
               Go Back
             </button>
-            <button className="btn-primary" onClick={() => setCurrentView('Auth')}>
+            <button className="btn-primary" onClick={() => navigate('/auth')}>
               Create Free Account <ArrowRight size={20} style={{ marginLeft: '8px' }} />
             </button>
           </div>
@@ -96,7 +105,7 @@ const UnauthPreview = ({ setCurrentView }) => {
       <header style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
           <button 
-            onClick={() => setCurrentView('Home')}
+            onClick={() => navigate('/')}
             style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
           >
             <ArrowLeft size={20} /> Exit Preview

@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
+import { useSEO } from '../hooks/useSEO';
+import { useNavigate } from 'react-router-dom';
 import { Moon, Sun, Bell, Globe, Shield, User, ToggleLeft, ToggleRight } from 'lucide-react';
 import ExamSidebar from '../components/ExamSidebar';
 
-const Settings = ({ setCurrentView, isDarkMode, setIsDarkMode }) => {
+const Settings = ({ isDarkMode, setIsDarkMode }) => {
+  useSEO({
+    title: 'Settings',
+    description: "View Settings on GermaniStudy.",
+  });
+
+  const navigate = useNavigate();
+
   const [notifications, setNotifications] = useState(true);
   const [privacyMode, setPrivacyMode] = useState(false);
   const [language, setLanguage] = useState('English');
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-main)' }}>
-      <ExamSidebar setCurrentView={setCurrentView} />
+      <ExamSidebar />
       <main style={{ flex: 1, padding: '48px', overflowY: 'auto' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           <header style={{ marginBottom: '40px' }}>
@@ -74,7 +83,7 @@ const Settings = ({ setCurrentView, isDarkMode, setIsDarkMode }) => {
               </h3>
 
               <div style={{ marginTop: '24px' }}>
-                 <button onClick={() => setCurrentView('Profile')} className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                 <button onClick={() => navigate('/profile')} className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                    <User size={18} /> Manage Account Details
                  </button>
               </div>

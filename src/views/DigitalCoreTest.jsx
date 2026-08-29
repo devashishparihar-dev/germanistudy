@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { PlayCircle, Target, Clock, BookOpen, AlertCircle, ChevronRight, Monitor, Database, CheckCircle, RotateCcw } from 'lucide-react';
+import { Target, Clock, AlertCircle, ChevronRight, Monitor, Database, CheckCircle, RotateCcw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import ExamSidebar from '../components/ExamSidebar';
 import { motion } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { trackEvent } from '../utils/analytics';
+import { useSEO } from '../hooks/useSEO';
 
-const DigitalCoreTest = ({ setCurrentView }) => {
+const DigitalCoreTest = () => {
+  useSEO({
+    title: 'Digital Core Test',
+    description: 'Take a mock core test on the GermaniStudy simulator.',
+  });
+  const navigate = useNavigate();
   const [mockTests, setMockTests] = useState([]);
   const [completedMocks, setCompletedMocks] = useState({});
   const [loading, setLoading] = useState(true);
@@ -14,7 +21,7 @@ const DigitalCoreTest = ({ setCurrentView }) => {
   useEffect(() => {
     const fetchMockTests = async () => {
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('mock_tests')
           .select('id, title, total_questions, duration, section');
         
@@ -51,25 +58,25 @@ const DigitalCoreTest = ({ setCurrentView }) => {
   const startModule = (moduleId) => {
     localStorage.setItem('selectedDigitalModule', moduleId);
     trackEvent('mock_started', { type: 'subtest', moduleId });
-    setCurrentView('DigitalSimulator');
+    navigate('/simulator/core');
   };
 
   const startFullTest = () => {
     localStorage.removeItem('selectedDigitalModule');
     trackEvent('mock_started', { type: 'full_core' });
-    setCurrentView('DigitalSimulator');
+    navigate('/simulator/core');
   };
 
   const startCustomMock = (testId) => {
     localStorage.setItem('selectedDigitalModule', testId);
     trackEvent('mock_started', { type: 'custom_mock', testId });
-    setCurrentView('DigitalSimulator');
+    navigate('/simulator/core');
   };
 
   return (
     <ErrorBoundary>
       <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
-        <ExamSidebar setCurrentView={setCurrentView} />
+        <ExamSidebar />
       
       <main style={{ flex: 1, padding: '48px', overflowY: 'auto' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
