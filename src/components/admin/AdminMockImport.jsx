@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
 import { Upload, CheckCircle, AlertCircle, FileJson, ShieldCheck } from 'lucide-react';
 
@@ -13,6 +13,10 @@ const AdminMockImport = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [parsedData, setParsedData] = useState(null);
   const [existingMocks, setExistingMocks] = useState([]);
+
+  useEffect(() => {
+    fetchMocks();
+  }, []);
 
   const fetchMocks = async () => {
     setLoading(true);
@@ -182,13 +186,13 @@ const AdminMockImport = () => {
           section: section,
           duration: parseInt(duration) || 25,
           total_questions: parsedData.length,
-          is_premium: isPremium
+          is_published: true
         })
         .select('id')
         .single();
         
       if (mockError) {
-          // fallback for legacy column names if section/is_premium fails
+          // fallback if section or is_published fails
           const { data: fallbackData, error: fallbackError } = await supabase
             .from('mock_tests')
             .insert({
@@ -218,11 +222,7 @@ const AdminMockImport = () => {
         question_image: q.type === 'figural_sequence' ? q.question_image : null
       }));
       
-      // Wait, we need to insert them and link to mock_test_questions OR does core_test_questions have mock_test_id?
-      // Based on original AdminMockImport.jsx, it inserts to core_test_questions AND mock_test_questions.
-      // The brief says: `mock_test_id | uuid, FK -> mock_tests.id`.
-      // Let's try adding mock_test_id directly, and if it fails, fallback to linking.
-      
+      // Try inserting with mock_test_id directly first
       const questionsWithMockId = questionsToInsert.map(q => ({ ...q, mock_test_id: mockTestId }));
       
       const { data: insertedQs, error: insertError } = await supabase
@@ -231,32 +231,29 @@ const AdminMockImport = () => {
         .select('id');
         
       if (insertError) {
-          if (insertError.message.includes('mock_test_id')) {
-              // fallback to linking table
-              const { data: legacyQs, error: legacyInsertError } = await supabase
-                  .from('core_test_questions')
-                  .insert(questionsToInsert)
-                  .select('id');
-                  
-              if (legacyInsertError) throw new Error(`Database error on questions insert: ${legacyInsertError.message}`);
+          // fallback to linking table
+          const { data: legacyQs, error: legacyInsertError } = await supabase
+              .from('core_test_questions')
+              .insert(questionsToInsert)
+              .select('id');
               
-              const linkRecords = legacyQs.map((q, idx) => ({
-                  mock_test_id: mockTestId,
-                  question_id: q.id,
-                  display_order: idx + 1
-              }));
-              
-              const { error: linkError } = await supabase.from('mock_test_questions').insert(linkRecords);
-              if (linkError) throw new Error(`Database error on linking questions: ${linkError.message}`);
-          } else {
-              throw new Error(`Database error on questions insert: ${insertError.message}`);
-          }
+          if (legacyInsertError) throw new Error(`Database error on questions insert: ${legacyInsertError.message}`);
+          
+          const linkRecords = legacyQs.map((q, idx) => ({
+              mock_test_id: mockTestId,
+              question_id: q.id,
+              display_order: idx + 1
+          }));
+          
+          const { error: linkError } = await supabase.from('mock_test_questions').insert(linkRecords);
+          if (linkError) throw new Error(`Database error on linking questions: ${linkError.message}`);
       }
       
       setMessage({ type: 'success', text: `Successfully published test "${testName}" with ${parsedData.length} questions.` });
       setJsonText('');
       setTestName('');
       setParsedData(null);
+      fetchMocks();
     } catch (err) {
       if (mockTestId) {
         await supabase.from('mock_tests').delete().eq('id', mockTestId);
