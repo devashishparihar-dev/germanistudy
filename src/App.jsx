@@ -65,7 +65,7 @@ const AppLayout = ({ session, isAdmin, isDarkMode, setIsDarkMode }) => {
   const location = useLocation();
   const path = location.pathname;
   
-  const showNavAndWidget = path === '/' || path === '/blogs' || path.startsWith('/blogs/') || path === '/pricing' || path === '/guides/dmat';
+  const showNavAndWidget = path === '/' || path === '/blogs' || path.startsWith('/blogs/') || path === '/pricing' || path === '/guides/dmat' || path === '/guides/aps' || path === '/privacy-policy' || path === '/terms-of-service' || path === '/library';
   const simulatorActive = !showNavAndWidget;
 
   return (
@@ -138,6 +138,9 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={session ? <Navigate to="/dashboard" replace /> : <Home isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />} />
           <Route path="/auth" element={session ? <Navigate to="/dashboard" replace /> : <Auth />} />
+          <Route path="/login" element={<Navigate to="/auth" replace />} />
+          <Route path="/signup" element={<Navigate to="/auth" replace />} />
+          <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="/library" element={<Library />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:blogId" element={<BlogPost />} />
@@ -158,8 +161,10 @@ function App() {
           <Route path="/profile" element={<AuthGuard session={session}><Profile session={session} /></AuthGuard>} />
           <Route path="/settings" element={<AuthGuard session={session}><Settings isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} /></AuthGuard>} />
           <Route path="/admin" element={<AuthGuard session={session}><AdminPanel session={session} /></AuthGuard>} />
+          <Route path="/admin-panel" element={<Navigate to="/admin" replace />} />
 
           {/* Study Routes (Protected) */}
+          <Route path="/study" element={<Navigate to="/study/core/math-equations" replace />} />
           <Route path="/study/core/figure-sequences" element={<AuthGuard session={session}><StudyCoreFigureSequences /></AuthGuard>} />
           <Route path="/study/core/math-equations" element={<AuthGuard session={session}><StudyCoreMathEquations /></AuthGuard>} />
           <Route path="/study/core/latin-squares" element={<AuthGuard session={session}><StudyCoreLatinSquares /></AuthGuard>} />
@@ -171,6 +176,7 @@ function App() {
           <Route path="/study/subject/social-sciences" element={<AuthGuard session={session}><StudySubjectSocialSciences /></AuthGuard>} />
 
           {/* Practice Routes (Protected) */}
+          <Route path="/practice" element={<Navigate to="/practice/core/math-equations" replace />} />
           <Route path="/practice/core/figure-sequences" element={<AuthGuard session={session}><PracticeCoreFigureSequences /></AuthGuard>} />
           <Route path="/practice/core/math-equations" element={<AuthGuard session={session}><PracticeCoreMathEquations /></AuthGuard>} />
           <Route path="/practice/core/latin-squares" element={<AuthGuard session={session}><PracticeCoreLatinSquares /></AuthGuard>} />
@@ -182,6 +188,8 @@ function App() {
           <Route path="/practice/subject/social-sciences" element={<AuthGuard session={session}><PracticeSubjectSocialSciences /></AuthGuard>} />
 
           {/* Mock Routes (Protected) */}
+          <Route path="/mocks" element={<Navigate to="/mocks/core" replace />} />
+          <Route path="/mock-tests" element={<Navigate to="/mocks/core" replace />} />
           <Route path="/mocks/full" element={<AuthGuard session={session}><MockTestsFull /></AuthGuard>} />
           <Route path="/mocks/core" element={<AuthGuard session={session}><MockTestsCore /></AuthGuard>} />
           <Route path="/mocks/subject" element={<AuthGuard session={session}><MockTestsSubject /></AuthGuard>} />

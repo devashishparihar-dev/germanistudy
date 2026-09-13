@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, BarChart3, Settings, User, Compass, Target, FolderOpen, History, Menu, X, Shield, Layers, ChevronDown, ChevronRight } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ExamSidebar = ({ currentView }) => {
+const ExamSidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [collapsed, setCollapsed] = useState(false); // Default to open for better navigation discovery
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -46,23 +47,23 @@ const ExamSidebar = ({ currentView }) => {
   };
 
   const menuItems = [
-    { label: 'Dashboard', icon: <LayoutDashboard size={20} />, view: 'Dashboard' },
-    { label: 'DMAT Handbook', icon: <BookOpen size={20} />, view: 'DMATHandbook' },
+    { label: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
+    { label: 'DMAT Handbook', icon: <BookOpen size={20} />, path: '/guides/dmat' },
     { 
       label: 'Study Materials', 
       icon: <BookOpen size={20} />,
       subItems: [
         { group: 'Core Module' },
-        { label: 'Figure Sequences', view: 'StudyCoreFigureSequences' },
-        { label: 'Math Equations', view: 'StudyCoreMathEquations' },
-        { label: 'Latin Squares', view: 'StudyCoreLatinSquares' },
+        { label: 'Figure Sequences', path: '/study/core/figure-sequences' },
+        { label: 'Math Equations', path: '/study/core/math-equations' },
+        { label: 'Latin Squares', path: '/study/core/latin-squares' },
         { group: 'Subject Module' },
-        { label: 'Mathematics', view: 'StudySubjectMath' },
-        { label: 'Engineering', view: 'StudySubjectEngineering' },
-        { label: 'Natural Sciences', view: 'StudySubjectNaturalSciences' },
-        { label: 'Business', view: 'StudySubjectBusiness' },
-        { label: 'Economics', view: 'StudySubjectEconomics' },
-        { label: 'Social Sciences', view: 'StudySubjectSocialSciences' },
+        { label: 'Mathematics', path: '/study/subject/math' },
+        { label: 'Engineering', path: '/study/subject/engineering' },
+        { label: 'Natural Sciences', path: '/study/subject/natural-sciences' },
+        { label: 'Business', path: '/study/subject/business' },
+        { label: 'Economics', path: '/study/subject/economics' },
+        { label: 'Social Sciences', path: '/study/subject/social-sciences' },
       ]
     },
     { 
@@ -70,35 +71,47 @@ const ExamSidebar = ({ currentView }) => {
       icon: <Target size={20} />,
       subItems: [
         { group: 'Core Module' },
-        { label: 'Figure Sequences', view: 'PracticeCoreFigureSequences' },
-        { label: 'Math Equations', view: 'PracticeCoreMathEquations' },
-        { label: 'Latin Squares', view: 'PracticeCoreLatinSquares' },
+        { label: 'Figure Sequences', path: '/practice/core/figure-sequences' },
+        { label: 'Math Equations', path: '/practice/core/math-equations' },
+        { label: 'Latin Squares', path: '/practice/core/latin-squares' },
         { group: 'Subject Module' },
-        { label: 'Mathematics', view: 'PracticeSubjectMath' },
-        { label: 'Engineering', view: 'PracticeSubjectEngineering' },
-        { label: 'Natural Sciences', view: 'PracticeSubjectNaturalSciences' },
-        { label: 'Business', view: 'PracticeSubjectBusiness' },
-        { label: 'Economics', view: 'PracticeSubjectEconomics' },
-        { label: 'Social Sciences', view: 'PracticeSubjectSocialSciences' },
+        { label: 'Mathematics', path: '/practice/subject/math' },
+        { label: 'Engineering', path: '/practice/subject/engineering' },
+        { label: 'Natural Sciences', path: '/practice/subject/natural-sciences' },
+        { label: 'Business', path: '/practice/subject/business' },
+        { label: 'Economics', path: '/practice/subject/economics' },
+        { label: 'Social Sciences', path: '/practice/subject/social-sciences' },
       ]
     },
     { 
       label: 'Mock Tests', 
       icon: <Layers size={20} />,
       subItems: [
-        { label: 'Full dMAT Mocks', view: 'MockTestsFull' },
-        { label: 'Core Module Mocks', view: 'MockTestsCore' },
-        { label: 'Subject Module Mocks', view: 'MockTestsSubject' }
+        { label: 'Full dMAT Mocks', path: '/mocks/full' },
+        { label: 'Core Module Mocks', path: '/mocks/core' },
+        { label: 'Subject Module Mocks', path: '/mocks/subject' }
       ]
     },
-    { label: 'Analytics', icon: <BarChart3 size={20} />, view: 'Analytics' },
-    { label: 'Settings', icon: <Settings size={20} />, view: 'Settings', bottom: true },
-    { label: 'Profile', icon: <User size={20} />, view: 'Profile', bottom: true },
+    { label: 'Analytics', icon: <BarChart3 size={20} />, path: '/analytics' },
+    { label: 'Settings', icon: <Settings size={20} />, path: '/settings', bottom: true },
+    { label: 'Profile', icon: <User size={20} />, path: '/profile', bottom: true },
   ];
 
   if (isAdmin) {
-    menuItems.push({ label: 'Admin Panel', icon: <Shield size={20} />, view: 'admin-panel', bottom: true });
+    menuItems.push({ label: 'Admin Panel', icon: <Shield size={20} />, path: '/admin', bottom: true });
   }
+
+  // Auto-expand menu if current path matches any sub-item
+  useEffect(() => {
+    menuItems.forEach(item => {
+      if (item.subItems) {
+        const hasActiveChild = item.subItems.some(sub => sub.path === location.pathname);
+        if (hasActiveChild) {
+          setExpandedMenus(prev => ({ ...prev, [item.label]: true }));
+        }
+      }
+    });
+  }, [location.pathname]);
 
   const renderNavButton = (item, isSubItem = false, isGroupHeader = false) => {
     if (isGroupHeader) {
@@ -109,7 +122,7 @@ const ExamSidebar = ({ currentView }) => {
       );
     }
 
-    const isActive = currentView === item.view;
+    const isActive = location.pathname === item.path;
     const hasSubItems = !!item.subItems;
     const isExpanded = expandedMenus[item.label];
 
@@ -119,9 +132,9 @@ const ExamSidebar = ({ currentView }) => {
           onClick={() => {
             if (hasSubItems) {
               toggleMenu(item.label);
-            } else if (item.view) {
-              if (item.view) navigate(item.view);
-              if(isMobile) setMobileOpen(false);
+            } else if (item.path) {
+              navigate(item.path);
+              if (isMobile) setMobileOpen(false);
             }
           }}
           style={{
