@@ -191,7 +191,7 @@ function App() {
           <Route path="/mocks" element={<Navigate to="/mocks/core" replace />} />
           <Route path="/mock-tests" element={<Navigate to="/mocks/core" replace />} />
           <Route path="/mocks/full" element={<AuthGuard session={session}><MockTestsFull /></AuthGuard>} />
-          <Route path="/mocks/core" element={<AuthGuard session={session}><MockTestsCore /></AuthGuard>} />
+          <Route path="/mocks/core" element={<AuthGuard session={session}><DigitalCoreTest /></AuthGuard>} />
           <Route path="/mocks/subject" element={<AuthGuard session={session}><MockTestsSubject /></AuthGuard>} />
 
           {/* Fallback */}

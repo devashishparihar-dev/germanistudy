@@ -58,19 +58,19 @@ const DigitalCoreTest = () => {
   const startModule = (moduleId) => {
     localStorage.setItem('selectedDigitalModule', moduleId);
     trackEvent('mock_started', { type: 'subtest', moduleId });
-    navigate('/simulator/core');
+    navigate('/simulator');
   };
 
   const startFullTest = () => {
     localStorage.removeItem('selectedDigitalModule');
     trackEvent('mock_started', { type: 'full_core' });
-    navigate('/simulator/core');
+    navigate('/simulator');
   };
 
   const startCustomMock = (testId) => {
     localStorage.setItem('selectedDigitalModule', testId);
     trackEvent('mock_started', { type: 'custom_mock', testId });
-    navigate('/simulator/core');
+    navigate('/simulator');
   };
 
   return (
